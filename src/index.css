@@ -1,5 +1,5 @@
 @import "tailwindcss";
 
-h1 {
-  @apply text-purple-500;
+body {
+  @apply bg-[#2b2f33] text-white;
 }
