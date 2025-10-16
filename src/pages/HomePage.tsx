@@ -1,30 +1,31 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import { Navbar } from "../components/Navbar"; // 👈 importa el componente Navbar
 
 export const HomePage: React.FC = () => {
   const movies = [
-    "https://m.media-amazon.com/images/I/81ExhpBEbHL._AC_SY679_.jpg", 
-    "https://m.media-amazon.com/images/I/91bYsX41DVL._AC_SY679_.jpg", 
-    "https://m.media-amazon.com/images/I/91kFYg4fX3L._AC_SY679_.jpg",  
-    "https://m.media-amazon.com/images/I/71c05lTE03L._AC_SY679_.jpg", 
-    "https://m.media-amazon.com/images/I/91kFYg4fX3L._AC_SY679_.jpg", 
+    "https://m.media-amazon.com/images/I/81ExhpBEbHL._AC_SY679_.jpg",
+    "https://m.media-amazon.com/images/I/91bYsX41DVL._AC_SY679_.jpg",
+    "https://m.media-amazon.com/images/I/91kFYg4fX3L._AC_SY679_.jpg",
+    "https://m.media-amazon.com/images/I/71c05lTE03L._AC_SY679_.jpg",
+    "https://m.media-amazon.com/images/I/91kFYg4fX3L._AC_SY679_.jpg",
     "https://m.media-amazon.com/images/I/81aA7hEEykL._AC_SY679_.jpg",
   ];
 
   return (
     <div className="min-h-screen bg-[#2b2f33] text-white flex flex-col items-center relative">
-      {/* NAVBAR */}
-      <nav className="absolute top-2 left-0 w-full flex justify-between items-center px-8 py-">
-        {/* SOLO LOGO */}
-        <img
-          src="/logo.png"
-          alt="Movu Logo"
-          className="h-18 w-auto md:h-30 object-contain drop-shadow-lg"
-        />
+      {/* ✅ NAVBAR REUTILIZABLE */}
+      <Navbar />
 
-        <button className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded text-sm md:text-base transition">
+      {/* BOTÓN INICIAR SESIÓN (queda separado del logo) */}
+      <div className="absolute top-10 right-8">
+        <Link
+          to="/login"
+          className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded text-sm md:text-base transition"
+        >
           Iniciar sesión
-        </button>
-      </nav>
+        </Link>
+      </div>
 
       {/* CONTENIDO PRINCIPAL */}
       <main className="flex flex-col items-center justify-center text-center flex-grow mt-40 px-4">
@@ -34,9 +35,9 @@ export const HomePage: React.FC = () => {
 
         <p className="text-gray-300 text-sm mb-12">
           ¿No tienes cuenta?{" "}
-          <a href="#" className="text-red-500 hover:underline">
+          <Link to="/register" className="text-red-500 hover:underline">
             Regístrate aquí
-          </a>
+          </Link>
         </p>
 
         {/* GRID DE PELÍCULAS */}
