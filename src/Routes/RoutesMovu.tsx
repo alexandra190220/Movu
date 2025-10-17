@@ -5,6 +5,8 @@ import { LoginPage } from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import LayoutMovu from "../components/Layout";
 import ConfirmResetPage from "../pages/ConfirmResetPage";
+import SiteMapPage from "../pages/SiteMapPage";
+
 
 /**
  * Define las rutas principales de la aplicación Movu.
@@ -27,6 +29,7 @@ const RoutesMovu = () => {
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/aboutPage" element={<AboutPage />} />
+                <Route path="/SiteMapPage" element={<SiteMapPage />} />
               </Routes>
             </LayoutMovu>
           }
