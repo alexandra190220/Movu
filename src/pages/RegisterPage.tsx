@@ -1,10 +1,10 @@
-// src/pages/RegisterPage.tsx
 import React, { useState } from "react";
-import { Navbar } from "../components/Navbar"; // Asegúrate de que este componente tenga tu logo
+import { Navbar } from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../Services/AuthService";
 import { Link } from "react-router-dom";
 import { validateField, validateForm } from "../Services/ValidateRegister";
+import { Eye, EyeOff, Loader2 } from "lucide-react"; // 👁️ + ⏳ iconos
 
 type FormState = {
   firstName: string;
@@ -28,17 +28,20 @@ const RegisterPage: React.FC = () => {
 
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [submitError, setSubmitError] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false); // 🔹 Estado de carga
+
+  // 👁️ Mostrar/ocultar contraseñas
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const updatedForm = { ...form, [name]: value } as FormState;
     setForm(updatedForm);
 
-    // Validación en tiempo real del campo modificado
     const error = validateField(name, value, updatedForm);
     setErrors((prev) => ({ ...prev, [name]: error }));
 
-    // Revalidar contraseñas si cambian
     if (name === "password" && updatedForm.confirmPassword) {
       const errConfirm = validateField("confirmPassword", updatedForm.confirmPassword, updatedForm);
       setErrors((prev) => ({ ...prev, confirmPassword: errConfirm }));
@@ -52,7 +55,6 @@ const RegisterPage: React.FC = () => {
   const extractErrorMessage = (err: unknown): string => {
     if (!err) return "Error al registrar usuario";
     if (err instanceof Error) return err.message;
-
     try {
       const anyErr = err as any;
       if (anyErr.response?.data?.message) return String(anyErr.response.data.message);
@@ -75,6 +77,7 @@ const RegisterPage: React.FC = () => {
     }
 
     try {
+      setIsLoading(true); // ⏳ Empieza el estado de carga
       await registerUser(
         form.firstName,
         form.lastName,
@@ -82,33 +85,30 @@ const RegisterPage: React.FC = () => {
         form.email,
         form.password
       );
-      alert("Registro exitoso, ahora inicia sesión");
+      alert("✅ Registro exitoso, ahora inicia sesión");
       navigate("/LoginPage");
     } catch (err) {
       const message = extractErrorMessage(err);
-      // mensaje amigable para correo duplicado
       if (message.includes("E11000") || message.includes("duplicate key")) {
         setSubmitError("Este correo ya está registrado. Intenta con otro.");
       } else {
         setSubmitError(message);
       }
+    } finally {
+      setIsLoading(false); // ⏹️ Finaliza carga
     }
   };
 
   return (
     <>
-      {/* 🔹 Navbar con logo (si tu componente Navbar ya tiene el logo, se mostrará arriba) */}
       <Navbar />
 
-      {/* 🔹 Contenedor principal del formulario */}
       <div className="min-h-screen flex items-center justify-center bg-[#2f3336] px-6 py-24">
         <form
           onSubmit={handleSubmit}
           className="bg-[#3a3d3f] p-8 rounded-lg shadow-lg w-full max-w-lg"
           noValidate
         >
-         
-
           <h2 className="text-2xl md:text-3xl font-semibold text-center text-white mb-8">
             Registro de Usuario
           </h2>
@@ -126,13 +126,9 @@ const RegisterPage: React.FC = () => {
               value={form.firstName}
               onChange={handleChange}
               className="w-full p-2 rounded-md bg-[#e9e9e9] text-black placeholder-gray-600 focus:outline-none"
-              aria-invalid={!!errors.firstName}
-              aria-describedby={errors.firstName ? "error-firstName" : undefined}
             />
             {errors.firstName && (
-              <p id="error-firstName" className="text-red-400 text-sm mt-1">
-                {errors.firstName}
-              </p>
+              <p className="text-red-400 text-sm mt-1">{errors.firstName}</p>
             )}
           </div>
 
@@ -145,13 +141,9 @@ const RegisterPage: React.FC = () => {
               value={form.lastName}
               onChange={handleChange}
               className="w-full p-2 rounded-md bg-[#e9e9e9] text-black placeholder-gray-600 focus:outline-none"
-              aria-invalid={!!errors.lastName}
-              aria-describedby={errors.lastName ? "error-lastName" : undefined}
             />
             {errors.lastName && (
-              <p id="error-lastName" className="text-red-400 text-sm mt-1">
-                {errors.lastName}
-              </p>
+              <p className="text-red-400 text-sm mt-1">{errors.lastName}</p>
             )}
           </div>
 
@@ -165,22 +157,16 @@ const RegisterPage: React.FC = () => {
               value={form.age}
               onChange={handleChange}
               className="w-full p-2 rounded-md bg-[#e9e9e9] text-black placeholder-gray-600 focus:outline-none"
-              aria-invalid={!!errors.age}
-              aria-describedby={errors.age ? "error-age" : undefined}
               min={0}
             />
             {errors.age && (
-              <p id="error-age" className="text-red-400 text-sm mt-1">
-                {errors.age}
-              </p>
+              <p className="text-red-400 text-sm mt-1">{errors.age}</p>
             )}
           </div>
 
           {/* Correo */}
           <div className="mb-4">
-            <label className="text-white text-sm block mb-1">
-              Correo electrónico:
-            </label>
+            <label className="text-white text-sm block mb-1">Correo electrónico:</label>
             <input
               name="email"
               type="email"
@@ -188,64 +174,75 @@ const RegisterPage: React.FC = () => {
               value={form.email}
               onChange={handleChange}
               className="w-full p-2 rounded-md bg-[#e9e9e9] text-black placeholder-gray-600 focus:outline-none"
-              aria-invalid={!!errors.email}
-              aria-describedby={errors.email ? "error-email" : undefined}
             />
             {errors.email && (
-              <p id="error-email" className="text-red-400 text-sm mt-1">
-                {errors.email}
-              </p>
+              <p className="text-red-400 text-sm mt-1">{errors.email}</p>
             )}
           </div>
 
           {/* Contraseña */}
-          <div className="mb-4">
+          <div className="mb-4 relative">
             <label className="text-white text-sm block mb-1">Contraseña:</label>
             <input
               name="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Contraseña"
               value={form.password}
               onChange={handleChange}
-              className="w-full p-2 rounded-md bg-[#e9e9e9] text-black placeholder-gray-600 focus:outline-none"
-              aria-invalid={!!errors.password}
-              aria-describedby={errors.password ? "error-password" : undefined}
+              className="w-full p-2 pr-10 rounded-md bg-[#e9e9e9] text-black placeholder-gray-600 focus:outline-none"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-9 text-gray-600 hover:text-gray-800"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
             {errors.password && (
-              <p id="error-password" className="text-red-400 text-sm mt-1">
-                {errors.password}
-              </p>
+              <p className="text-red-400 text-sm mt-1">{errors.password}</p>
             )}
           </div>
 
           {/* Confirmar contraseña */}
-          <div className="mb-4">
-            <label className="text-white text-sm block mb-1">
-              Confirmar contraseña:
-            </label>
+          <div className="mb-6 relative">
+            <label className="text-white text-sm block mb-1">Confirmar contraseña:</label>
             <input
               name="confirmPassword"
-              type="password"
+              type={showConfirmPassword ? "text" : "password"}
               placeholder="Repite tu contraseña"
               value={form.confirmPassword}
               onChange={handleChange}
-              className="w-full p-2 rounded-md bg-[#e9e9e9] text-black placeholder-gray-600 focus:outline-none"
-              aria-invalid={!!errors.confirmPassword}
-              aria-describedby={errors.confirmPassword ? "error-confirmPassword" : undefined}
+              className="w-full p-2 pr-10 rounded-md bg-[#e9e9e9] text-black placeholder-gray-600 focus:outline-none"
             />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="absolute right-3 top-9 text-gray-600 hover:text-gray-800"
+            >
+              {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
             {errors.confirmPassword && (
-              <p id="error-confirmPassword" className="text-red-400 text-sm mt-1">
-                {errors.confirmPassword}
-              </p>
+              <p className="text-red-400 text-sm mt-1">{errors.confirmPassword}</p>
             )}
           </div>
 
+          {/* Botón con spinner */}
           <div className="flex justify-center mt-6">
             <button
               type="submit"
-              className="bg-[#d71920] hover:bg-[#b01315] text-white font-semibold px-6 py-2 rounded-full transition"
+              disabled={isLoading}
+              className={`w-full bg-[#d71920] hover:bg-[#b01315] text-white font-semibold px-6 py-2 rounded-md transition flex items-center justify-center gap-2 ${
+                isLoading ? "opacity-70 cursor-not-allowed" : ""
+              }`}
             >
-              Crear Cuenta
+              {isLoading ? (
+                <>
+                  <Loader2 size={20} className="animate-spin" />
+                  Registrando...
+                </>
+              ) : (
+                "Crear Cuenta"
+              )}
             </button>
           </div>
 
