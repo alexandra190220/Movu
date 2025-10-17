@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Navbar } from "../components/Navbar";
 import { Link, useNavigate } from "react-router";
-import { loginUser } from "../Services/AuthService"; // 👈 importa tu servicio
+import { loginUser } from "../Services/AuthService";
+import { Loader2 } from "lucide-react"; // 👈 icono de carga
 
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -18,7 +19,7 @@ export const LoginPage: React.FC = () => {
     try {
       const data = await loginUser(email, password);
       alert(`✅ ${data.message || "Inicio de sesión exitoso"}`);
-      navigate("/");
+      navigate("/HomePage");
     } catch (err: any) {
       console.error("Error al iniciar sesión:", err);
       setError(err.message || "Error al iniciar sesión");
@@ -64,12 +65,30 @@ export const LoginPage: React.FC = () => {
               <p className="text-red-400 text-sm text-center">{error}</p>
             )}
 
+              <p className="text-gray-300 text-sm text-center mt-6">
+            {" "}
+            <Link to="/ConfirmResetPage" className="text-red-500 hover:underline">
+              ¿Se te olvidó la contraseña?
+            </Link>
+          </p>
+
+
+            {/* Botón con animación de carga */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-md font-semibold transition disabled:opacity-70"
+              className={`w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-md font-semibold transition flex items-center justify-center gap-2 ${
+                loading ? "opacity-70 cursor-not-allowed" : ""
+              }`}
             >
-              {loading ? "Cargando..." : "Ingresar"}
+              {loading ? (
+                <>
+                  <Loader2 size={20} className="animate-spin" />
+                  Iniciando sesión...
+                </>
+              ) : (
+                "Ingresar"
+              )}
             </button>
           </form>
 
@@ -77,12 +96,6 @@ export const LoginPage: React.FC = () => {
             ¿No tienes cuenta?{" "}
             <Link to="/RegisterPage" className="text-red-500 hover:underline">
               Regístrate aquí
-            </Link>
-          </p>
-          <p className="text-gray-300 text-sm text-center mt-6">
-            {" "}
-            <Link to="/ConfirmResetPage" className="text-red-500 hover:underline">
-              ¿No tienes cuenta?
             </Link>
           </p>
         </div>

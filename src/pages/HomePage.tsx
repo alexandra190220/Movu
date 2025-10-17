@@ -14,7 +14,7 @@ export const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#2b2f33] text-white flex flex-col items-center relative">
-      {/* ✅ NAVBAR REUTILIZABLE */}
+      {}
       <Navbar />
 
       {/* BOTÓN INICIAR SESIÓN (queda separado del logo) */}
