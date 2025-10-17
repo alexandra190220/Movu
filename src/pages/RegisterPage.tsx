@@ -101,20 +101,13 @@ const RegisterPage: React.FC = () => {
       <Navbar />
 
       {/* 🔹 Contenedor principal del formulario */}
-      <div className="min-h-screen flex items-center justify-center bg-[#2f3336] px-6 py-12">
+      <div className="min-h-screen flex items-center justify-center bg-[#2f3336] px-6 py-24">
         <form
           onSubmit={handleSubmit}
           className="bg-[#3a3d3f] p-8 rounded-lg shadow-lg w-full max-w-lg"
           noValidate
         >
-          {/* Logo dentro del formulario (opcional si quieres que también se vea aquí) */}
-          <div className="flex justify-center mb-6">
-            <img
-              src="/logo.png" // Cambia la ruta según tu logo real (por ejemplo: /assets/logo.svg)
-              alt="Logo Movu"
-              className="w-24 h-24 object-contain"
-            />
-          </div>
+         
 
           <h2 className="text-2xl md:text-3xl font-semibold text-center text-white mb-8">
             Registro de Usuario
