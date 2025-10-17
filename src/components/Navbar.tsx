@@ -1,10 +1,17 @@
 import React from "react";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
+
 export const Navbar: React.FC = () => {
   return (
-    <nav>
-      <Link to="/">Home</Link>
-      <Link to="/about">About</Link>
+    <nav className="absolute top-0 left-2 w-full flex justify-start px-15">
+      <Link to="/">
+        <img
+          src="/logo.png"
+          alt="Movu Logo"
+          className="h-20 w-auto md:h-30 object-contain drop-shadow-lg"
+        />
+      </Link>
     </nav>
   );
 };
+
