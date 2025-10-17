@@ -24,6 +24,5 @@ export async function registerUser(firstName: string, lastName: string, age: num
   const data = await response.json();
 
   if (!response.ok) throw new Error(data.error || "Error al registrarse");
-
   return data;
 }
