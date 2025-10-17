@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000"; // cambiar cuando se despliegue en vercel
+const API_URL = "http://localhost:3000/api/v1"; // cambiar cuando se despliegue en vercel
 
 export async function loginUser(email: string, password: string) {
   const response = await fetch(`${API_URL}/sessions/login`, {
