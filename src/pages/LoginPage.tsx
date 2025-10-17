@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Navbar } from "../components/Navbar";
 import { Link, useNavigate } from "react-router";
-import { loginUser } from "../Services/AuthService"; // 👈 importa tu servicio
+import { loginUser } from "../Services/AuthService";
+import { Loader2 } from "lucide-react"; // Icono de carga
 
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -18,7 +19,7 @@ export const LoginPage: React.FC = () => {
     try {
       const data = await loginUser(email, password);
       alert(`✅ ${data.message || "Inicio de sesión exitoso"}`);
-      navigate("/");
+      navigate("/HomePage");
     } catch (err: any) {
       console.error("Error al iniciar sesión:", err);
       setError(err.message || "Error al iniciar sesión");
@@ -31,11 +32,15 @@ export const LoginPage: React.FC = () => {
     <div className="min-h-screen bg-[#2b2f33] text-white flex flex-col">
       <Navbar />
 
-      <div className="flex-grow flex justify-center items-center px-4 py-20">
+      {/* Contenedor principal centrado */}
+      <div className="flex-grow flex justify-center items-center px-4 py-12">
         <div className="bg-[#3a3f45] p-8 rounded-2xl shadow-lg w-full max-w-md">
-          <h2 className="text-3xl font-bold mb-6 text-center">Iniciar sesión</h2>
+          <h2 className="text-3xl font-bold mb-6 text-center">
+            Iniciar Sesión
+          </h2>
 
           <form onSubmit={handleLogin} className="space-y-5">
+            {/* Campo correo */}
             <div>
               <label className="block text-sm mb-1">Correo electrónico</label>
               <input
@@ -44,10 +49,11 @@ export const LoginPage: React.FC = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="ejemplo@correo.com"
-                className="w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             </div>
 
+            {/* Campo contraseña */}
             <div>
               <label className="block text-sm mb-1">Contraseña</label>
               <input
@@ -56,36 +62,54 @@ export const LoginPage: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="••••••••"
-                className="w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             </div>
 
+            {/* Mensaje de error */}
             {error && (
               <p className="text-red-400 text-sm text-center">{error}</p>
             )}
-             <p className="text-gray-300 text-sm text-center mt-6">
-            {" "}
-            <Link to="/ConfirmResetPage" className="text-red-500 hover:underline">
-              ¿Se te olvidó la contraseña?
-            </Link>
-          </p>
 
+            {/* Enlace de recuperación */}
+            <p className="text-gray-300 text-sm text-center mt-2">
+              <Link
+                to="/ConfirmResetPage"
+                className="text-red-500 hover:underline"
+              >
+                ¿Olvidaste tu contraseña?
+              </Link>
+            </p>
+
+            {/* Botón con animación de carga */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-md font-semibold transition disabled:opacity-70"
+              className={`w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-md font-semibold transition flex items-center justify-center gap-2 ${
+                loading ? "opacity-70 cursor-not-allowed" : ""
+              }`}
             >
-              {loading ? "Cargando..." : "Ingresar"}
+              {loading ? (
+                <>
+                  <Loader2 size={20} className="animate-spin" />
+                  Iniciando sesión...
+                </>
+              ) : (
+                "Ingresar"
+              )}
             </button>
           </form>
 
+          {/* Enlace a registro */}
           <p className="text-gray-300 text-sm text-center mt-6">
             ¿No tienes cuenta?{" "}
-            <Link to="/RegisterPage" className="text-red-500 hover:underline">
+            <Link
+              to="/RegisterPage"
+              className="text-red-500 hover:underline font-medium"
+            >
               Regístrate aquí
             </Link>
           </p>
-         
         </div>
       </div>
     </div>
