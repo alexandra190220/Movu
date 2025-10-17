@@ -1,5 +1,6 @@
 import React from "react";
 import {Navbar} from "./Navbar";
+import {Link} from "react-router";
 
 /**
  * Layout principal de la aplicación Movu.
@@ -22,6 +23,14 @@ const LayoutMovu: React.FC<LayoutProps> = ({ children }) => {
           color: "#aaa",
         }}
       >
+        <p className="text-gray-300 text-sm text-center mt-6">
+                    <Link
+                      to="/SiteMapPage"
+                      className="text-red-500 hover:underline font-medium"
+                    >
+                      Mapa del sitio
+                    </Link>
+                  </p>
         © 2025 Movu — Todos los derechos reservados
       </footer>
     </div>
