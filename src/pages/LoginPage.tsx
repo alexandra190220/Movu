@@ -18,7 +18,7 @@ export const LoginPage: React.FC = () => {
     try {
       const data = await loginUser(email, password);
       alert(`✅ ${data.message || "Inicio de sesión exitoso"}`);
-      navigate("/HomePage");
+      navigate("/");
     } catch (err: any) {
       console.error("Error al iniciar sesión:", err);
       setError(err.message || "Error al iniciar sesión");
@@ -77,6 +77,12 @@ export const LoginPage: React.FC = () => {
             ¿No tienes cuenta?{" "}
             <Link to="/RegisterPage" className="text-red-500 hover:underline">
               Regístrate aquí
+            </Link>
+          </p>
+          <p className="text-gray-300 text-sm text-center mt-6">
+            {" "}
+            <Link to="/ConfirmResetPage" className="text-red-500 hover:underline">
+              ¿No tienes cuenta?
             </Link>
           </p>
         </div>

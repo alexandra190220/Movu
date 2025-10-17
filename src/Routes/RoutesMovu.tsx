@@ -1,9 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router";
-import {HomePage} from "../pages/HomePage";
-import {AboutPage} from "../pages/AboutPage";
-import {LoginPage} from "../pages/LoginPage";
+import { HomePage } from "../pages/HomePage";
+import { AboutPage } from "../pages/AboutPage";
+import { LoginPage } from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import LayoutMovu from "../components/Layout";
+import ConfirmResetPage from "../pages/ConfirmResetPage";
 
 /**
  * Define las rutas principales de la aplicación Movu.
@@ -13,20 +14,19 @@ const RoutesMovu = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Rutas sin layout (páginas públicas) */}
+        {/* 🔓 Rutas sin layout (páginas públicas) */}
         <Route path="/loginPage" element={<LoginPage />} />
-        <Route path="/RegisterPage" element={<RegisterPage />} />
+        <Route path="/registerPage" element={<RegisterPage />} />
+        <Route path="/confirmResetPage" element={<ConfirmResetPage />} />
 
-        {/* Rutas con layout (navbar y footer incluidos) */}
+        {/* 🔒 Rutas con layout (navbar y footer incluidos) */}
         <Route
           path="/*"
           element={
             <LayoutMovu>
               <Routes>
                 <Route path="/" element={<HomePage />} />
-                <Route path="/AboutPage" element={<AboutPage />} />
-                <Route path="/loginPage" element={<LoginPage />} />
-                <Route path="/RegisterPage" element={<RegisterPage />} />
+                <Route path="/aboutPage" element={<AboutPage />} />
               </Routes>
             </LayoutMovu>
           }
