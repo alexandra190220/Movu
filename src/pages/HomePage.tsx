@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { Navbar } from "../components/Navbar"; // 👈 importa el componente Navbar
 
 export const HomePage: React.FC = () => {
@@ -20,7 +20,7 @@ export const HomePage: React.FC = () => {
       {/* BOTÓN INICIAR SESIÓN (queda separado del logo) */}
       <div className="absolute top-10 right-8">
         <Link
-          to="/login"
+          to="/loginPage"
           className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded text-sm md:text-base transition"
         >
           Iniciar sesión
@@ -35,7 +35,7 @@ export const HomePage: React.FC = () => {
 
         <p className="text-gray-300 text-sm mb-12">
           ¿No tienes cuenta?{" "}
-          <Link to="/register" className="text-red-500 hover:underline">
+          <Link to="/RegisterPage" className="text-red-500 hover:underline">
             Regístrate aquí
           </Link>
         </p>

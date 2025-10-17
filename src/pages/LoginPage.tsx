@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Navbar } from "../components/Navbar";
+import { Link } from "react-router";
 
 export const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -57,9 +58,9 @@ export const LoginPage: React.FC = () => {
 
           <p className="text-gray-300 text-sm text-center mt-6">
             ¿No tienes cuenta?{" "}
-            <a href="#" className="text-red-500 hover:underline">
-              Regístrate aquí
-            </a>
+            <Link to="/RegisterPage" className="text-red-500 hover:underline">
+                Registrate aquí
+            </Link>
           </p>
         </div>
       </div>
