@@ -72,7 +72,7 @@ const RecoverPasswordPage: React.FC = () => {
 
     if (!email.trim()) {
       setIsError(true);
-      setMessage("Please enter a valid email address.");
+      setMessage("Por favor ingresa una dirección de correo válida.");
       return;
     }
 
@@ -90,21 +90,20 @@ const RecoverPasswordPage: React.FC = () => {
         setIsError(false);
         setMessage(
           data.message ||
-            "If this email exists, we have sent a password reset link."
+            "Si este correo existe, te hemos enviado un enlace para restablecer tu contraseña."
         );
 
-        
         setTimeout(() => {
           navigate("/LoginPage");
         }, 3000);
       } else {
         setIsError(true);
-        setMessage(data.message || data.error || "Error sending email.");
+        setMessage(data.message || data.error || "Error al enviar el correo.");
       }
     } catch (err) {
       console.error(err);
       setIsError(true);
-      setMessage("Server connection error.");
+      setMessage("Error de conexión con el servidor.");
     } finally {
       setLoading(false);
     }
@@ -117,17 +116,17 @@ const RecoverPasswordPage: React.FC = () => {
       <div className="flex-grow flex justify-center items-center px-4 py-24">
         <div className="bg-[#3a3f45] p-8 rounded-2xl shadow-lg w-full max-w-md">
           <h2 className="text-3xl font-bold mb-4 text-center">
-            Recover Password
+            Recuperar Contraseña
           </h2>
 
           <p className="text-gray-300 text-sm mb-6 text-center leading-relaxed">
-            Enter your email address and we will send you a link to reset your password.
+            Ingresa tu dirección de correo electrónico y te enviaremos un enlace para restablecer tu contraseña.
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label htmlFor="email" className="block text-sm mb-1">
-                Email Address
+                Correo electrónico
               </label>
               <input
                 id="email"
@@ -162,10 +161,10 @@ const RecoverPasswordPage: React.FC = () => {
               {loading ? (
                 <>
                   <Loader2 size={20} className="animate-spin" aria-hidden="true" />
-                  Sending link...
+                  Enviando enlace...
                 </>
               ) : (
-                "Send Link"
+                "Enviar enlace"
               )}
             </button>
           </form>

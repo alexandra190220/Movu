@@ -76,13 +76,13 @@ const ConfirmResetPage: React.FC = () => {
 
     if (!password.trim() || !confirm.trim()) {
       setIsError(true);
-      setMessage("Please complete both fields.");
+      setMessage("Por favor completa ambos campos.");
       return;
     }
 
     if (password !== confirm) {
       setIsError(true);
-      setMessage("Passwords do not match.");
+      setMessage("Las contraseñas no coinciden.");
       return;
     }
 
@@ -98,16 +98,16 @@ const ConfirmResetPage: React.FC = () => {
 
       if (res.ok) {
         setIsError(false);
-        setMessage("Your password was successfully updated ✅");
+        setMessage("Tu contraseña se actualizó correctamente ✅");
         setTimeout(() => navigate("/LoginPage"), 3000);
       } else {
         setIsError(true);
-        setMessage(data.message || "Failed to reset password.");
+        setMessage(data.message || "Error al restablecer la contraseña.");
       }
     } catch (err) {
       console.error(err);
       setIsError(true);
-      setMessage("Connection error with the server.");
+      setMessage("Error de conexión con el servidor.");
     } finally {
       setLoading(false);
     }
@@ -120,18 +120,18 @@ const ConfirmResetPage: React.FC = () => {
       <div className="flex-grow flex justify-center items-center px-4 py-24">
         <div className="bg-[#3a3f45] p-8 rounded-2xl shadow-lg w-full max-w-md">
           <h2 className="text-3xl font-bold mb-4 text-center">
-            Reset Password
+            Restablecer Contraseña
           </h2>
 
           <p className="text-gray-300 text-sm mb-6 text-center leading-relaxed">
-            Enter a new secure password for your account.
+            Ingresa una nueva contraseña segura para tu cuenta.
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* === New Password Field === */}
             <div className="relative">
               <label htmlFor="newPassword" className="block text-sm mb-1">
-                New Password
+                Nueva Contraseña
               </label>
               <input
                 id="newPassword"
@@ -141,12 +141,12 @@ const ConfirmResetPage: React.FC = () => {
                 required
                 placeholder="••••••••"
                 className="w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
-                aria-label="Enter new password"
+                aria-label="Ingresa tu nueva contraseña"
               />
               <button
                 type="button"
                 onClick={() => setShowPass(!showPass)}
-                aria-label={showPass ? "Hide password" : "Show password"}
+                aria-label={showPass ? "Ocultar contraseña" : "Mostrar contraseña"}
                 className="absolute right-3 top-8 text-gray-400 hover:text-white"
               >
                 {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -156,7 +156,7 @@ const ConfirmResetPage: React.FC = () => {
             {/* === Confirm Password Field === */}
             <div className="relative">
               <label htmlFor="confirmPassword" className="block text-sm mb-1">
-                Confirm Password
+                Confirmar Contraseña
               </label>
               <input
                 id="confirmPassword"
@@ -166,12 +166,12 @@ const ConfirmResetPage: React.FC = () => {
                 required
                 placeholder="••••••••"
                 className="w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
-                aria-label="Confirm your new password"
+                aria-label="Confirma tu nueva contraseña"
               />
               <button
                 type="button"
                 onClick={() => setShowConfirm(!showConfirm)}
-                aria-label={showConfirm ? "Hide confirmation password" : "Show confirmation password"}
+                aria-label={showConfirm ? "Ocultar confirmación" : "Mostrar confirmación"}
                 className="absolute right-3 top-8 text-gray-400 hover:text-white"
               >
                 {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -202,10 +202,10 @@ const ConfirmResetPage: React.FC = () => {
               {loading ? (
                 <>
                   <Loader2 size={20} className="animate-spin" />
-                  Updating...
+                  Actualizando...
                 </>
               ) : (
-                "Change Password"
+                "Cambiar Contraseña"
               )}
             </button>
           </form>
