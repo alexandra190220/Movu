@@ -78,7 +78,7 @@ export const DashboardPage: React.FC = () => {
 
         <nav className="flex flex-col p-4 space-y-3">
           <Link
-            to="/profile"
+            to="/ProfilePage"
             className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
             onClick={toggleMenu}
           >

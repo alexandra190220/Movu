@@ -11,8 +11,16 @@ export async function loginUser(email: string, password: string) {
 
   if (!response.ok) throw new Error(data.error || "Error al iniciar sesión");
 
+  // 🔹 Solo guarda el userId, ya que el backend no envía token
+  if (data.userId) {
+    localStorage.setItem("userId", data.userId);
+  } else {
+    console.warn("No se recibió userId desde el backend");
+  }
+
   return data; // { message, userId }
 }
+
 
 export async function registerUser(firstName: string, lastName: string, age: number, email: string, password: string) {
   const response = await fetch(`${API_URL}/users`, {
@@ -26,3 +34,45 @@ export async function registerUser(firstName: string, lastName: string, age: num
   if (!response.ok) throw new Error(data.error || "Error al registrarse");
   return data;
 }
+export const deleteAccount = async (userId: string): Promise<boolean> => {
+  try {
+    const response = await fetch(`${API_URL}/users/${userId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.ok;
+  } catch (error) {
+    console.error("Error al eliminar la cuenta:", error);
+    return false;
+  }
+};
+export async function getUserData(userId: string) {
+  try {
+    const response = await fetch(`${API_URL}/users/${userId}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (!response.ok) {
+      console.error("Error al obtener datos del usuario");
+      return null;
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error al cargar datos del usuario:", error);
+    return null;
+  }
+}
+export const updateUser = async (userId: string, data: any) => {
+  const res = await fetch(`${API_URL}/users/${userId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Error al actualizar usuario");
+  return res.json();
+};

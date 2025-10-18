@@ -7,6 +7,8 @@ import LayoutMovu from "../components/Layout";
 import ConfirmResetPage from "../pages/ConfirmResetPage";
 import SiteMapPage from "../pages/SiteMapPage";
 import { DashboardPage } from "../pages/DashboardPage";
+import { ProfilePage } from "../pages/ProfilePage";
+import { EditProfilePage } from "../pages/EditProfilePage";
 
 
 /**
@@ -21,7 +23,6 @@ const RoutesMovu = () => {
         <Route path="/loginPage" element={<LoginPage />} />
         <Route path="/registerPage" element={<RegisterPage />} />
         <Route path="/confirmResetPage" element={<ConfirmResetPage />} />
-         <Route path="/dashboard" element={<DashboardPage />} />
 
         {/* 🔒 Rutas con layout (navbar y footer incluidos) */}
         <Route
@@ -32,6 +33,9 @@ const RoutesMovu = () => {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/aboutPage" element={<AboutPage />} />
                 <Route path="/SiteMapPage" element={<SiteMapPage />} />
+                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/ProfilePage" element ={<ProfilePage/>}/>
+                <Route path="/EditProfilePage" element ={<EditProfilePage/>}/>
               </Routes>
             </LayoutMovu>
           }
