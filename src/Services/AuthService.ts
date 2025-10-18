@@ -16,9 +16,20 @@ export async function loginUser(email: string, password: string) {
     body: JSON.stringify({ email, password }),
   });
 
-  const data = await response.json();
+  // Try to parse JSON, but handle HTML or plain text error pages gracefully
+  const text = await response.text();
+  let data: any;
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch (e) {
+    data = null;
+  }
 
-  if (!response.ok) throw new Error(data.error || "Error al iniciar sesión");
+  if (!response.ok) {
+    // If backend returned JSON with error field, prefer it
+    const message = data?.error || data?.message || text || `HTTP ${response.status}`;
+    throw new Error(message);
+  }
 
   return data; // { message, userId }
 }
@@ -30,8 +41,18 @@ export async function registerUser(firstName: string, lastName: string, age: num
     body: JSON.stringify({ firstName, lastName, age, email, password }),
   });
 
-  const data = await response.json();
+  const text = await response.text();
+  let data: any;
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch (e) {
+    data = null;
+  }
 
-  if (!response.ok) throw new Error(data.error || "Error al registrarse");
+  if (!response.ok) {
+    const message = data?.error || data?.message || text || `HTTP ${response.status}`;
+    throw new Error(message);
+  }
+
   return data;
 }
