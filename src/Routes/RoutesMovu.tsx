@@ -11,6 +11,7 @@ import ConfirResetPage from "../pages/ConfirResetPage";
 
 
 
+
 /**
  * Define las rutas principales de la aplicación Movu.
  * Incluye páginas públicas (login y registro) y páginas internas con layout.
@@ -25,6 +26,7 @@ const RoutesMovu = () => {
         <Route path="/resetPage" element={<ResetPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/confirResetPage" element={<ConfirResetPage />} />
+        
 
         {/* 🔒 Rutas con layout (navbar y footer incluidos) */}
         <Route
