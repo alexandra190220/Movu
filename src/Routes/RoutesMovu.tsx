@@ -9,6 +9,7 @@ import SiteMapPage from "../pages/SiteMapPage";
 import { DashboardPage } from "../pages/DashboardPage";
 import { ProfilePage } from "../pages/ProfilePage";
 import { EditProfilePage } from "../pages/EditProfilePage";
+import ConfirResetPage from "../pages/ConfirResetPage";
 
 
 
