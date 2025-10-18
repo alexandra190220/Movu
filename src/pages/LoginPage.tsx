@@ -92,7 +92,7 @@ export const LoginPage: React.FC = () => {
             {/* Enlace de recuperación */}
             <p className="text-gray-300 text-sm text-center mt-2">
               <Link
-                to="/ConfirmResetPage"
+                to="/ResetPage"
                 className="text-red-500 hover:underline"
               >
                 ¿Olvidaste tu contraseña?

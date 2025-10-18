@@ -1,5 +1,18 @@
 @import "tailwindcss";
 
+/* Color base del body */
 body {
   @apply bg-[#2b2f33] text-white;
+}
+
+/* === Corrige el fondo azul de autocompletado (consistente con tu UI) === */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #3b4655 inset !important; /* azul-gris del campo activo */
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #ffffff;
+  transition: background-color 5000s ease-in-out 0s;
+  border: 1px solid #5a6475 !important; /* borde suave para mantener contraste */
 }
