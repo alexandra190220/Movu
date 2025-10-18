@@ -1,22 +1,17 @@
 import React, { useState } from "react";
 import { Navbar } from "../components/Navbar";
 import { Link } from "react-router-dom";
-import { Loader2 } from "lucide-react";
+
 
 export const DashboardPage: React.FC = () => {
   const [menuAbierto, setMenuAbierto] = useState(false);
-  const [loading, setLoading] = useState(false);
+  
 
   const toggleMenu = () => setMenuAbierto(!menuAbierto);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    window.location.href = "/login";
-  };
-
   return (
     <div className="min-h-screen bg-[#2b2f33] text-white flex flex-col relative">
-      {/* ==== NAVBAR (MISMO COMPONENTE DEL LOGIN) ==== */}
+      {/* ==== NAVBAR ==== */}
       <Navbar />
 
       {/* ==== BOTÓN MENÚ HAMBURGUESA ==== */}
@@ -89,6 +84,7 @@ export const DashboardPage: React.FC = () => {
           >
             👤 Perfil
           </Link>
+
           <Link
             to="/aboutPage"
             className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
@@ -96,31 +92,31 @@ export const DashboardPage: React.FC = () => {
           >
             ℹ️ Sobre nosotros
           </Link>
-          <button
-            onClick={handleLogout}
+
+          {/* ==== CERRAR SESIÓN (redirige al Home) ==== */}
+          <Link
+            to="/"
+            onClick={() => {
+              localStorage.removeItem("token");
+              toggleMenu();
+            }}
             className="text-left text-white hover:bg-red-600 rounded-lg px-3 py-2 transition"
           >
             🚪 Cerrar sesión
-          </button>
+          </Link>
         </nav>
       </div>
 
-      {/* ==== CONTENIDO PRINCIPAL (MISMA ESTRUCTURA LOGIN) ==== */}
+      {/* ==== CONTENIDO PRINCIPAL ==== */}
       <div className="flex-grow flex justify-center items-center px-4 py-12">
         <div className="bg-[#3a3f45] p-8 rounded-2xl shadow-lg w-full max-w-3xl text-center">
           <h2 className="text-3xl font-bold mb-6">Bienvenido a Movu 🎬</h2>
-
-          {loading ? (
-            <div className="flex justify-center items-center py-6">
-              <Loader2 size={28} className="animate-spin text-red-500" />
-              <span className="ml-2 text-gray-300">Cargando contenido...</span>
-            </div>
-          ) : (
+ 
             <>
               <p className="text-gray-300 mb-8 max-w-lg mx-auto">
-                Disfruta de una experiencia personalizada con las mejores películas
-                y series. Gestiona tu perfil, descubre contenido nuevo y mantente al
-                día con lo mejor del cine.
+                Disfruta de una experiencia personalizada con las mejores
+                películas y series. Gestiona tu perfil, descubre contenido nuevo
+                y mantente al día con lo mejor del cine.
               </p>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -130,7 +126,7 @@ export const DashboardPage: React.FC = () => {
                 <Card icon="⚙️" text="Configuración" />
               </div>
             </>
-          )}
+          
         </div>
       </div>
     </div>

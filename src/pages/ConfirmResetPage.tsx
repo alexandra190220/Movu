@@ -74,7 +74,7 @@ const RecoverPasswordPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="tu@correo.com"
+                placeholder="ejemplo@correo.com"
                 className="w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             </div>
