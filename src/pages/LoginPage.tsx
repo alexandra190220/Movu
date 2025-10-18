@@ -41,7 +41,7 @@ export const LoginPage: React.FC = () => {
     <div className="min-h-screen bg-[#2b2f33] text-white flex flex-col">
       <Navbar />
 
-      <div className="flex-grow flex justify-center items-center px-4 py-12">
+      <div className="flex-grow flex justify-center items-center px-4 py-12 mt-24 sm:mt-16">
         <div className="bg-[#3a3f45] p-8 rounded-2xl shadow-lg w-full max-w-md">
           <h2 className="text-3xl font-bold mb-6 text-center">Iniciar Sesión</h2>
 

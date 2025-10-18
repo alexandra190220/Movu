@@ -1,7 +1,7 @@
-// src/pages/ProfilePage.tsx
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { deleteAccount, getUserData } from "../Services/AuthService";
+import { User, Edit, Trash2, X, CheckCircle } from "lucide-react";
 
 interface User {
   id?: string;
@@ -18,6 +18,7 @@ export const ProfilePage: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,7 +41,6 @@ export const ProfilePage: React.FC = () => {
             };
             setUser(normalized);
             localStorage.setItem("user", JSON.stringify(normalized));
-            setLoading(false);
             return;
           }
         }
@@ -49,7 +49,6 @@ export const ProfilePage: React.FC = () => {
         if (storedUser) {
           const parsed = JSON.parse(storedUser);
           setUser(parsed);
-          setLoading(false);
           return;
         }
 
@@ -73,7 +72,7 @@ export const ProfilePage: React.FC = () => {
     if (!user) return;
     const userId = user._id ?? user.id;
     if (!userId) {
-      alert("No se encontró el ID del usuario.");
+      setMessage({ text: "No se encontró el ID del usuario.", type: "error" });
       return;
     }
 
@@ -83,14 +82,14 @@ export const ProfilePage: React.FC = () => {
         localStorage.removeItem("user");
         localStorage.removeItem("userId");
         localStorage.removeItem("token");
-        alert("Tu cuenta ha sido eliminada correctamente.");
-        window.location.href = "/LoginPage";
+        setMessage({ text: "Tu cuenta ha sido eliminada correctamente.", type: "success" });
+        setTimeout(() => navigate("/LoginPage"), 1200);
       } else {
-        alert("No se pudo eliminar la cuenta. Intenta nuevamente.");
+        setMessage({ text: "No se pudo eliminar la cuenta. Intenta nuevamente.", type: "error" });
       }
     } catch (error) {
       console.error("Error al eliminar cuenta:", error);
-      alert("Ocurrió un error al eliminar la cuenta.");
+      setMessage({ text: "Ocurrió un error al eliminar la cuenta.", type: "error" });
     } finally {
       setShowConfirm(false);
     }
@@ -119,81 +118,86 @@ export const ProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#2B2E33] px-6">
-      <div className="bg-[#3B3E43] shadow-xl rounded-2xl p-8 w-full max-w-md">
-        <h1 className="text-3xl font-semibold text-center text-white mb-6">
-          Perfil de Usuario
-        </h1>
-
-        <div className="space-y-4">
-          <div>
-            <p className="text-gray-300">Nombre completo</p>
-            <p className="text-lg font-medium text-white">
-              {user.firstName && user.lastName
-                ? `${user.firstName} ${user.lastName}`
-                : ""}
-            </p>
+    <div className="min-h-screen flex flex-col bg-[#2B2E33] text-white">
+      <div className="flex flex-col items-center justify-center flex-grow mt-24 sm:mt-20 px-6">
+        <div className="bg-[#3B3E43] shadow-lg rounded-2xl p-8 w-full max-w-md">
+          <div className="flex flex-col items-center mb-6">
+            <div className="bg-[#E50914]/20 p-4 rounded-full mb-3">
+              <User size={48} className="text-[#E50914]" />
+            </div>
+            <h1 className="text-3xl font-semibold text-center">Perfil de Usuario</h1>
           </div>
 
-          <div>
-            <p className="text-gray-300">Correo electrónico</p>
-            <p className="text-lg font-medium text-white">{user.email ?? ""}</p>
-          </div>
-
-          <div>
-            <p className="text-gray-300">Edad</p>
-            <p className="text-lg font-medium text-white">
-              {user.age ? `${user.age} años` : ""}
-            </p>
-          </div>
-
-          {user.createdAt && (
+          <div className="space-y-4 text-center">
             <div>
-              <p className="text-gray-300">Cuenta creada</p>
-              <p className="text-lg font-medium text-white">
-                {new Date(user.createdAt).toLocaleDateString()}
+              <p className="text-gray-400 text-sm">Nombre completo</p>
+              <p className="text-lg font-medium">
+                {user.firstName && user.lastName
+                  ? `${user.firstName} ${user.lastName}`
+                  : ""}
               </p>
+            </div>
+
+            <div>
+              <p className="text-gray-400 text-sm">Correo electrónico</p>
+              <p className="text-lg font-medium">{user.email ?? ""}</p>
+            </div>
+
+            <div>
+              <p className="text-gray-400 text-sm">Edad</p>
+              <p className="text-lg font-medium">
+                {user.age ? `${user.age} años` : ""}
+              </p>
+            </div>
+
+            {user.createdAt && (
+              <div>
+                <p className="text-gray-400 text-sm">Cuenta creada</p>
+                <p className="text-lg font-medium">
+                  {new Date(user.createdAt).toLocaleDateString()}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Mensaje de confirmación o error */}
+          {message && (
+            <div
+              className={`flex items-center gap-2 mt-6 p-3 rounded-lg text-sm font-medium border ${
+                message.type === "success"
+                  ? "bg-green-700/40 text-green-300 border-green-600"
+                  : "bg-red-700/40 text-red-300 border-red-600"
+              }`}
+            >
+              <CheckCircle size={18} />
+              {message.text}
             </div>
           )}
 
-          {user.updatedAt && (
-            <div>
-              <p className="text-gray-300">Última actualización</p>
-              <p className="text-lg font-medium text-white">
-                {new Date(user.updatedAt).toLocaleDateString()}
-              </p>
-            </div>
-          )}
-        </div>
+          {/* Botones */}
+          <div className="mt-8 flex flex-col gap-3">
+            <Link
+              to="/EditProfilePage"
+              className="w-full flex items-center justify-center gap-2 bg-[#E50914] hover:bg-[#b0060f] py-2 rounded-lg font-semibold shadow-md transition-all"
+            >
+              <Edit size={18} /> Editar Perfil
+            </Link>
 
-        <div className="mt-8 flex flex-col gap-3">
-          <Link
-            to="/EditProfilePage"
-            className="w-full text-center bg-[#E50914] hover:bg-[#b0060f] text-white font-semibold py-2 px-4 rounded-lg transition"
-          >
-            Editar Perfil
-          </Link>
-
-          <button
-            onClick={() => setShowConfirm(true)}
-            className="w-full bg-[#E50914] hover:bg-[#b0060f] text-white font-semibold py-2 px-4 rounded-lg transition"
-          >
-            Eliminar Cuenta
-          </button>
-
-          <button
-            onClick={() => navigate("/dashboard")}
-            className="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg transition"
-          >
-            Volver
-          </button>
+            <button
+              onClick={() => setShowConfirm(true)}
+              className="w-full flex items-center justify-center gap-2 bg-[#E50914] hover:bg-[#b0060f] py-2 rounded-lg font-semibold shadow-md transition-all"
+            >
+              <Trash2 size={18} /> Eliminar Cuenta
+            </button>
+          </div>
         </div>
       </div>
 
+      {/* Modal de confirmación */}
       {showConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-[#3B3E43] p-6 rounded-2xl shadow-lg w-80 text-center">
-            <h2 className="text-xl font-semibold text-white mb-4">
+          <div className="bg-[#3B3E43] p-6 rounded-2xl shadow-lg w-80 text-center border border-gray-600">
+            <h2 className="text-xl font-semibold mb-4 text-white">
               ¿Eliminar cuenta?
             </h2>
             <p className="text-gray-300 mb-6 text-sm">
@@ -202,15 +206,15 @@ export const ProfilePage: React.FC = () => {
             <div className="flex justify-center gap-3">
               <button
                 onClick={handleDeleteAccount}
-                className="bg-[#E50914] hover:bg-[#b0060f] text-white font-semibold py-2 px-4 rounded-lg transition"
+                className="flex items-center gap-2 bg-[#E50914] hover:bg-[#b0060f] text-white font-semibold py-2 px-4 rounded-lg transition-all"
               >
-                Sí, eliminar
+                <CheckCircle size={18} /> Sí, eliminar
               </button>
               <button
                 onClick={() => setShowConfirm(false)}
-                className="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition"
+                className="flex items-center gap-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-all"
               >
-                Cancelar
+                <X size={18} /> Cancelar
               </button>
             </div>
           </div>
