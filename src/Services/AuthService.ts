@@ -1,4 +1,4 @@
-export const API_URL = "https://movu-back.4mcj.onrender.com/api/v1";
+export const API_URL = "https://movu-back-4mcj.onrender.com/api/v1";
 
 export async function loginUser(email: string, password: string) {
   const response = await fetch(`${API_URL}/sessions/login`, {
