@@ -1,3 +1,21 @@
+/**
+ * @file SiteMapPage.tsx
+ * @description Displays a sitemap with quick navigation links to key sections of the MOVU platform. 
+ * Users can access major routes such as Home, About, Login, Register, and Password Reset. 
+ * Includes a return button to the home page and a footer.
+ * 
+ * @component
+ * @example
+ * return <SiteMapPage />;
+ * 
+ * @returns {JSX.Element} The rendered sitemap page component.
+ * 
+ * @accessibility
+ * WCAG 2.1 Guideline 2.4.4 - Link Purpose (In Context): 
+ * Each link text clearly describes its destination (e.g., “Inicio”, “Iniciar Sesión”), 
+ * helping users and assistive technologies understand where each link leads.
+ */
+
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -13,7 +31,6 @@ const SiteMapPage: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#2c2f33] px-6 py-12">
       <div className="bg-[#3a3d42] shadow-lg rounded-2xl p-8 w-full max-w-md">
-        {/* Título */}
         <h1 className="text-3xl font-bold text-center mb-6 text-white">
           🗺️ Mapa del Sitio
         </h1>
@@ -22,7 +39,6 @@ const SiteMapPage: React.FC = () => {
           Accede fácilmente a las secciones principales de MOVU:
         </p>
 
-        {/* Lista de enlaces */}
         <ul className="space-y-3 text-center">
           {pages.map((page) => (
             <li key={page.path}>
@@ -36,7 +52,6 @@ const SiteMapPage: React.FC = () => {
           ))}
         </ul>
 
-        {/* Botón de volver */}
         <div className="mt-10 text-center">
           <Link
             to="/"
@@ -46,7 +61,6 @@ const SiteMapPage: React.FC = () => {
           </Link>
         </div>
 
-        {/* Footer */}
         <div className="mt-8 text-center text-sm text-gray-400">
           © {new Date().getFullYear()} MOVU — Todos los derechos reservados.
         </div>

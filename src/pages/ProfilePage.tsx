@@ -54,7 +54,7 @@ export const ProfilePage: React.FC = () => {
 
         setUser(null);
       } catch (err) {
-        console.error("Error cargando perfil:", err);
+        console.error("Error loading profile:", err);
         setUser(null);
       } finally {
         if (mounted) setLoading(false);
@@ -62,7 +62,6 @@ export const ProfilePage: React.FC = () => {
     };
 
     loadUser();
-
     return () => {
       mounted = false;
     };
@@ -72,7 +71,7 @@ export const ProfilePage: React.FC = () => {
     if (!user) return;
     const userId = user._id ?? user.id;
     if (!userId) {
-      setMessage({ text: "No se encontró el ID del usuario.", type: "error" });
+      setMessage({ text: "ID de usuario no encontrado.", type: "error" });
       return;
     }
 
@@ -85,10 +84,10 @@ export const ProfilePage: React.FC = () => {
         setMessage({ text: "Tu cuenta ha sido eliminada correctamente.", type: "success" });
         setTimeout(() => navigate("/LoginPage"), 1200);
       } else {
-        setMessage({ text: "No se pudo eliminar la cuenta. Intenta nuevamente.", type: "error" });
+        setMessage({ text: "No se pudo eliminar la cuenta. Por favor, inténtalo de nuevo.", type: "error" });
       }
     } catch (error) {
-      console.error("Error al eliminar cuenta:", error);
+      console.error("Error deleting account:", error);
       setMessage({ text: "Ocurrió un error al eliminar la cuenta.", type: "error" });
     } finally {
       setShowConfirm(false);
@@ -97,7 +96,11 @@ export const ProfilePage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-[#2B2E33] text-gray-300">
+      <div
+        className="flex flex-col items-center justify-center h-screen bg-[#2B2E33] text-gray-300"
+        role="status"
+        aria-live="polite"
+      >
         <p className="text-lg">Cargando información del perfil...</p>
       </div>
     );
@@ -106,10 +109,11 @@ export const ProfilePage: React.FC = () => {
   if (!user) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-[#2B2E33] text-gray-300">
-        <p className="text-lg mb-4 text-white">No hay usuario logueado.</p>
+        <p className="text-lg mb-4 text-white">Ningún usuario ha iniciado sesión.</p>
         <Link
           to="/LoginPage"
           className="text-[#E50914] font-medium hover:underline"
+          aria-label="Ir a la página de inicio de sesión"
         >
           Iniciar sesión
         </Link>
@@ -120,21 +124,23 @@ export const ProfilePage: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#2B2E33] text-white">
       <div className="flex flex-col items-center justify-center flex-grow mt-24 sm:mt-20 px-6">
-        <div className="bg-[#3B3E43] shadow-lg rounded-2xl p-8 w-full max-w-md">
+        <div
+          className="bg-[#3B3E43] shadow-lg rounded-2xl p-8 w-full max-w-md"
+          role="region"
+          aria-label="Información del perfil de usuario"
+        >
           <div className="flex flex-col items-center mb-6">
             <div className="bg-[#E50914]/20 p-4 rounded-full mb-3">
-              <User size={48} className="text-[#E50914]" />
+              <User size={48} className="text-[#E50914]" aria-hidden="true" />
             </div>
-            <h1 className="text-3xl font-semibold text-center">Perfil de Usuario</h1>
+            <h1 className="text-3xl font-semibold text-center">Perfil del Usuario</h1>
           </div>
 
           <div className="space-y-4 text-center">
             <div>
               <p className="text-gray-400 text-sm">Nombre completo</p>
               <p className="text-lg font-medium">
-                {user.firstName && user.lastName
-                  ? `${user.firstName} ${user.lastName}`
-                  : ""}
+                {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : ""}
               </p>
             </div>
 
@@ -160,7 +166,6 @@ export const ProfilePage: React.FC = () => {
             )}
           </div>
 
-          {/* Mensaje de confirmación o error */}
           {message && (
             <div
               className={`flex items-center gap-2 mt-6 p-3 rounded-lg text-sm font-medium border ${
@@ -168,39 +173,46 @@ export const ProfilePage: React.FC = () => {
                   ? "bg-green-700/40 text-green-300 border-green-600"
                   : "bg-red-700/40 text-red-300 border-red-600"
               }`}
+              role="alert"
             >
-              <CheckCircle size={18} />
+              <CheckCircle size={18} aria-hidden="true" />
               {message.text}
             </div>
           )}
 
-          {/* Botones */}
           <div className="mt-8 flex flex-col gap-3">
             <Link
               to="/EditProfilePage"
               className="w-full flex items-center justify-center gap-2 bg-[#E50914] hover:bg-[#b0060f] py-2 rounded-lg font-semibold shadow-md transition-all"
+              aria-label="Editar perfil"
             >
-              <Edit size={18} /> Editar Perfil
+              <Edit size={18} /> Editar perfil
             </Link>
 
             <button
               onClick={() => setShowConfirm(true)}
               className="w-full flex items-center justify-center gap-2 bg-[#E50914] hover:bg-[#b0060f] py-2 rounded-lg font-semibold shadow-md transition-all"
+              aria-label="Eliminar cuenta"
             >
-              <Trash2 size={18} /> Eliminar Cuenta
+              <Trash2 size={18} /> Eliminar cuenta
             </button>
           </div>
         </div>
       </div>
 
-      {/* Modal de confirmación */}
       {showConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-title"
+          aria-describedby="delete-description"
+        >
           <div className="bg-[#3B3E43] p-6 rounded-2xl shadow-lg w-80 text-center border border-gray-600">
-            <h2 className="text-xl font-semibold mb-4 text-white">
+            <h2 id="delete-title" className="text-xl font-semibold mb-4 text-white">
               ¿Eliminar cuenta?
             </h2>
-            <p className="text-gray-300 mb-6 text-sm">
+            <p id="delete-description" className="text-gray-300 mb-6 text-sm">
               Esta acción no se puede deshacer. ¿Deseas continuar?
             </p>
             <div className="flex justify-center gap-3">
