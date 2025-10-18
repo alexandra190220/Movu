@@ -11,6 +11,7 @@ import { ProfilePage } from "../pages/ProfilePage";
 import { EditProfilePage } from "../pages/EditProfilePage";
 
 
+
 /**
  * Define las rutas principales de la aplicación Movu.
  * Incluye páginas públicas (login y registro) y páginas internas con layout.
@@ -22,7 +23,10 @@ const RoutesMovu = () => {
         {/* 🔓 Rutas sin layout (páginas públicas) */}
         <Route path="/loginPage" element={<LoginPage />} />
         <Route path="/registerPage" element={<RegisterPage />} />
-        <Route path="/confirmResetPage" element={<ConfirmResetPage />} />
+        <Route path="/resetPage" element={<ResetPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/confirResetPage" element={<ConfirResetPage />} />
+        
 
         {/* 🔒 Rutas con layout (navbar y footer incluidos) */}
         <Route
