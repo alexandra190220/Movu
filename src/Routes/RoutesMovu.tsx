@@ -7,8 +7,8 @@ import LayoutMovu from "../components/Layout";
 import ResetPage from "../pages/ResetPage";
 import SiteMapPage from "../pages/SiteMapPage";
 import { DashboardPage } from "../pages/DashboardPage";
-import ConfirResetPage from "../pages/ConfirResetPage";
-
+import { ProfilePage } from "../pages/ProfilePage";
+import { EditProfilePage } from "../pages/EditProfilePage";
 
 
 
@@ -37,6 +37,9 @@ const RoutesMovu = () => {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/aboutPage" element={<AboutPage />} />
                 <Route path="/SiteMapPage" element={<SiteMapPage />} />
+                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/ProfilePage" element ={<ProfilePage/>}/>
+                <Route path="/EditProfilePage" element ={<EditProfilePage/>}/>
               </Routes>
             </LayoutMovu>
           }
