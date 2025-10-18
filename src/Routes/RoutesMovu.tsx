@@ -11,25 +11,25 @@ import { ProfilePage } from "../pages/ProfilePage";
 import { EditProfilePage } from "../pages/EditProfilePage";
 import ConfirResetPage from "../pages/ConfirResetPage";
 
-
-
 /**
- * Define las rutas principales de la aplicación Movu.
- * Incluye páginas públicas (login y registro) y páginas internas con layout.
+ * Main routing configuration for the Movu application.
+ * Includes both public pages (login, register, reset) and internal pages that use the main layout.
+ *
+ * @component
+ * @returns {JSX.Element} The application's route structure with layout and nested routes.
  */
 const RoutesMovu = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* 🔓 Rutas sin layout (páginas públicas) */}
+        {/* 🔓 Routes without layout (public pages) */}
         <Route path="/loginPage" element={<LoginPage />} />
         <Route path="/registerPage" element={<RegisterPage />} />
         <Route path="/resetPage" element={<ResetPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/confirResetPage" element={<ConfirResetPage />} />
-        
 
-        {/* 🔒 Rutas con layout (navbar y footer incluidos) */}
+        {/* 🔒 Routes with layout (navbar and footer included) */}
         <Route
           path="/*"
           element={
@@ -39,8 +39,8 @@ const RoutesMovu = () => {
                 <Route path="/aboutPage" element={<AboutPage />} />
                 <Route path="/SiteMapPage" element={<SiteMapPage />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
-                <Route path="/ProfilePage" element ={<ProfilePage/>}/>
-                <Route path="/EditProfilePage" element ={<EditProfilePage/>}/>
+                <Route path="/ProfilePage" element={<ProfilePage />} />
+                <Route path="/EditProfilePage" element={<EditProfilePage />} />
               </Routes>
             </LayoutMovu>
           }

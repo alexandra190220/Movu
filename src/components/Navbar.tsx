@@ -1,6 +1,13 @@
 import React from "react";
 import { Link } from "react-router";
 
+/**
+ * Navigation bar component for the Movu application.
+ * Displays the Movu logo and provides a link to the home page.
+ *
+ * @component
+ * @returns {JSX.Element} The navigation bar containing the logo.
+ */
 export const Navbar: React.FC = () => {
   return (
     <nav

@@ -3,6 +3,18 @@ import { Link, useNavigate } from "react-router-dom";
 import { deleteAccount, getUserData } from "../Services/AuthService";
 import { User, Edit, Trash2, X, CheckCircle } from "lucide-react";
 
+/**
+ * Interface representing the structure of a user object.
+ * @interface
+ * @property {string} [id] - Optional user ID.
+ * @property {string} [_id] - Alternative optional user ID used by MongoDB.
+ * @property {string} [firstName] - User's first name.
+ * @property {string} [lastName] - User's last name.
+ * @property {number} [age] - User's age.
+ * @property {string} [email] - User's email address.
+ * @property {string} [createdAt] - Date when the account was created.
+ * @property {string} [updatedAt] - Date when the account was last updated.
+ */
 interface User {
   id?: string;
   _id?: string;
@@ -14,6 +26,13 @@ interface User {
   updatedAt?: string;
 }
 
+/**
+ * Profile page component.
+ * Displays the logged-in user's profile information and allows editing or deleting the account.
+ *
+ * @component
+ * @returns {JSX.Element} A complete profile page with user details and account management options.
+ */
 export const ProfilePage: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -21,6 +40,10 @@ export const ProfilePage: React.FC = () => {
   const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
   const navigate = useNavigate();
 
+  /**
+   * Loads the user data when the component mounts.
+   * Attempts to fetch from the API; if not available, retrieves from local storage.
+   */
   useEffect(() => {
     let mounted = true;
 
@@ -67,6 +90,10 @@ export const ProfilePage: React.FC = () => {
     };
   }, []);
 
+  /**
+   * Handles user account deletion with confirmation and error management.
+   * On success, clears local storage and redirects to the login page.
+   */
   const handleDeleteAccount = async () => {
     if (!user) return;
     const userId = user._id ?? user.id;
