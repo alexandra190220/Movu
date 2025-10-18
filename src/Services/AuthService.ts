@@ -22,24 +22,34 @@ export async function loginUser(email: string, password: string) {
 }
 
 
-export async function registerUser(firstName: string, lastName: string, age: number, email: string, password: string) {
-  const response = await fetch(`${API_URL}/users`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ firstName, lastName, age, email, password }),
-  });
+export async function registerUser(
+  firstName: string,
+  lastName: string,
+  age: number,
+  email: string,
+  password: string
+) {
+  try {
+    const response = await fetch(`${API_URL}/users`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ firstName, lastName, age, email, password }),
+    });
 
-  const data = await response.json();
+    const data = await response.json();
 
-  if (!response.ok) {
-    if (data.error === "Email already exists") {
-      throw new Error("El correo ya está registrado.");
+    if (!response.ok) {
+      // ✅ Usamos "message" en lugar de "error" (para coincidir con el backend)
+      throw new Error(data.message || "Error al registrarse");
     }
-    throw new Error(data.error || "Error al registrarse");
-  }
 
-  return data;
+    return data;
+  } catch (error: any) {
+    console.error("❌ Error al registrar usuario:", error);
+    throw new Error(error.message || "Error al registrarse");
+  }
 }
+
 
 export const deleteAccount = async (userId: string): Promise<boolean> => {
   try {
