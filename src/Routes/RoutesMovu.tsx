@@ -4,9 +4,11 @@ import { AboutPage } from "../pages/AboutPage";
 import { LoginPage } from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import LayoutMovu from "../components/Layout";
-import ConfirmResetPage from "../pages/ConfirmResetPage";
+import ResetPage from "../pages/ResetPage";
 import SiteMapPage from "../pages/SiteMapPage";
 import { DashboardPage } from "../pages/DashboardPage";
+import ConfirResetPage from "../pages/ConfirResetPage";
+
 
 
 /**
@@ -20,8 +22,9 @@ const RoutesMovu = () => {
         {/* 🔓 Rutas sin layout (páginas públicas) */}
         <Route path="/loginPage" element={<LoginPage />} />
         <Route path="/registerPage" element={<RegisterPage />} />
-        <Route path="/confirmResetPage" element={<ConfirmResetPage />} />
-         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/resetPage" element={<ResetPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/confirResetPage" element={<ConfirResetPage />} />
 
         {/* 🔒 Rutas con layout (navbar y footer incluidos) */}
         <Route

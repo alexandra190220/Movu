@@ -38,6 +38,11 @@ const RecoverPasswordPage: React.FC = () => {
           data.message ||
             "Si el correo existe, enviamos un enlace para restablecer tu contraseña."
         );
+
+        // 👇 Redirige automáticamente después de 3 segundos
+        setTimeout(() => {
+          navigate("/LoginPage");
+        }, 3000);
       } else {
         setIsError(true);
         setMessage(data.message || data.error || "Error al enviar el correo.");
@@ -106,13 +111,6 @@ const RecoverPasswordPage: React.FC = () => {
               )}
             </button>
           </form>
-
-          <button
-            onClick={() => navigate("/LoginPage")}
-            className="mt-6 text-red-400 hover:underline text-sm w-full text-center"
-          >
-            Volver al inicio de sesión
-          </button>
         </div>
       </div>
     </div>
