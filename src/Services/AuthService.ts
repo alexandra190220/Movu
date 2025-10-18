@@ -37,6 +37,7 @@ export async function registerUser(
     });
 
     const data = await response.json();
+     console.log("📦 Respuesta del backend:", data);
 
     if (!response.ok) {
       // ✅ Usamos "message" en lugar de "error" (para coincidir con el backend)
