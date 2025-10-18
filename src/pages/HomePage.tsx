@@ -1,7 +1,26 @@
 import React from "react";
 import { Link } from "react-router";
-import { Navbar } from "../components/Navbar"; // 👈 importa el componente Navbar
+import { Navbar } from "../components/Navbar";
 
+/**
+ * HomePage Component
+ * 
+ * This component serves as the landing page of the movie project.  
+ * It displays a navigation bar, a login button, a short promotional text,  
+ * and a responsive grid with movie posters.
+ *
+ * @component
+ * @example
+ * return (
+ *   <HomePage />
+ * )
+ *
+ * @returns {JSX.Element} The rendered home page.
+ *
+ * @accessibility
+ * - **WCAG 2.1 - 1.1.1 Non-text Content:**  
+ *   Each movie image includes an `alt` attribute to provide descriptive text for users relying on assistive technologies.
+ */
 export const HomePage: React.FC = () => {
   const movies = [
     "https://m.media-amazon.com/images/I/81ExhpBEbHL._AC_SY679_.jpg",
@@ -14,10 +33,8 @@ export const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#2b2f33] text-white flex flex-col items-center relative">
-      {}
       <Navbar />
 
-      {/* BOTÓN INICIAR SESIÓN (queda separado del logo) */}
       <div className="absolute top-10 right-8">
         <Link
           to="/loginPage"
@@ -27,7 +44,6 @@ export const HomePage: React.FC = () => {
         </Link>
       </div>
 
-      {/* CONTENIDO PRINCIPAL */}
       <main className="flex flex-col items-center justify-center text-center flex-grow mt-40 px-4">
         <h2 className="text-3xl md:text-5xl font-bold mb-4 leading-tight">
           Las mejores <br /> Películas están aquí
@@ -40,7 +56,6 @@ export const HomePage: React.FC = () => {
           </Link>
         </p>
 
-        {/* GRID DE PELÍCULAS */}
         <div className="grid grid-cols-3 gap-8">
           {movies.map((src, index) => (
             <div
@@ -49,7 +64,7 @@ export const HomePage: React.FC = () => {
             >
               <img
                 src={src}
-                alt={`Pelicula ${index + 1}`}
+                alt={`Movie ${index + 1}`}
                 className="w-full h-full object-cover"
               />
             </div>

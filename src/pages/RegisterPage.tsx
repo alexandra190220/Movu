@@ -14,6 +14,26 @@ type FormState = {
   confirmPassword: string;
 };
 
+/**
+ * RegisterPage Component
+ *
+ * This component renders the registration page for new users. It includes
+ * form validation for each field, password confirmation checks, visual
+ * feedback for errors and success messages, and a loading indicator during submission.
+ *
+ * @component
+ * @example
+ * return (
+ *   <RegisterPage />
+ * )
+ *
+ * @returns {JSX.Element} The rendered RegisterPage component.
+ *
+ * @accessibility
+ * - **WCAG 2.1 - 3.3.3 Error Suggestion:**  
+ *   When an input error occurs, the component provides clear feedback and guidance
+ *   on how to correct the issue (e.g., missing fields, invalid email format).
+ */
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState<FormState>({
@@ -32,6 +52,11 @@ const RegisterPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  /**
+   * Handles form input changes and triggers validation for each field.
+   *
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The input change event.
+   */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const updatedForm = { ...form, [name]: value } as FormState;
@@ -46,8 +71,14 @@ const RegisterPage: React.FC = () => {
     }
   };
 
+  /**
+   * Extracts a readable error message from different error object types.
+   *
+   * @param {unknown} err - The error object thrown during registration.
+   * @returns {string} A readable error message.
+   */
   const extractErrorMessage = (err: unknown): string => {
-    if (!err) return "Error al registrar usuario";
+    if (!err) return "Error registering user";
     if (err instanceof Error) return err.message;
     try {
       const anyErr = err as any;
@@ -55,9 +86,17 @@ const RegisterPage: React.FC = () => {
       if (anyErr.message) return String(anyErr.message);
       if (typeof anyErr === "string") return anyErr;
     } catch {}
-    return "Error al registrar usuario";
+    return "Error registering user";
   };
 
+  /**
+   * Handles the form submission.
+   * Validates input, registers the user, and provides visual feedback.
+   *
+   * @async
+   * @param {React.FormEvent} e - The form submission event.
+   * @returns {Promise<void>} Redirects to LoginPage upon successful registration.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitError("");
@@ -81,12 +120,12 @@ const RegisterPage: React.FC = () => {
         form.password
       );
 
-      setSuccessMessage("✅ Cuenta creada correctamente");
+      setSuccessMessage("✅ Account created successfully");
       setTimeout(() => navigate("/LoginPage"), 2500);
     } catch (err) {
       const message = extractErrorMessage(err);
       if (message.includes("E11000") || message.includes("duplicate key")) {
-        setSubmitError("Este correo ya está registrado. Intenta con otro.");
+        setSubmitError("This email is already registered. Try another one.");
       } else {
         setSubmitError(message);
       }
@@ -107,7 +146,6 @@ const RegisterPage: React.FC = () => {
         >
           <h2 className="text-3xl font-bold text-center mb-6">Crear cuenta</h2>
 
-          {/* Campos */}
           <div>
             <label className="block text-sm mb-1">Nombres</label>
             <input
@@ -159,7 +197,6 @@ const RegisterPage: React.FC = () => {
             {errors.email && <p className="text-red-400 text-sm mt-1">{errors.email}</p>}
           </div>
 
-          {/* Contraseña */}
           <div className="relative mt-3">
             <label className="block text-sm mb-1">Contraseña</label>
             <input
@@ -180,7 +217,6 @@ const RegisterPage: React.FC = () => {
             {errors.password && <p className="text-red-400 text-sm mt-1">{errors.password}</p>}
           </div>
 
-          {/* Confirmar contraseña */}
           <div className="relative mt-3">
             <label className="block text-sm mb-1">Confirmar contraseña</label>
             <input
@@ -203,7 +239,6 @@ const RegisterPage: React.FC = () => {
             )}
           </div>
 
-          {/* Mensaje de feedback arriba del botón */}
           <div className="mt-4">
             {submitError && (
               <p className="text-red-400 text-center mb-2 text-sm">{submitError}</p>
@@ -216,7 +251,6 @@ const RegisterPage: React.FC = () => {
             )}
           </div>
 
-          {/* Botón */}
           <button
             type="submit"
             disabled={isLoading}

@@ -1,4 +1,3 @@
-// src/pages/EditProfilePage.tsx
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getUserData, updateUser } from "../Services/AuthService";
@@ -53,9 +52,7 @@ export const EditProfilePage: React.FC = () => {
     loadUserData();
   }, [navigate]);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -66,13 +63,12 @@ export const EditProfilePage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const userId = localStorage.getItem("userId");
-    if (!userId) return alert("No se encontró el usuario.");
+    if (!userId) return alert("Usuario no encontrado.");
 
     try {
       setSaving(true);
       const updated = await updateUser(userId, formData);
       if (updated) {
-        // actualiza almacenamiento local
         localStorage.setItem("user", JSON.stringify(updated));
         alert("Perfil actualizado correctamente.");
         navigate("/profilepage");
@@ -80,8 +76,8 @@ export const EditProfilePage: React.FC = () => {
         alert("No se pudo actualizar el perfil.");
       }
     } catch (err) {
-      console.error("Error actualizando el perfil:", err);
-      alert("Error al actualizar el perfil.");
+      console.error("Error al actualizar el perfil:", err);
+      alert("Ocurrió un error al actualizar el perfil.");
     } finally {
       setSaving(false);
     }
@@ -99,13 +95,16 @@ export const EditProfilePage: React.FC = () => {
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#2B2E33] px-6">
       <div className="bg-[#3B3E43] shadow-xl rounded-2xl p-8 w-full max-w-md">
         <h1 className="text-3xl font-semibold text-center text-white mb-6">
-          Editar Perfil
+          Editar perfil
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-gray-300 mb-1">Nombre</label>
+            <label htmlFor="firstName" className="block text-gray-300 mb-1">
+              Nombre
+            </label>
             <input
+              id="firstName"
               type="text"
               name="firstName"
               value={formData.firstName}
@@ -116,8 +115,11 @@ export const EditProfilePage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-gray-300 mb-1">Apellido</label>
+            <label htmlFor="lastName" className="block text-gray-300 mb-1">
+              Apellido
+            </label>
             <input
+              id="lastName"
               type="text"
               name="lastName"
               value={formData.lastName}
@@ -128,8 +130,11 @@ export const EditProfilePage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-gray-300 mb-1">Edad</label>
+            <label htmlFor="age" className="block text-gray-300 mb-1">
+              Edad
+            </label>
             <input
+              id="age"
               type="number"
               name="age"
               value={formData.age}
@@ -139,8 +144,11 @@ export const EditProfilePage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-gray-300 mb-1">Correo electrónico</label>
+            <label htmlFor="email" className="block text-gray-300 mb-1">
+              Correo electrónico
+            </label>
             <input
+              id="email"
               type="email"
               name="email"
               value={formData.email}
@@ -155,7 +163,7 @@ export const EditProfilePage: React.FC = () => {
             disabled={saving}
             className="w-full bg-[#E50914] hover:bg-[#b0060f] text-white font-semibold py-2 px-4 rounded-lg transition"
           >
-            {saving ? "Guardando..." : "Guardar Cambios"}
+            {saving ? "Guardando..." : "Guardar cambios"}
           </button>
         </form>
 

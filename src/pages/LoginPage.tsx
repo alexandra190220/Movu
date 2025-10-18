@@ -4,6 +4,25 @@ import { Link, useNavigate } from "react-router";
 import { loginUser } from "../Services/AuthService";
 import { Loader2, Eye, EyeOff, CheckCircle, XCircle } from "lucide-react";
 
+/**
+ * LoginPage Component
+ * 
+ * This component renders the login page, where users can authenticate  
+ * using their email and password. It includes form validation, a password  
+ * visibility toggle, loading indicators, and dynamic success/error messages.
+ *
+ * @component
+ * @example
+ * return (
+ *   <LoginPage />
+ * )
+ *
+ * @returns {JSX.Element} The rendered login page component.
+ *
+ * @accessibility
+ * - **WCAG 2.1 - 3.3.1 Error Identification:**  
+ *   Error messages are displayed with clear visual cues and icons, helping users identify and understand form input issues.
+ */
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -12,6 +31,14 @@ export const LoginPage: React.FC = () => {
   const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
   const navigate = useNavigate();
 
+  /**
+   * Handles the login form submission.
+   * Sends the user credentials to the backend using the `loginUser` service.
+   *
+   * @async
+   * @param {React.FormEvent} e - The form submission event.
+   * @returns {Promise<void>} Redirects to dashboard upon successful login.
+   */
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -20,16 +47,15 @@ export const LoginPage: React.FC = () => {
     try {
       const data = await loginUser(email, password);
       setMessage({
-        text: data.message || "Inicio de sesión exitoso 🎉",
+        text: data.message || "Login successful 🎉",
         type: "success",
       });
 
-      // Mostrar el mensaje de éxito un momento antes de redirigir
       setTimeout(() => navigate("/dashboard"), 1000);
     } catch (err: any) {
-      console.error("Error al iniciar sesión:", err);
+      console.error("Login error:", err);
       setMessage({
-        text: err.message || "Error al iniciar sesión 😞",
+        text: err.message || "Error logging in 😞",
         type: "error",
       });
     } finally {
@@ -46,7 +72,6 @@ export const LoginPage: React.FC = () => {
           <h2 className="text-3xl font-bold mb-6 text-center">Iniciar Sesión</h2>
 
           <form onSubmit={handleLogin} className="space-y-5">
-            {/* Campo correo */}
             <div>
               <label className="block text-sm mb-1">Correo electrónico</label>
               <input
@@ -59,7 +84,6 @@ export const LoginPage: React.FC = () => {
               />
             </div>
 
-            {/* Campo contraseña */}
             <div>
               <label className="block text-sm mb-1">Contraseña</label>
               <div className="relative">
@@ -80,7 +104,6 @@ export const LoginPage: React.FC = () => {
                 </button>
               </div>
 
-              {/* Mensaje de error debajo de la contraseña */}
               {message?.type === "error" && (
                 <div className="flex items-center gap-2 mt-3 p-2 rounded-lg text-sm font-medium bg-red-700/40 text-red-300 border border-red-600">
                   <XCircle size={18} />
@@ -89,7 +112,6 @@ export const LoginPage: React.FC = () => {
               )}
             </div>
 
-            {/* Enlace de recuperación */}
             <p className="text-gray-300 text-sm text-center mt-2">
               <Link
                 to="/ResetPage"
@@ -99,7 +121,6 @@ export const LoginPage: React.FC = () => {
               </Link>
             </p>
 
-            {/* Mensaje de éxito arriba del botón */}
             {message?.type === "success" && (
               <div className="flex items-center gap-2 mt-4 mb-2 p-3 rounded-lg text-sm font-medium bg-green-700/40 text-green-300 border border-green-600">
                 <CheckCircle size={18} />
@@ -107,7 +128,6 @@ export const LoginPage: React.FC = () => {
               </div>
             )}
 
-            {/* Botón de login */}
             <button
               type="submit"
               disabled={loading}
@@ -126,7 +146,6 @@ export const LoginPage: React.FC = () => {
             </button>
           </form>
 
-          {/* Enlace a registro */}
           <p className="text-gray-300 text-sm text-center mt-6">
             ¿No tienes cuenta?{" "}
             <Link
