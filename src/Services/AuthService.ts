@@ -31,9 +31,16 @@ export async function registerUser(firstName: string, lastName: string, age: num
 
   const data = await response.json();
 
-  if (!response.ok) throw new Error(data.error || "Error al registrarse");
+  if (!response.ok) {
+    if (data.error === "Email already exists") {
+      throw new Error("El correo ya está registrado.");
+    }
+    throw new Error(data.error || "Error al registrarse");
+  }
+
   return data;
 }
+
 export const deleteAccount = async (userId: string): Promise<boolean> => {
   try {
     const response = await fetch(`${API_URL}/users/${userId}`, {
