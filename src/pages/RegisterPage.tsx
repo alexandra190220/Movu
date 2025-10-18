@@ -3,7 +3,7 @@ import { Navbar } from "../components/Navbar";
 import { useNavigate, Link } from "react-router-dom";
 import { registerUser } from "../Services/AuthService";
 import { validateField, validateForm } from "../Services/ValidateRegister";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2, CheckCircle2 } from "lucide-react";
 
 type FormState = {
   firstName: string;
@@ -27,6 +27,7 @@ const RegisterPage: React.FC = () => {
 
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [submitError, setSubmitError] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -60,6 +61,7 @@ const RegisterPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitError("");
+    setSuccessMessage("");
     const validationErrors = validateForm(form);
     setErrors(validationErrors);
 
@@ -78,8 +80,9 @@ const RegisterPage: React.FC = () => {
         form.email,
         form.password
       );
-      alert("✅ Registro exitoso, ahora inicia sesión");
-      navigate("/LoginPage");
+
+      setSuccessMessage("✅ Cuenta creada correctamente");
+      setTimeout(() => navigate("/LoginPage"), 2500);
     } catch (err) {
       const message = extractErrorMessage(err);
       if (message.includes("E11000") || message.includes("duplicate key")) {
@@ -102,15 +105,9 @@ const RegisterPage: React.FC = () => {
           className="bg-[#3a3f45] p-8 rounded-2xl shadow-lg w-full max-w-md"
           noValidate
         >
-          <h2 className="text-3xl font-bold text-center mb-6">
-            Crear cuenta
-          </h2>
+          <h2 className="text-3xl font-bold text-center mb-6">Crear cuenta</h2>
 
-          {submitError && (
-            <p className="text-red-400 text-center mb-4 text-sm">{submitError}</p>
-          )}
-
-          {/* Nombres */}
+          {/* Campos */}
           <div>
             <label className="block text-sm mb-1">Nombres</label>
             <input
@@ -120,12 +117,9 @@ const RegisterPage: React.FC = () => {
               onChange={handleChange}
               className="w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
             />
-            {errors.firstName && (
-              <p className="text-red-400 text-sm mt-1">{errors.firstName}</p>
-            )}
+            {errors.firstName && <p className="text-red-400 text-sm mt-1">{errors.firstName}</p>}
           </div>
 
-          {/* Apellidos */}
           <div>
             <label className="block text-sm mb-1 mt-3">Apellidos</label>
             <input
@@ -135,12 +129,9 @@ const RegisterPage: React.FC = () => {
               onChange={handleChange}
               className="w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
             />
-            {errors.lastName && (
-              <p className="text-red-400 text-sm mt-1">{errors.lastName}</p>
-            )}
+            {errors.lastName && <p className="text-red-400 text-sm mt-1">{errors.lastName}</p>}
           </div>
 
-          {/* Edad */}
           <div>
             <label className="block text-sm mb-1 mt-3">Edad</label>
             <input
@@ -152,12 +143,9 @@ const RegisterPage: React.FC = () => {
               className="w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
               min={0}
             />
-            {errors.age && (
-              <p className="text-red-400 text-sm mt-1">{errors.age}</p>
-            )}
+            {errors.age && <p className="text-red-400 text-sm mt-1">{errors.age}</p>}
           </div>
 
-          {/* Correo */}
           <div>
             <label className="block text-sm mb-1 mt-3">Correo electrónico</label>
             <input
@@ -168,9 +156,7 @@ const RegisterPage: React.FC = () => {
               onChange={handleChange}
               className="w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
             />
-            {errors.email && (
-              <p className="text-red-400 text-sm mt-1">{errors.email}</p>
-            )}
+            {errors.email && <p className="text-red-400 text-sm mt-1">{errors.email}</p>}
           </div>
 
           {/* Contraseña */}
@@ -191,9 +177,7 @@ const RegisterPage: React.FC = () => {
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
-            {errors.password && (
-              <p className="text-red-400 text-sm mt-1">{errors.password}</p>
-            )}
+            {errors.password && <p className="text-red-400 text-sm mt-1">{errors.password}</p>}
           </div>
 
           {/* Confirmar contraseña */}
@@ -219,11 +203,24 @@ const RegisterPage: React.FC = () => {
             )}
           </div>
 
-          {/* Botón con animación */}
+          {/* Mensaje de feedback arriba del botón */}
+          <div className="mt-4">
+            {submitError && (
+              <p className="text-red-400 text-center mb-2 text-sm">{submitError}</p>
+            )}
+            {successMessage && (
+              <div className="flex items-center justify-center gap-2 text-green-400 text-center mb-2 text-sm animate-fade-in">
+                <CheckCircle2 size={18} />
+                <span>{successMessage}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Botón */}
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full mt-6 bg-red-600 hover:bg-red-700 text-white py-2 rounded-md font-semibold transition flex items-center justify-center gap-2 ${
+            className={`w-full mt-2 bg-red-600 hover:bg-red-700 text-white py-2 rounded-md font-semibold transition flex items-center justify-center gap-2 ${
               isLoading ? "opacity-70 cursor-not-allowed" : ""
             }`}
           >

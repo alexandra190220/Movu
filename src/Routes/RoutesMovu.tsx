@@ -4,7 +4,7 @@ import { AboutPage } from "../pages/AboutPage";
 import { LoginPage } from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import LayoutMovu from "../components/Layout";
-import ConfirmResetPage from "../pages/ConfirmResetPage";
+import ResetPage from "../pages/ResetPage";
 import SiteMapPage from "../pages/SiteMapPage";
 import { DashboardPage } from "../pages/DashboardPage";
 import { ProfilePage } from "../pages/ProfilePage";
