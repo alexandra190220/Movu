@@ -19,7 +19,7 @@ export const LoginPage: React.FC = () => {
     try {
       const data = await loginUser(email, password);
       alert(`✅ ${data.message || "Inicio de sesión exitoso"}`);
-      navigate("/HomePage");
+      navigate("/dashboard");
     } catch (err: any) {
       console.error("Error al iniciar sesión:", err);
       setError(err.message || "Error al iniciar sesión");

@@ -6,6 +6,7 @@ import RegisterPage from "../pages/RegisterPage";
 import LayoutMovu from "../components/Layout";
 import ConfirmResetPage from "../pages/ConfirmResetPage";
 import SiteMapPage from "../pages/SiteMapPage";
+import { DashboardPage } from "../pages/DashboardPage";
 
 
 /**
@@ -20,6 +21,7 @@ const RoutesMovu = () => {
         <Route path="/loginPage" element={<LoginPage />} />
         <Route path="/registerPage" element={<RegisterPage />} />
         <Route path="/confirmResetPage" element={<ConfirmResetPage />} />
+         <Route path="/dashboard" element={<DashboardPage />} />
 
         {/* 🔒 Rutas con layout (navbar y footer incluidos) */}
         <Route

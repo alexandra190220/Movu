@@ -2,7 +2,7 @@ import React from "react";
 
 export const AboutPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-[#2c2f33] flex flex-col items-center justify-center px-6 py-12 text-gray-200">
+    <div className="min-h-screen bg-[#2c2f33] flex flex-col items-center justify-center px-6 py-24 text-gray-200">
       {/* Contenedor principal */}
       <div className="bg-[#3a3d42] rounded-2xl shadow-xl p-10 max-w-3xl w-full">
         {/* Título */}
@@ -12,10 +12,11 @@ export const AboutPage: React.FC = () => {
 
         {/* Descripción */}
         <p className="text-center text-gray-300 mb-8 leading-relaxed">
-          En <span className="text-red-500 font-semibold">MOVU</span> creemos en el poder del
-          entretenimiento y la tecnología. Somos un equipo apasionado por crear
-          experiencias digitales únicas, ayudando a las personas a descubrir,
-          organizar y disfrutar de sus películas favoritas con facilidad y estilo.
+          En <span className="text-red-500 font-semibold">MOVU</span> creemos en
+          el poder del entretenimiento y la tecnología. Somos un equipo
+          apasionado por crear experiencias digitales únicas, ayudando a las
+          personas a descubrir, organizar y disfrutar de sus películas favoritas
+          con facilidad y estilo.
         </p>
 
         {/* Sección de equipo */}
@@ -25,9 +26,9 @@ export const AboutPage: React.FC = () => {
               Colaboradores:
             </h2>
             <p className="text-gray-400">
-              Marco Fidel Castro <br/>
-              Alexandra Morales <br/>
-              German Garmendia <br/>
+              Marco Fidel Castro <br />
+              Alexandra Morales <br />
+              German Garmendia <br />
               Brayan Alexander
             </p>
           </div>
@@ -37,15 +38,16 @@ export const AboutPage: React.FC = () => {
               Equipo MOVU
             </h2>
             <p className="text-gray-400">
-              Colaboradores creativos y apasionados por la innovación audiovisual
+              Colaboradores creativos y apasionados por la innovación
+              audiovisual
             </p>
           </div>
         </div>
 
         {/* Footer o mensaje final */}
         <div className="mt-10 text-center text-gray-400 text-sm">
-          Nuestra misión es construir una plataforma confiable, moderna y accesible
-          para todos los amantes del cine.
+          Nuestra misión es construir una plataforma confiable, moderna y
+          accesible para todos los amantes del cine.
         </div>
       </div>
     </div>
