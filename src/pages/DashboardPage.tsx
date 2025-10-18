@@ -90,7 +90,7 @@ export const DashboardPage: React.FC = () => {
             👤 Perfil
           </Link>
           <Link
-            to="/about"
+            to="/aboutPage"
             className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
             onClick={toggleMenu}
           >

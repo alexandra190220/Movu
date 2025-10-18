@@ -28,7 +28,7 @@ export const AboutPage: React.FC = () => {
             <p className="text-gray-400">
               Marco Fidel Castro <br />
               Alexandra Morales <br />
-              German Garmendia <br />
+              German Franco <br />
               Brayan Alexander
             </p>
           </div>
