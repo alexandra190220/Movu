@@ -93,7 +93,7 @@ const RecoverPasswordPage: React.FC = () => {
             "If this email exists, we have sent a password reset link."
         );
 
-        // ⏳ Automatically redirect after success
+        
         setTimeout(() => {
           navigate("/LoginPage");
         }, 3000);
