@@ -1,20 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { deleteAccount, getUserData } from "../Services/AuthService";
-import { User, Edit, Trash2, X, CheckCircle } from "lucide-react";
+import { deleteAccount, getUserData, updateUser } from "../Services/AuthService";
+import { User, Edit, Trash2, X, CheckCircle, Save } from "lucide-react";
 
-/**
- * Interface representing the structure of a user object.
- * @interface
- * @property {string} [id] - Optional user ID.
- * @property {string} [_id] - Alternative optional user ID used by MongoDB.
- * @property {string} [firstName] - User's first name.
- * @property {string} [lastName] - User's last name.
- * @property {number} [age] - User's age.
- * @property {string} [email] - User's email address.
- * @property {string} [createdAt] - Date when the account was created.
- * @property {string} [updatedAt] - Date when the account was last updated.
- */
 interface User {
   id?: string;
   _id?: string;
@@ -26,24 +14,15 @@ interface User {
   updatedAt?: string;
 }
 
-/**
- * Profile page component.
- * Displays the logged-in user's profile information and allows editing or deleting the account.
- *
- * @component
- * @returns {JSX.Element} A complete profile page with user details and account management options.
- */
 export const ProfilePage: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [showConfirm, setShowConfirm] = useState(false);
   const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState<User & { password?: string }>({});
   const navigate = useNavigate();
 
-  /**
-   * Loads the user data when the component mounts.
-   * Attempts to fetch from the API; if not available, retrieves from local storage.
-   */
   useEffect(() => {
     let mounted = true;
 
@@ -63,6 +42,7 @@ export const ProfilePage: React.FC = () => {
               updatedAt: fetched.updatedAt,
             };
             setUser(normalized);
+            setFormData(normalized);
             localStorage.setItem("user", JSON.stringify(normalized));
             return;
           }
@@ -72,6 +52,7 @@ export const ProfilePage: React.FC = () => {
         if (storedUser) {
           const parsed = JSON.parse(storedUser);
           setUser(parsed);
+          setFormData(parsed);
           return;
         }
 
@@ -90,10 +71,6 @@ export const ProfilePage: React.FC = () => {
     };
   }, []);
 
-  /**
-   * Handles user account deletion with confirmation and error management.
-   * On success, clears local storage and redirects to the login page.
-   */
   const handleDeleteAccount = async () => {
     if (!user) return;
     const userId = user._id ?? user.id;
@@ -121,13 +98,38 @@ export const ProfilePage: React.FC = () => {
     }
   };
 
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSaveChanges = async () => {
+    if (!user) return;
+    const userId = user._id ?? user.id;
+    if (!userId) {
+      setMessage({ text: "ID de usuario no encontrado.", type: "error" });
+      return;
+    }
+
+    try {
+      const updated = await updateUser(userId, formData);
+      if (updated) {
+        localStorage.setItem("user", JSON.stringify(updated));
+        setUser(updated);
+        setMessage({ text: "Perfil actualizado correctamente ✅", type: "success" });
+        setIsEditing(false);
+      } else {
+        setMessage({ text: "Error al actualizar el perfil.", type: "error" });
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      setMessage({ text: "Ocurrió un error al guardar los cambios.", type: "error" });
+    }
+  };
+
   if (loading) {
     return (
-      <div
-        className="flex flex-col items-center justify-center h-screen bg-[#2B2E33] text-gray-300"
-        role="status"
-        aria-live="polite"
-      >
+      <div className="flex flex-col items-center justify-center h-screen bg-[#2B2E33] text-gray-300">
         <p className="text-lg">Cargando información del perfil...</p>
       </div>
     );
@@ -137,11 +139,7 @@ export const ProfilePage: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-[#2B2E33] text-gray-300">
         <p className="text-lg mb-4 text-white">Ningún usuario ha iniciado sesión.</p>
-        <Link
-          to="/LoginPage"
-          className="text-[#E50914] font-medium hover:underline"
-          aria-label="Ir a la página de inicio de sesión"
-        >
+        <Link to="/LoginPage" className="text-[#E50914] font-medium hover:underline">
           Iniciar sesión
         </Link>
       </div>
@@ -151,47 +149,81 @@ export const ProfilePage: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#2B2E33] text-white">
       <div className="flex flex-col items-center justify-center flex-grow mt-24 sm:mt-20 px-6">
-        <div
-          className="bg-[#3B3E43] shadow-lg rounded-2xl p-8 w-full max-w-md"
-          role="region"
-          aria-label="Información del perfil de usuario"
-        >
+        <div className="bg-[#3B3E43] shadow-lg rounded-2xl p-8 w-full max-w-md">
           <div className="flex flex-col items-center mb-6">
             <div className="bg-[#E50914]/20 p-4 rounded-full mb-3">
-              <User size={48} className="text-[#E50914]" aria-hidden="true" />
+              <User size={48} className="text-[#E50914]" />
             </div>
             <h1 className="text-3xl font-semibold text-center">Perfil del Usuario</h1>
           </div>
 
-          <div className="space-y-4 text-center">
-            <div>
-              <p className="text-gray-400 text-sm">Nombre completo</p>
-              <p className="text-lg font-medium">
-                {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : ""}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-gray-400 text-sm">Correo electrónico</p>
-              <p className="text-lg font-medium">{user.email ?? ""}</p>
-            </div>
-
-            <div>
-              <p className="text-gray-400 text-sm">Edad</p>
-              <p className="text-lg font-medium">
-                {user.age ? `${user.age} años` : ""}
-              </p>
-            </div>
-
-            {user.createdAt && (
+          {!isEditing ? (
+            <div className="space-y-4 text-center">
               <div>
-                <p className="text-gray-400 text-sm">Cuenta creada</p>
+                <p className="text-gray-400 text-sm">Nombre completo</p>
                 <p className="text-lg font-medium">
-                  {new Date(user.createdAt).toLocaleDateString()}
+                  {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : ""}
                 </p>
               </div>
-            )}
-          </div>
+              <div>
+                <p className="text-gray-400 text-sm">Correo electrónico</p>
+                <p className="text-lg font-medium">{user.email ?? ""}</p>
+              </div>
+              <div>
+                <p className="text-gray-400 text-sm">Edad</p>
+                <p className="text-lg font-medium">{user.age ? `${user.age} años` : ""}</p>
+              </div>
+              {user.createdAt && (
+                <div>
+                  <p className="text-gray-400 text-sm">Cuenta creada</p>
+                  <p className="text-lg font-medium">
+                    {new Date(user.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <input
+                name="firstName"
+                value={formData.firstName || ""}
+                onChange={handleEditChange}
+                placeholder="Nombre"
+                className="w-full bg-[#2B2E33] border border-gray-600 rounded-lg p-2 text-white focus:border-[#E50914]"
+              />
+              <input
+                name="lastName"
+                value={formData.lastName || ""}
+                onChange={handleEditChange}
+                placeholder="Apellido"
+                className="w-full bg-[#2B2E33] border border-gray-600 rounded-lg p-2 text-white focus:border-[#E50914]"
+              />
+              <input
+                name="age"
+                type="number"
+                value={formData.age || ""}
+                onChange={handleEditChange}
+                placeholder="Edad"
+                className="w-full bg-[#2B2E33] border border-gray-600 rounded-lg p-2 text-white focus:border-[#E50914]"
+              />
+              <input
+                name="email"
+                type="email"
+                value={formData.email || ""}
+                onChange={handleEditChange}
+                placeholder="Correo electrónico"
+                className="w-full bg-[#2B2E33] border border-gray-600 rounded-lg p-2 text-white focus:border-[#E50914]"
+              />
+              <input
+                name="password"
+                type="password"
+                value={formData.password || ""}
+                onChange={handleEditChange}
+                placeholder="Nueva contraseña (opcional)"
+                className="w-full bg-[#2B2E33] border border-gray-600 rounded-lg p-2 text-white focus:border-[#E50914]"
+              />
+            </div>
+          )}
 
           {message && (
             <div
@@ -200,46 +232,57 @@ export const ProfilePage: React.FC = () => {
                   ? "bg-green-700/40 text-green-300 border-green-600"
                   : "bg-red-700/40 text-red-300 border-red-600"
               }`}
-              role="alert"
             >
-              <CheckCircle size={18} aria-hidden="true" />
+              <CheckCircle size={18} />
               {message.text}
             </div>
           )}
 
           <div className="mt-8 flex flex-col gap-3">
-            <Link
-              to="/EditProfilePage"
-              className="w-full flex items-center justify-center gap-2 bg-[#E50914] hover:bg-[#b0060f] py-2 rounded-lg font-semibold shadow-md transition-all"
-              aria-label="Editar perfil"
-            >
-              <Edit size={18} /> Editar perfil
-            </Link>
+            {!isEditing ? (
+              <>
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="w-full flex items-center justify-center gap-2 bg-[#E50914] hover:bg-[#b0060f] py-2 rounded-lg font-semibold shadow-md transition-all"
+                >
+                  <Edit size={18} /> Editar perfil
+                </button>
 
-            <button
-              onClick={() => setShowConfirm(true)}
-              className="w-full flex items-center justify-center gap-2 bg-[#E50914] hover:bg-[#b0060f] py-2 rounded-lg font-semibold shadow-md transition-all"
-              aria-label="Eliminar cuenta"
-            >
-              <Trash2 size={18} /> Eliminar cuenta
-            </button>
+                <button
+                  onClick={() => setShowConfirm(true)}
+                  className="w-full flex items-center justify-center gap-2 bg-gray-600 hover:bg-gray-700 py-2 rounded-lg font-semibold shadow-md transition-all"
+                >
+                  <Trash2 size={18} /> Eliminar cuenta
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={handleSaveChanges}
+                  className="w-full flex items-center justify-center gap-2 bg-[#E50914] hover:bg-[#b0060f] py-2 rounded-lg font-semibold shadow-md transition-all"
+                >
+                  <Save size={18} /> Guardar cambios
+                </button>
+                <button
+                  onClick={() => {
+                    setIsEditing(false);
+                    setFormData(user);
+                  }}
+                  className="w-full flex items-center justify-center gap-2 bg-gray-600 hover:bg-gray-700 py-2 rounded-lg font-semibold shadow-md transition-all"
+                >
+                  <X size={18} /> Cancelar
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
 
       {showConfirm && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="delete-title"
-          aria-describedby="delete-description"
-        >
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-[#3B3E43] p-6 rounded-2xl shadow-lg w-80 text-center border border-gray-600">
-            <h2 id="delete-title" className="text-xl font-semibold mb-4 text-white">
-              ¿Eliminar cuenta?
-            </h2>
-            <p id="delete-description" className="text-gray-300 mb-6 text-sm">
+            <h2 className="text-xl font-semibold mb-4 text-white">¿Eliminar cuenta?</h2>
+            <p className="text-gray-300 mb-6 text-sm">
               Esta acción no se puede deshacer. ¿Deseas continuar?
             </p>
             <div className="flex justify-center gap-3">
