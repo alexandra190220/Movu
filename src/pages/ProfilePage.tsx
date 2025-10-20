@@ -296,7 +296,7 @@ export const ProfilePage: React.FC = () => {
                 onClick={() => setShowConfirm(false)}
                 className="flex items-center gap-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-all"
               >
-                <X size={18} /> Cancelar
+                <X size={18} /> Cancelarr
               </button>
             </div>
           </div>
