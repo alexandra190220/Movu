@@ -1,27 +1,64 @@
 import React, { useState } from "react";
 import { Navbar } from "../components/Navbar";
+import { CheckCircle, XCircle, Eye, EyeOff, Loader2, X } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { loginUser } from "../Services/AuthService";
-import { Loader2, Eye, EyeOff, CheckCircle, XCircle } from "lucide-react";
+
+// Modal de confirmación reutilizable
+const ConfirmModal: React.FC<{
+  show: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+}> = ({ show, onConfirm, onCancel }) => {
+  if (!show) return null;
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
+      <div className="bg-[#2f3338] text-white rounded-2xl shadow-xl p-6 w-[90%] max-w-sm animate-fadeIn">
+        <h2 className="text-xl font-semibold text-center mb-2">
+          ¿Eliminar cuenta?
+        </h2>
+        <p className="text-gray-300 text-sm text-center mb-6">
+          Esta acción no se puede deshacer. ¿Deseas continuar?
+        </p>
+
+        <div className="flex justify-center gap-3">
+          <button
+            onClick={onConfirm}
+            className="flex items-center justify-center gap-1 px-4 py-2 text-sm font-medium bg-red-600 hover:bg-red-700 rounded-lg transition-colors shadow-md hover:shadow-red-900/40"
+          >
+            <CheckCircle size={16} />
+            Sí, eliminar
+          </button>
+
+          <button
+            onClick={onCancel}
+            className="flex items-center justify-center gap-1 px-4 py-2 text-sm font-medium bg-gray-600 hover:bg-gray-500 rounded-lg transition-colors shadow-md"
+          >
+            <X size={16} />
+            Cancelar
+          </button>
+        </div>
+      </div>
+
+      {/* Animación suave */}
+      <style>
+        {`
+          @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+          }
+          .animate-fadeIn {
+            animation: fadeIn 0.25s ease-out;
+          }
+        `}
+      </style>
+    </div>
+  );
+};
 
 /**
  * LoginPage Component
- * 
- * This component renders the login page, where users can authenticate  
- * using their email and password. It includes form validation, a password  
- * visibility toggle, loading indicators, and dynamic success/error messages.
- *
- * @component
- * @example
- * return (
- *   <LoginPage />
- * )
- *
- * @returns {JSX.Element} The rendered login page component.
- *
- * @accessibility
- * - **WCAG 2.1 - 3.3.1 Error Identification:**  
- *   Error messages are displayed with clear visual cues and icons, helping users identify and understand form input issues.
  */
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -29,16 +66,9 @@ export const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+  const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
-  /**
-   * Handles the login form submission.
-   * Sends the user credentials to the backend using the `loginUser` service.
-   *
-   * @async
-   * @param {React.FormEvent} e - The form submission event.
-   * @returns {Promise<void>} Redirects to dashboard upon successful login.
-   */
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -47,20 +77,36 @@ export const LoginPage: React.FC = () => {
     try {
       const data = await loginUser(email, password);
       setMessage({
-        text: data.message || "Login successful 🎉",
+        text: data.message || "Perfil actualizado correctamente ✅",
         type: "success",
       });
+
+      // Desaparecer mensaje después de 3 segundos
+      setTimeout(() => setMessage(null), 3000);
 
       setTimeout(() => navigate("/dashboard"), 1000);
     } catch (err: any) {
       console.error("Login error:", err);
       setMessage({
-        text: err.message || "Error logging in 😞",
+        text: err.message || "Error al iniciar sesión 😞",
         type: "error",
       });
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDeleteAccount = () => {
+    setShowModal(true);
+  };
+
+  const confirmDelete = () => {
+    setShowModal(false);
+    setMessage({
+      text: "Cuenta eliminada correctamente 🗑️",
+      type: "success",
+    });
+    setTimeout(() => setMessage(null), 3000);
   };
 
   return (
@@ -102,30 +148,28 @@ export const LoginPage: React.FC = () => {
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
-
-              {message?.type === "error" && (
-                <div className="flex items-center gap-2 mt-3 p-2 rounded-lg text-sm font-medium bg-red-700/40 text-red-300 border border-red-600">
-                  <XCircle size={18} />
-                  {message.text}
-                </div>
-              )}
             </div>
 
-            <p className="text-gray-300 text-sm text-center mt-2">
-              <Link
-                to="/ResetPage"
-                className="text-red-500 hover:underline"
+            {message && (
+              <div
+                className={`flex items-center gap-2 mt-4 text-sm font-medium transition-opacity ${
+                  message.type === "success" ? "text-green-400" : "text-red-400"
+                }`}
               >
-                ¿Olvidaste tu contraseña?
-              </Link>
-            </p>
-
-            {message?.type === "success" && (
-              <div className="flex items-center gap-2 mt-4 mb-2 p-3 rounded-lg text-sm font-medium bg-green-700/40 text-green-300 border border-green-600">
-                <CheckCircle size={18} />
+                {message.type === "success" ? (
+                  <CheckCircle size={18} />
+                ) : (
+                  <XCircle size={18} />
+                )}
                 {message.text}
               </div>
             )}
+
+            <p className="text-gray-300 text-sm text-center mt-2">
+              <Link to="/ResetPage" className="text-red-500 hover:underline">
+                ¿Olvidaste tu contraseña?
+              </Link>
+            </p>
 
             <button
               type="submit"
@@ -154,8 +198,24 @@ export const LoginPage: React.FC = () => {
               Regístrate aquí
             </Link>
           </p>
+
+          <div className="text-center mt-6">
+            <button
+              onClick={handleDeleteAccount}
+              className="text-gray-400 hover:text-red-500 text-sm underline"
+            >
+              Eliminar cuenta
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Modal */}
+      <ConfirmModal
+        show={showModal}
+        onConfirm={confirmDelete}
+        onCancel={() => setShowModal(false)}
+      />
     </div>
   );
 };
