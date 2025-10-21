@@ -4,44 +4,14 @@ import { Link, useNavigate } from "react-router";
 import { loginUser } from "../Services/AuthService";
 import { Loader2, Eye, EyeOff, CheckCircle, XCircle } from "lucide-react";
 
-/**
- * LoginPage Component
- *
- * This component renders the login page, where users can authenticate
- * using their email and password. It includes form validation, a password
- * visibility toggle, loading indicators, and dynamic success/error messages.
- *
- * @component
- * @example
- * return (
- *   <LoginPage />
- * )
- *
- * @returns {JSX.Element} The rendered login page component.
- *
- * @accessibility
- * - **WCAG 2.1 - 3.3.1 Error Identification:**
- *   Error messages are displayed with clear visual cues and icons, helping users identify and understand form input issues.
- */
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<{
-    text: string;
-    type: "success" | "error";
-  } | null>(null);
+  const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
   const navigate = useNavigate();
 
-  /**
-   * Handles the login form submission.
-   * Sends the user credentials to the backend using the `loginUser` service.
-   *
-   * @async
-   * @param {React.FormEvent} e - The form submission event.
-   * @returns {Promise<void>} Redirects to dashboard upon successful login.
-   */
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -50,7 +20,7 @@ export const LoginPage: React.FC = () => {
     try {
       const data = await loginUser(email, password);
       setMessage({
-        text: data.message || "Login successful 🎉",
+        text: data.message || "Login exitoso 🎉",
         type: "success",
       });
 
@@ -58,7 +28,7 @@ export const LoginPage: React.FC = () => {
     } catch (err: any) {
       console.error("Login error:", err);
       setMessage({
-        text: err.message || "Error logging in 😞",
+        text: err.message || "Error al iniciar sesión 😞",
         type: "error",
       });
     } finally {
@@ -72,9 +42,7 @@ export const LoginPage: React.FC = () => {
 
       <div className="flex-grow flex justify-center items-center px-4 py-12 mt-24 sm:mt-16">
         <div className="bg-[#3a3f45] p-8 rounded-2xl shadow-lg w-full max-w-md">
-          <h2 className="text-3xl font-bold mb-6 text-center">
-            Iniciar Sesión
-          </h2>
+          <h2 className="text-3xl font-bold mb-6 text-center">Iniciar Sesión</h2>
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
@@ -109,7 +77,7 @@ export const LoginPage: React.FC = () => {
               </div>
 
               {message?.type === "error" && (
-                <div className="flex items-center gap-2 mt-3 p-2 rounded-lg text-sm font-medium bg-red-700/40 text-red-300 border border-red-600">
+                <div className="flex items-center gap-2 mt-3 text-sm font-medium text-red-300">
                   <XCircle size={18} />
                   {message.text}
                 </div>
@@ -123,7 +91,7 @@ export const LoginPage: React.FC = () => {
             </p>
 
             {message?.type === "success" && (
-              <div className="flex items-center gap-2 mt-4 mb-2 p-3 rounded-lg text-sm font-medium text-green-300">
+              <div className="flex items-center justify-center gap-2 mt-4 text-sm font-medium text-green-300">
                 <CheckCircle size={18} />
                 {message.text}
               </div>
@@ -149,10 +117,7 @@ export const LoginPage: React.FC = () => {
 
           <p className="text-gray-300 text-sm text-center mt-6">
             ¿No tienes cuenta?{" "}
-            <Link
-              to="/RegisterPage"
-              className="text-red-500 hover:underline font-medium"
-            >
+            <Link to="/RegisterPage" className="text-red-500 hover:underline font-medium">
               Regístrate aquí
             </Link>
           </p>
