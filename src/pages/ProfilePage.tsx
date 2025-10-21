@@ -25,6 +25,7 @@ export const ProfilePage: React.FC = () => {
 
   useEffect(() => {
     let mounted = true;
+
     const loadUser = async () => {
       try {
         const userId = localStorage.getItem("userId");
@@ -70,14 +71,6 @@ export const ProfilePage: React.FC = () => {
     };
   }, []);
 
-  // 🔹 Ocultar mensaje automáticamente después de 1.2s
-  useEffect(() => {
-    if (message) {
-      const timer = setTimeout(() => setMessage(null), 1200);
-      return () => clearTimeout(timer);
-    }
-  }, [message]);
-
   const handleDeleteAccount = async () => {
     if (!user) return;
     const userId = user._id ?? user.id;
@@ -89,11 +82,13 @@ export const ProfilePage: React.FC = () => {
     try {
       const success = await deleteAccount(userId);
       if (success) {
-        localStorage.clear();
+        localStorage.removeItem("user");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("token");
         setMessage({ text: "Tu cuenta ha sido eliminada correctamente.", type: "success" });
         setTimeout(() => navigate("/LoginPage"), 1200);
       } else {
-        setMessage({ text: "No se pudo eliminar la cuenta. Inténtalo de nuevo.", type: "error" });
+        setMessage({ text: "No se pudo eliminar la cuenta. Por favor, inténtalo de nuevo.", type: "error" });
       }
     } catch (error) {
       console.error("Error deleting account:", error);
@@ -108,6 +103,7 @@ export const ProfilePage: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // 🔍 Validación de contraseña (igual que en el registro)
   const validatePassword = (password: string): string | null => {
     const minLength = 8;
     const regexUpper = /[A-Z]/;
@@ -115,11 +111,17 @@ export const ProfilePage: React.FC = () => {
     const regexNumber = /[0-9]/;
     const regexSpecial = /[!@#$%^&*(),.?":{}|<>]/;
 
-    if (password.length < minLength) return "La contraseña debe tener al menos 8 caracteres.";
-    if (!regexUpper.test(password)) return "Debe incluir al menos una letra mayúscula.";
-    if (!regexLower.test(password)) return "Debe incluir al menos una letra minúscula.";
-    if (!regexNumber.test(password)) return "Debe incluir al menos un número.";
-    if (!regexSpecial.test(password)) return "Debe incluir al menos un carácter especial.";
+    if (password.length < minLength)
+      return "La contraseña debe tener al menos 8 caracteres.";
+    if (!regexUpper.test(password))
+      return "Debe incluir al menos una letra mayúscula.";
+    if (!regexLower.test(password))
+      return "Debe incluir al menos una letra minúscula.";
+    if (!regexNumber.test(password))
+      return "Debe incluir al menos un número.";
+    if (!regexSpecial.test(password))
+      return "Debe incluir al menos un carácter especial.";
+
     return null;
   };
 
@@ -131,6 +133,7 @@ export const ProfilePage: React.FC = () => {
       return;
     }
 
+    // ✅ Validar la contraseña si se está cambiando
     if (formData.password && formData.password.trim() !== "") {
       const passwordError = validatePassword(formData.password);
       if (passwordError) {
@@ -144,7 +147,7 @@ export const ProfilePage: React.FC = () => {
       if (updated) {
         localStorage.setItem("user", JSON.stringify(updated));
         setUser(updated);
-        setMessage({ text: "Perfil actualizado correctamente.", type: "success" });
+        setMessage({ text: "Perfil actualizado correctamente ✅", type: "success" });
         setIsEditing(false);
       } else {
         setMessage({ text: "Error al actualizar el perfil.", type: "error" });
@@ -155,14 +158,15 @@ export const ProfilePage: React.FC = () => {
     }
   };
 
-  if (loading)
+  if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-[#2B2E33] text-gray-300">
         <p className="text-lg">Cargando información del perfil...</p>
       </div>
     );
+  }
 
-  if (!user)
+  if (!user) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-[#2B2E33] text-gray-300">
         <p className="text-lg mb-4 text-white">Ningún usuario ha iniciado sesión.</p>
@@ -171,10 +175,11 @@ export const ProfilePage: React.FC = () => {
         </Link>
       </div>
     );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-[#2B2E33] text-white">
-      <div className="flex flex-col items-center justify-center flex-grow mt-24 px-6">
+      <div className="flex flex-col items-center justify-center flex-grow mt-24 sm:mt-20 px-6">
         <div className="bg-[#3B3E43] shadow-lg rounded-2xl p-8 w-full max-w-md">
           <div className="flex flex-col items-center mb-6">
             <div className="bg-[#E50914]/20 p-4 rounded-full mb-3">
@@ -185,14 +190,28 @@ export const ProfilePage: React.FC = () => {
 
           {!isEditing ? (
             <div className="space-y-4 text-center">
-              <p className="text-gray-400 text-sm">Nombre completo</p>
-              <p className="text-lg font-medium">{`${user.firstName ?? ""} ${user.lastName ?? ""}`}</p>
-
-              <p className="text-gray-400 text-sm">Correo electrónico</p>
-              <p className="text-lg font-medium">{user.email ?? ""}</p>
-
-              <p className="text-gray-400 text-sm">Edad</p>
-              <p className="text-lg font-medium">{user.age ? `${user.age} años` : ""}</p>
+              <div>
+                <p className="text-gray-400 text-sm">Nombre completo</p>
+                <p className="text-lg font-medium">
+                  {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : ""}
+                </p>
+              </div>
+              <div>
+                <p className="text-gray-400 text-sm">Correo electrónico</p>
+                <p className="text-lg font-medium">{user.email ?? ""}</p>
+              </div>
+              <div>
+                <p className="text-gray-400 text-sm">Edad</p>
+                <p className="text-lg font-medium">{user.age ? `${user.age} años` : ""}</p>
+              </div>
+              {user.createdAt && (
+                <div>
+                  <p className="text-gray-400 text-sm">Cuenta creada</p>
+                  <p className="text-lg font-medium">
+                    {new Date(user.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+              )}
             </div>
           ) : (
             <div className="space-y-4">
@@ -238,11 +257,14 @@ export const ProfilePage: React.FC = () => {
           )}
 
           {message && (
-            <div className="flex items-center justify-center gap-2 mt-5 text-sm font-medium text-gray-200">
-              <CheckCircle
-                size={18}
-                className={message.type === "success" ? "text-green-400" : "text-red-400"}
-              />
+            <div
+              className={`flex items-center gap-2 mt-6 p-3 rounded-lg text-sm font-medium border ${
+                message.type === "success"
+                  ? "bg-green-700/40 text-green-300 border-green-600"
+                  : "bg-red-700/40 text-red-300 border-red-600"
+              }`}
+            >
+              <CheckCircle size={18} />
               {message.text}
             </div>
           )}
@@ -256,6 +278,7 @@ export const ProfilePage: React.FC = () => {
                 >
                   <Edit size={18} /> Editar perfil
                 </button>
+
                 <button
                   onClick={() => setShowConfirm(true)}
                   className="w-full flex items-center justify-center gap-2 bg-gray-600 hover:bg-gray-700 py-2 rounded-lg font-semibold shadow-md transition-all"
@@ -287,9 +310,9 @@ export const ProfilePage: React.FC = () => {
       </div>
 
       {showConfirm && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-[#3B3E43] p-6 rounded-2xl shadow-xl w-80 text-center border border-gray-700">
-            <h2 className="text-xl font-semibold mb-3 text-white">¿Eliminar cuenta?</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-[#3B3E43] p-6 rounded-2xl shadow-lg w-80 text-center border border-gray-600">
+            <h2 className="text-xl font-semibold mb-4 text-white">¿Eliminar cuenta?</h2>
             <p className="text-gray-300 mb-6 text-sm">
               Esta acción no se puede deshacer. ¿Deseas continuar?
             </p>
