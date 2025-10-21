@@ -2,13 +2,26 @@ import React, { useState } from "react";
 import { Navbar } from "../components/Navbar";
 import { Link, useNavigate } from "react-router";
 import { loginUser } from "../Services/AuthService";
-import { Loader2, Eye, EyeOff, XCircle } from "lucide-react";
+import { Loader2, Eye, EyeOff, CheckCircle, XCircle } from "lucide-react";
 
 /**
  * LoginPage Component
  * 
- * Página de inicio de sesión con validación, indicador de carga, 
- * y control de visibilidad de contraseña.
+ * This component renders the login page, where users can authenticate  
+ * using their email and password. It includes form validation, a password  
+ * visibility toggle, loading indicators, and dynamic success/error messages.
+ *
+ * @component
+ * @example
+ * return (
+ *   <LoginPage />
+ * )
+ *
+ * @returns {JSX.Element} The rendered login page component.
+ *
+ * @accessibility
+ * - **WCAG 2.1 - 3.3.1 Error Identification:**  
+ *   Error messages are displayed with clear visual cues and icons, helping users identify and understand form input issues.
  */
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -18,6 +31,14 @@ export const LoginPage: React.FC = () => {
   const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
   const navigate = useNavigate();
 
+  /**
+   * Handles the login form submission.
+   * Sends the user credentials to the backend using the `loginUser` service.
+   *
+   * @async
+   * @param {React.FormEvent} e - The form submission event.
+   * @returns {Promise<void>} Redirects to dashboard upon successful login.
+   */
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -34,7 +55,7 @@ export const LoginPage: React.FC = () => {
     } catch (err: any) {
       console.error("Login error:", err);
       setMessage({
-        text: err.message || "Error al iniciar sesión 😞",
+        text: err.message || "Error logging in 😞",
         type: "error",
       });
     } finally {
@@ -98,6 +119,13 @@ export const LoginPage: React.FC = () => {
                 ¿Olvidaste tu contraseña?
               </Link>
             </p>
+
+            {message?.type === "success" && (
+              <div className="flex items-center gap-2 mt-4 mb-2 p-3 rounded-lg text-sm font-medium bg-green-700/40 text-green-300 border border-green-600">
+                <CheckCircle size={18} />
+                {message.text}
+              </div>
+            )}
 
             <button
               type="submit"
