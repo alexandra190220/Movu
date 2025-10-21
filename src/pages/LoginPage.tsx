@@ -20,7 +20,7 @@ export const LoginPage: React.FC = () => {
     try {
       const data = await loginUser(email, password);
       setMessage({
-        text: data.message || "Login exitoso 🎉",
+        text: data.message || "Inicio de sesión exitoso 🎉",
         type: "success",
       });
 
@@ -77,7 +77,7 @@ export const LoginPage: React.FC = () => {
               </div>
 
               {message?.type === "error" && (
-                <div className="flex items-center gap-2 mt-3 text-sm font-medium text-red-300">
+                <div className="flex items-center gap-2 mt-3 text-sm font-medium text-red-400">
                   <XCircle size={18} />
                   {message.text}
                 </div>
@@ -91,7 +91,7 @@ export const LoginPage: React.FC = () => {
             </p>
 
             {message?.type === "success" && (
-              <div className="flex items-center justify-center gap-2 mt-4 text-sm font-medium text-green-300">
+              <div className="flex items-center justify-center gap-2 mt-4 text-sm font-medium text-green-400">
                 <CheckCircle size={18} />
                 {message.text}
               </div>
