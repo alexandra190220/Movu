@@ -6,9 +6,9 @@ import { Loader2, Eye, EyeOff, CheckCircle, XCircle } from "lucide-react";
 
 /**
  * LoginPage Component
- * 
- * This component renders the login page, where users can authenticate  
- * using their email and password. It includes form validation, a password  
+ *
+ * This component renders the login page, where users can authenticate
+ * using their email and password. It includes form validation, a password
  * visibility toggle, loading indicators, and dynamic success/error messages.
  *
  * @component
@@ -20,7 +20,7 @@ import { Loader2, Eye, EyeOff, CheckCircle, XCircle } from "lucide-react";
  * @returns {JSX.Element} The rendered login page component.
  *
  * @accessibility
- * - **WCAG 2.1 - 3.3.1 Error Identification:**  
+ * - **WCAG 2.1 - 3.3.1 Error Identification:**
  *   Error messages are displayed with clear visual cues and icons, helping users identify and understand form input issues.
  */
 export const LoginPage: React.FC = () => {
@@ -28,7 +28,10 @@ export const LoginPage: React.FC = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+  const [message, setMessage] = useState<{
+    text: string;
+    type: "success" | "error";
+  } | null>(null);
   const navigate = useNavigate();
 
   /**
@@ -69,7 +72,9 @@ export const LoginPage: React.FC = () => {
 
       <div className="flex-grow flex justify-center items-center px-4 py-12 mt-24 sm:mt-16">
         <div className="bg-[#3a3f45] p-8 rounded-2xl shadow-lg w-full max-w-md">
-          <h2 className="text-3xl font-bold mb-6 text-center">Iniciar Sesión</h2>
+          <h2 className="text-3xl font-bold mb-6 text-center">
+            Iniciar Sesión
+          </h2>
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
@@ -112,16 +117,13 @@ export const LoginPage: React.FC = () => {
             </div>
 
             <p className="text-gray-300 text-sm text-center mt-2">
-              <Link
-                to="/ResetPage"
-                className="text-red-500 hover:underline"
-              >
+              <Link to="/ResetPage" className="text-red-500 hover:underline">
                 ¿Olvidaste tu contraseña?
               </Link>
             </p>
 
             {message?.type === "success" && (
-              <div className="flex items-center gap-2 mt-4 mb-2 p-3 rounded-lg text-sm font-medium bg-green-700/40 text-green-300 border border-green-600">
+              <div className="flex items-center gap-2 mt-4 mb-2 p-3 rounded-lg text-sm font-medium text-green-300">
                 <CheckCircle size={18} />
                 {message.text}
               </div>
