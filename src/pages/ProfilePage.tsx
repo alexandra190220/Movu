@@ -71,6 +71,14 @@ export const ProfilePage: React.FC = () => {
     };
   }, []);
 
+  // Hace que el mensaje desaparezca después de unos segundos
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => setMessage(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
+
   const handleDeleteAccount = async () => {
     if (!user) return;
     const userId = user._id ?? user.id;
@@ -82,17 +90,15 @@ export const ProfilePage: React.FC = () => {
     try {
       const success = await deleteAccount(userId);
       if (success) {
-        localStorage.removeItem("user");
-        localStorage.removeItem("userId");
-        localStorage.removeItem("token");
-        setMessage({ text: "Tu cuenta ha sido eliminada correctamente.", type: "success" });
+        localStorage.clear();
+        setMessage({ text: "Cuenta eliminada correctamente.", type: "success" });
         setTimeout(() => navigate("/LoginPage"), 1200);
       } else {
-        setMessage({ text: "No se pudo eliminar la cuenta. Por favor, inténtalo de nuevo.", type: "error" });
+        setMessage({ text: "No se pudo eliminar la cuenta.", type: "error" });
       }
     } catch (error) {
       console.error("Error deleting account:", error);
-      setMessage({ text: "Ocurrió un error al eliminar la cuenta.", type: "error" });
+      setMessage({ text: "Error al eliminar la cuenta.", type: "error" });
     } finally {
       setShowConfirm(false);
     }
@@ -103,11 +109,28 @@ export const ProfilePage: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Validación de contraseña igual que en registro
+  const validatePassword = (password: string): string | null => {
+    if (!password) return null; // opcional
+    if (password.length < 8) return "La contraseña debe tener al menos 8 caracteres.";
+    if (!/[A-Z]/.test(password)) return "Debe incluir al menos una letra mayúscula.";
+    if (!/[a-z]/.test(password)) return "Debe incluir al menos una letra minúscula.";
+    if (!/[0-9]/.test(password)) return "Debe incluir al menos un número.";
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) return "Debe incluir al menos un símbolo.";
+    return null;
+  };
+
   const handleSaveChanges = async () => {
     if (!user) return;
     const userId = user._id ?? user.id;
     if (!userId) {
       setMessage({ text: "ID de usuario no encontrado.", type: "error" });
+      return;
+    }
+
+    const passwordError = validatePassword(formData.password || "");
+    if (passwordError) {
+      setMessage({ text: passwordError, type: "error" });
       return;
     }
 
@@ -148,7 +171,7 @@ export const ProfilePage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#2B2E33] text-white">
-      <div className="flex flex-col items-center justify-center flex-grow mt-24 sm:mt-20 px-6">
+      <div className="flex flex-col items-center justify-center flex-grow mt-24 px-6">
         <div className="bg-[#3B3E43] shadow-lg rounded-2xl p-8 w-full max-w-md">
           <div className="flex flex-col items-center mb-6">
             <div className="bg-[#E50914]/20 p-4 rounded-full mb-3">
@@ -226,16 +249,7 @@ export const ProfilePage: React.FC = () => {
           )}
 
           {message && (
-            <div
-              className={`flex items-center gap-2 mt-6 p-3 rounded-lg text-sm font-medium border ${
-                message.type === "success"
-                  ? "bg-green-700/40 text-green-300 border-green-600"
-                  : "bg-red-700/40 text-red-300 border-red-600"
-              }`}
-            >
-              <CheckCircle size={18} />
-              {message.text}
-            </div>
+            <div className="mt-4 text-center text-sm text-gray-300 italic">{message.text}</div>
           )}
 
           <div className="mt-8 flex flex-col gap-3">
@@ -279,24 +293,24 @@ export const ProfilePage: React.FC = () => {
       </div>
 
       {showConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-[#3B3E43] p-6 rounded-2xl shadow-lg w-80 text-center border border-gray-600">
-            <h2 className="text-xl font-semibold mb-4 text-white">¿Eliminar cuenta?</h2>
-            <p className="text-gray-300 mb-6 text-sm">
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+          <div className="bg-[#3B3E43] p-5 rounded-xl shadow-xl w-72 text-center border border-gray-600">
+            <h2 className="text-lg font-semibold mb-3 text-white">¿Eliminar cuenta?</h2>
+            <p className="text-gray-300 mb-4 text-sm">
               Esta acción no se puede deshacer. ¿Deseas continuar?
             </p>
             <div className="flex justify-center gap-3">
               <button
                 onClick={handleDeleteAccount}
-                className="flex items-center gap-2 bg-[#E50914] hover:bg-[#b0060f] text-white font-semibold py-2 px-4 rounded-lg transition-all"
+                className="bg-[#E50914] hover:bg-[#b0060f] text-white font-semibold py-1.5 px-3 rounded-lg transition-all text-sm"
               >
-                <CheckCircle size={18} /> Sí, eliminar
+                Sí, eliminar
               </button>
               <button
                 onClick={() => setShowConfirm(false)}
-                className="flex items-center gap-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-all"
+                className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-1.5 px-3 rounded-lg transition-all text-sm"
               >
-                <X size={18} /> Cancelarr
+                Cancelar
               </button>
             </div>
           </div>
