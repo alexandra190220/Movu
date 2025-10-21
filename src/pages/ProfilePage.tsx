@@ -227,10 +227,10 @@ export const ProfilePage: React.FC = () => {
 
           {message && (
             <div
-              className={`flex items-center gap-2 mt-6 p-3 rounded-lg text-sm font-medium border ${
+              className={`flex items-center gap-2 mt-6 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                 message.type === "success"
-                  ? "bg-green-700/40 text-green-300 border-green-600"
-                  : "bg-red-700/40 text-red-300 border-red-600"
+                  ? "bg-green-600/20 text-green-300"
+                  : "bg-red-600/20 text-red-300"
               }`}
             >
               <CheckCircle size={18} />
@@ -279,24 +279,24 @@ export const ProfilePage: React.FC = () => {
       </div>
 
       {showConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-[#3B3E43] p-6 rounded-2xl shadow-lg w-80 text-center border border-gray-600">
-            <h2 className="text-xl font-semibold mb-4 text-white">¿Eliminar cuenta?</h2>
-            <p className="text-gray-300 mb-6 text-sm">
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+          <div className="bg-[#3B3E43] p-6 rounded-2xl shadow-lg w-[320px] text-center border border-gray-600">
+            <h2 className="text-lg font-semibold mb-3 text-white">¿Eliminar cuenta?</h2>
+            <p className="text-gray-300 mb-5 text-sm">
               Esta acción no se puede deshacer. ¿Deseas continuar?
             </p>
-            <div className="flex justify-center gap-3">
+            <div className="flex justify-center gap-2">
               <button
                 onClick={handleDeleteAccount}
-                className="flex items-center gap-2 bg-[#E50914] hover:bg-[#b0060f] text-white font-semibold py-2 px-4 rounded-lg transition-all"
+                className="flex items-center gap-1 bg-[#E50914] hover:bg-[#b0060f] text-white font-semibold py-2 px-3 rounded-lg text-sm transition-all"
               >
-                <CheckCircle size={18} /> Sí, eliminar
+                <CheckCircle size={16} /> Sí
               </button>
               <button
                 onClick={() => setShowConfirm(false)}
-                className="flex items-center gap-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-all"
+                className="flex items-center gap-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-3 rounded-lg text-sm transition-all"
               >
-                <X size={18} /> Cancelar
+                <X size={16} /> Cancelar
               </button>
             </div>
           </div>
