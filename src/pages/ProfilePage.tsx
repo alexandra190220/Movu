@@ -5,7 +5,6 @@ import {
   getUserData,
   updateUser,
 } from "../Services/AuthService";
-import { validators } from "../Services/ValidateRegister"; // ✅ Importación agregada
 import { User, Edit, Trash2, X, CheckCircle, Save } from "lucide-react";
 
 interface User {
@@ -128,6 +127,13 @@ export const ProfilePage: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // 🔐 Validar contraseña antes de guardar
+  const validatePassword = (password: string) => {
+    const regex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._-])[A-Za-z\d@$!%*?&._-]{8,}$/;
+    return regex.test(password);
+  };
+
   const handleSaveChanges = async () => {
     if (!user) return;
     const userId = user._id ?? user.id;
@@ -136,13 +142,14 @@ export const ProfilePage: React.FC = () => {
       return;
     }
 
-    // ✅ Validación de contraseña (solo si el usuario ingresó una nueva)
-    if (formData.password) {
-      const passwordError = validators.password(formData.password);
-      if (passwordError) {
-        setMessage({ text: passwordError, type: "error" });
-        return;
-      }
+    // ⚠️ Validar contraseña si el usuario ingresó una nueva
+    if (formData.password && !validatePassword(formData.password)) {
+      setMessage({
+        text:
+          "La contraseña debe tener al menos 8 caracteres, incluir una mayúscula, una minúscula, un número y un símbolo.",
+        type: "error",
+      });
+      return;
     }
 
     try {
