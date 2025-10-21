@@ -103,43 +103,12 @@ export const ProfilePage: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 🔍 Validación de contraseña (igual que en el registro)
-  const validatePassword = (password: string): string | null => {
-    const minLength = 8;
-    const regexUpper = /[A-Z]/;
-    const regexLower = /[a-z]/;
-    const regexNumber = /[0-9]/;
-    const regexSpecial = /[!@#$%^&*(),.?":{}|<>]/;
-
-    if (password.length < minLength)
-      return "La contraseña debe tener al menos 8 caracteres.";
-    if (!regexUpper.test(password))
-      return "Debe incluir al menos una letra mayúscula.";
-    if (!regexLower.test(password))
-      return "Debe incluir al menos una letra minúscula.";
-    if (!regexNumber.test(password))
-      return "Debe incluir al menos un número.";
-    if (!regexSpecial.test(password))
-      return "Debe incluir al menos un carácter especial.";
-
-    return null;
-  };
-
   const handleSaveChanges = async () => {
     if (!user) return;
     const userId = user._id ?? user.id;
     if (!userId) {
       setMessage({ text: "ID de usuario no encontrado.", type: "error" });
       return;
-    }
-
-    // ✅ Validar la contraseña si se está cambiando
-    if (formData.password && formData.password.trim() !== "") {
-      const passwordError = validatePassword(formData.password);
-      if (passwordError) {
-        setMessage({ text: passwordError, type: "error" });
-        return;
-      }
     }
 
     try {
@@ -327,7 +296,7 @@ export const ProfilePage: React.FC = () => {
                 onClick={() => setShowConfirm(false)}
                 className="flex items-center gap-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-all"
               >
-                <X size={18} /> Cancelar
+                <X size={18} /> Cancelarr
               </button>
             </div>
           </div>
