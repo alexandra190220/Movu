@@ -349,26 +349,26 @@ export const ProfilePage: React.FC = () => {
       </div>
 
       {showConfirm && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-[#2F3238] p-6 rounded-2xl shadow-2xl w-80 text-center border border-gray-700">
-            <h2 className="text-xl font-semibold mb-3 text-white">
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+          <div className="bg-[#3B3E43] p-5 rounded-xl shadow-xl w-72 text-center border border-gray-600">
+            <h2 className="text-lg font-semibold mb-3 text-white">
               ¿Eliminar cuenta?
             </h2>
-            <p className="text-gray-300 mb-6 text-sm">
+            <p className="text-gray-300 mb-4 text-sm">
               Esta acción no se puede deshacer. ¿Deseas continuar?
             </p>
             <div className="flex justify-center gap-3">
               <button
                 onClick={handleDeleteAccount}
-                className="flex items-center justify-center gap-2 bg-[#E50914] hover:bg-[#b0060f] text-white font-semibold py-2 px-4 rounded-xl transition-all shadow-md"
+                className="bg-[#E50914] hover:bg-[#b0060f] text-white font-semibold py-1.5 px-3 rounded-lg transition-all text-sm"
               >
-                <CheckCircle size={18} /> Sí, eliminar
+                Sí
               </button>
               <button
                 onClick={() => setShowConfirm(false)}
-                className="flex items-center justify-center gap-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-xl transition-all shadow-md"
+                className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-1.5 px-3 rounded-lg transition-all text-sm"
               >
-                <X size={18} /> Cancelar
+                Cancelar
               </button>
             </div>
           </div>
