@@ -5,6 +5,7 @@ import {
   getUserData,
   updateUser,
 } from "../Services/AuthService";
+import { validators } from "../Services/ValidateRegister"; // ✅ Importación agregada
 import { User, Edit, Trash2, X, CheckCircle, Save } from "lucide-react";
 
 interface User {
@@ -133,6 +134,15 @@ export const ProfilePage: React.FC = () => {
     if (!userId) {
       setMessage({ text: "ID de usuario no encontrado.", type: "error" });
       return;
+    }
+
+    // ✅ Validación de contraseña (solo si el usuario ingresó una nueva)
+    if (formData.password) {
+      const passwordError = validators.password(formData.password);
+      if (passwordError) {
+        setMessage({ text: passwordError, type: "error" });
+        return;
+      }
     }
 
     try {
