@@ -25,7 +25,6 @@ export const ProfilePage: React.FC = () => {
 
   useEffect(() => {
     let mounted = true;
-
     const loadUser = async () => {
       try {
         const userId = localStorage.getItem("userId");
@@ -71,10 +70,10 @@ export const ProfilePage: React.FC = () => {
     };
   }, []);
 
-  // Hace que el mensaje desaparezca después de unos segundos
+  // 🔹 Ocultar mensaje automáticamente después de 1.2s
   useEffect(() => {
     if (message) {
-      const timer = setTimeout(() => setMessage(null), 3000);
+      const timer = setTimeout(() => setMessage(null), 1200);
       return () => clearTimeout(timer);
     }
   }, [message]);
@@ -91,14 +90,14 @@ export const ProfilePage: React.FC = () => {
       const success = await deleteAccount(userId);
       if (success) {
         localStorage.clear();
-        setMessage({ text: "Cuenta eliminada correctamente.", type: "success" });
+        setMessage({ text: "Tu cuenta ha sido eliminada correctamente.", type: "success" });
         setTimeout(() => navigate("/LoginPage"), 1200);
       } else {
-        setMessage({ text: "No se pudo eliminar la cuenta.", type: "error" });
+        setMessage({ text: "No se pudo eliminar la cuenta. Inténtalo de nuevo.", type: "error" });
       }
     } catch (error) {
       console.error("Error deleting account:", error);
-      setMessage({ text: "Error al eliminar la cuenta.", type: "error" });
+      setMessage({ text: "Ocurrió un error al eliminar la cuenta.", type: "error" });
     } finally {
       setShowConfirm(false);
     }
@@ -109,14 +108,18 @@ export const ProfilePage: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Validación de contraseña igual que en registro
   const validatePassword = (password: string): string | null => {
-    if (!password) return null; // opcional
-    if (password.length < 8) return "La contraseña debe tener al menos 8 caracteres.";
-    if (!/[A-Z]/.test(password)) return "Debe incluir al menos una letra mayúscula.";
-    if (!/[a-z]/.test(password)) return "Debe incluir al menos una letra minúscula.";
-    if (!/[0-9]/.test(password)) return "Debe incluir al menos un número.";
-    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) return "Debe incluir al menos un símbolo.";
+    const minLength = 8;
+    const regexUpper = /[A-Z]/;
+    const regexLower = /[a-z]/;
+    const regexNumber = /[0-9]/;
+    const regexSpecial = /[!@#$%^&*(),.?":{}|<>]/;
+
+    if (password.length < minLength) return "La contraseña debe tener al menos 8 caracteres.";
+    if (!regexUpper.test(password)) return "Debe incluir al menos una letra mayúscula.";
+    if (!regexLower.test(password)) return "Debe incluir al menos una letra minúscula.";
+    if (!regexNumber.test(password)) return "Debe incluir al menos un número.";
+    if (!regexSpecial.test(password)) return "Debe incluir al menos un carácter especial.";
     return null;
   };
 
@@ -128,10 +131,12 @@ export const ProfilePage: React.FC = () => {
       return;
     }
 
-    const passwordError = validatePassword(formData.password || "");
-    if (passwordError) {
-      setMessage({ text: passwordError, type: "error" });
-      return;
+    if (formData.password && formData.password.trim() !== "") {
+      const passwordError = validatePassword(formData.password);
+      if (passwordError) {
+        setMessage({ text: passwordError, type: "error" });
+        return;
+      }
     }
 
     try {
@@ -139,7 +144,7 @@ export const ProfilePage: React.FC = () => {
       if (updated) {
         localStorage.setItem("user", JSON.stringify(updated));
         setUser(updated);
-        setMessage({ text: "Perfil actualizado correctamente ✅", type: "success" });
+        setMessage({ text: "Perfil actualizado correctamente.", type: "success" });
         setIsEditing(false);
       } else {
         setMessage({ text: "Error al actualizar el perfil.", type: "error" });
@@ -150,15 +155,14 @@ export const ProfilePage: React.FC = () => {
     }
   };
 
-  if (loading) {
+  if (loading)
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-[#2B2E33] text-gray-300">
         <p className="text-lg">Cargando información del perfil...</p>
       </div>
     );
-  }
 
-  if (!user) {
+  if (!user)
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-[#2B2E33] text-gray-300">
         <p className="text-lg mb-4 text-white">Ningún usuario ha iniciado sesión.</p>
@@ -167,7 +171,6 @@ export const ProfilePage: React.FC = () => {
         </Link>
       </div>
     );
-  }
 
   return (
     <div className="min-h-screen flex flex-col bg-[#2B2E33] text-white">
@@ -182,28 +185,14 @@ export const ProfilePage: React.FC = () => {
 
           {!isEditing ? (
             <div className="space-y-4 text-center">
-              <div>
-                <p className="text-gray-400 text-sm">Nombre completo</p>
-                <p className="text-lg font-medium">
-                  {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : ""}
-                </p>
-              </div>
-              <div>
-                <p className="text-gray-400 text-sm">Correo electrónico</p>
-                <p className="text-lg font-medium">{user.email ?? ""}</p>
-              </div>
-              <div>
-                <p className="text-gray-400 text-sm">Edad</p>
-                <p className="text-lg font-medium">{user.age ? `${user.age} años` : ""}</p>
-              </div>
-              {user.createdAt && (
-                <div>
-                  <p className="text-gray-400 text-sm">Cuenta creada</p>
-                  <p className="text-lg font-medium">
-                    {new Date(user.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
-              )}
+              <p className="text-gray-400 text-sm">Nombre completo</p>
+              <p className="text-lg font-medium">{`${user.firstName ?? ""} ${user.lastName ?? ""}`}</p>
+
+              <p className="text-gray-400 text-sm">Correo electrónico</p>
+              <p className="text-lg font-medium">{user.email ?? ""}</p>
+
+              <p className="text-gray-400 text-sm">Edad</p>
+              <p className="text-lg font-medium">{user.age ? `${user.age} años` : ""}</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -249,7 +238,13 @@ export const ProfilePage: React.FC = () => {
           )}
 
           {message && (
-            <div className="mt-4 text-center text-sm text-gray-300 italic">{message.text}</div>
+            <div className="flex items-center justify-center gap-2 mt-5 text-sm font-medium text-gray-200">
+              <CheckCircle
+                size={18}
+                className={message.type === "success" ? "text-green-400" : "text-red-400"}
+              />
+              {message.text}
+            </div>
           )}
 
           <div className="mt-8 flex flex-col gap-3">
@@ -261,7 +256,6 @@ export const ProfilePage: React.FC = () => {
                 >
                   <Edit size={18} /> Editar perfil
                 </button>
-
                 <button
                   onClick={() => setShowConfirm(true)}
                   className="w-full flex items-center justify-center gap-2 bg-gray-600 hover:bg-gray-700 py-2 rounded-lg font-semibold shadow-md transition-all"
@@ -293,24 +287,24 @@ export const ProfilePage: React.FC = () => {
       </div>
 
       {showConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-          <div className="bg-[#3B3E43] p-5 rounded-xl shadow-xl w-72 text-center border border-gray-600">
-            <h2 className="text-lg font-semibold mb-3 text-white">¿Eliminar cuenta?</h2>
-            <p className="text-gray-300 mb-4 text-sm">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-[#3B3E43] p-6 rounded-2xl shadow-xl w-80 text-center border border-gray-700">
+            <h2 className="text-xl font-semibold mb-3 text-white">¿Eliminar cuenta?</h2>
+            <p className="text-gray-300 mb-6 text-sm">
               Esta acción no se puede deshacer. ¿Deseas continuar?
             </p>
             <div className="flex justify-center gap-3">
               <button
                 onClick={handleDeleteAccount}
-                className="bg-[#E50914] hover:bg-[#b0060f] text-white font-semibold py-1.5 px-3 rounded-lg transition-all text-sm"
+                className="flex items-center gap-2 bg-[#E50914] hover:bg-[#b0060f] text-white font-semibold py-2 px-4 rounded-lg transition-all"
               >
-                Sí, eliminar
+                <CheckCircle size={18} /> Sí, eliminar
               </button>
               <button
                 onClick={() => setShowConfirm(false)}
-                className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-1.5 px-3 rounded-lg transition-all text-sm"
+                className="flex items-center gap-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-all"
               >
-                Cancelar
+                <X size={18} /> Cancelar
               </button>
             </div>
           </div>
