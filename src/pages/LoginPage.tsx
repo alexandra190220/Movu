@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Navbar } from "../components/Navbar";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../Services/AuthService";
 import { Loader2, Eye, EyeOff, CheckCircle, XCircle } from "lucide-react";
 
@@ -24,6 +24,10 @@ export const LoginPage: React.FC = () => {
         type: "success",
       });
 
+      // Desaparece a los 3 segundos
+      setTimeout(() => setMessage(null), 3000);
+
+      // Navega después de un corto delay
       setTimeout(() => navigate("/dashboard"), 1000);
     } catch (err: any) {
       console.error("Login error:", err);
@@ -31,6 +35,8 @@ export const LoginPage: React.FC = () => {
         text: err.message || "Error al iniciar sesión 😞",
         type: "error",
       });
+      // Desaparece a los 3 segundos
+      setTimeout(() => setMessage(null), 3000);
     } finally {
       setLoading(false);
     }
@@ -65,6 +71,7 @@ export const LoginPage: React.FC = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  
                   className="w-full px-4 py-2 pr-10 rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
                 />
                 <button
@@ -76,6 +83,7 @@ export const LoginPage: React.FC = () => {
                 </button>
               </div>
 
+              {/* Mensaje de error sin recuadro */}
               {message?.type === "error" && (
                 <div className="flex items-center gap-2 mt-3 text-sm font-medium text-red-400">
                   <XCircle size={18} />
@@ -90,6 +98,7 @@ export const LoginPage: React.FC = () => {
               </Link>
             </p>
 
+            {/* Mensaje de éxito sin recuadro */}
             {message?.type === "success" && (
               <div className="flex items-center justify-center gap-2 mt-4 text-sm font-medium text-green-400">
                 <CheckCircle size={18} />
