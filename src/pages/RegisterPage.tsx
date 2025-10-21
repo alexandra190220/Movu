@@ -120,12 +120,12 @@ const RegisterPage: React.FC = () => {
         form.password
       );
 
-      setSuccessMessage("✅ Account created successfully");
+      setSuccessMessage("✅ Cuenta creada exitosamente! Redirigiendo al inicio de sesión...");
       setTimeout(() => navigate("/LoginPage"), 2500);
     } catch (err) {
       const message = extractErrorMessage(err);
       if (message.includes("E11000") || message.includes("duplicate key")) {
-        setSubmitError("This email is already registered. Try another one.");
+        setSubmitError("Este correo electrónico ya está registrado. Intenta con otro.");
       } else {
         setSubmitError(message);
       }
