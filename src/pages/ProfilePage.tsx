@@ -71,7 +71,7 @@ export const ProfilePage: React.FC = () => {
     };
   }, []);
 
-  // Oculta los mensajes después de 3 segundos
+  // Ocultar mensaje automáticamente después de unos segundos
   useEffect(() => {
     if (message) {
       const timer = setTimeout(() => setMessage(null), 3000);
@@ -93,10 +93,10 @@ export const ProfilePage: React.FC = () => {
         localStorage.removeItem("user");
         localStorage.removeItem("userId");
         localStorage.removeItem("token");
-        setMessage({ text: "Cuenta eliminada correctamente.", type: "success" });
+        setMessage({ text: "Tu cuenta ha sido eliminada correctamente.", type: "success" });
         setTimeout(() => navigate("/LoginPage"), 1200);
       } else {
-        setMessage({ text: "No se pudo eliminar la cuenta. Intenta de nuevo.", type: "error" });
+        setMessage({ text: "No se pudo eliminar la cuenta. Inténtalo de nuevo.", type: "error" });
       }
     } catch (error) {
       console.error("Error deleting account:", error);
@@ -124,7 +124,7 @@ export const ProfilePage: React.FC = () => {
       if (updated) {
         localStorage.setItem("user", JSON.stringify(updated));
         setUser(updated);
-        setMessage({ text: "Perfil actualizado correctamente", type: "success" });
+        setMessage({ text: "Perfil actualizado correctamente ✅", type: "success" });
         setIsEditing(false);
       } else {
         setMessage({ text: "Error al actualizar el perfil.", type: "error" });
@@ -157,7 +157,7 @@ export const ProfilePage: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#2B2E33] text-white">
       <div className="flex flex-col items-center justify-center flex-grow mt-24 sm:mt-20 px-6">
-        <div className="bg-[#3B3E43] shadow-lg rounded-2xl p-8 w-full max-w-md relative">
+        <div className="bg-[#3B3E43] shadow-lg rounded-2xl p-8 w-full max-w-md">
           <div className="flex flex-col items-center mb-6">
             <div className="bg-[#E50914]/20 p-4 rounded-full mb-3">
               <User size={48} className="text-[#E50914]" />
@@ -233,15 +233,13 @@ export const ProfilePage: React.FC = () => {
             </div>
           )}
 
-          {/* Mensaje flotante */}
+          {/* ✅ Mensaje limpio sin fondo verde */}
           {message && (
-            <div
-              className={`absolute top-2 left-1/2 transform -translate-x-1/2 text-center px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                message.type === "success"
-                  ? "bg-green-600/30 text-green-300"
-                  : "bg-red-600/30 text-red-300"
-              }`}
-            >
+            <div className="flex items-center justify-center gap-2 mt-6 text-sm text-center text-gray-200 font-medium animate-fade">
+              <CheckCircle
+                size={18}
+                className={message.type === "success" ? "text-green-400" : "text-red-400"}
+              />
               {message.text}
             </div>
           )}
@@ -286,15 +284,15 @@ export const ProfilePage: React.FC = () => {
         </div>
       </div>
 
-      {/* Modal de confirmación mejorado */}
+      {/* ✅ Modal pequeño y centrado */}
       {showConfirm && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-[#3B3E43] p-6 rounded-2xl shadow-xl w-[300px] text-center border border-gray-700">
-            <h2 className="text-lg font-semibold mb-3 text-white">¿Eliminar cuenta?</h2>
-            <p className="text-gray-300 mb-5 text-sm">
-              Esta acción no se puede deshacer. ¿Deseas continuar?
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 px-4">
+          <div className="bg-[#2F3136] p-5 rounded-2xl shadow-xl w-full max-w-xs text-center border border-gray-700">
+            <h2 className="text-lg font-semibold mb-2 text-white">¿Eliminar cuenta?</h2>
+            <p className="text-gray-300 mb-4 text-sm">
+              Esta acción no se puede deshacer.
             </p>
-            <div className="flex justify-center gap-3">
+            <div className="flex justify-center gap-2">
               <button
                 onClick={handleDeleteAccount}
                 className="flex items-center gap-1 bg-[#E50914] hover:bg-[#b0060f] text-white font-semibold py-2 px-4 rounded-lg text-sm transition-all"
@@ -303,7 +301,7 @@ export const ProfilePage: React.FC = () => {
               </button>
               <button
                 onClick={() => setShowConfirm(false)}
-                className="flex items-center gap-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-all"
+                className="flex items-center gap-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-all"
               >
                 <X size={16} /> Cancelar
               </button>
