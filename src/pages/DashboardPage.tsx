@@ -62,14 +62,27 @@ export const DashboardPage: React.FC = () => {
     loadVideosByCategory();
   }, []);
 
-  // Filtrado por búsqueda (título o descripción)
-  const filtrarVideos = (lista: any[]) => {
-    if (!busqueda) return lista;
-    return lista.filter((v) => {
-      const title = v.title?.toLowerCase() || "";
-      const desc = v.description?.toLowerCase() || "";
-      return title.includes(busqueda.toLowerCase()) || desc.includes(busqueda.toLowerCase());
-    });
+  // 🔹 Buscar videos desde backend
+  const buscarVideos = async () => {
+    if (!busqueda.trim()) return;
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `${API_URL}/videos/search?query=${encodeURIComponent(busqueda)}&per_page=10`
+      );
+      const data = await res.json();
+      setVideos({ Resultado: data.videos || [] }); // mostramos bajo categoría "Resultado"
+    } catch (err) {
+      console.error(err);
+    }
+    setLoading(false);
+  };
+
+  // Permitir buscar con Enter
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      buscarVideos();
+    }
   };
 
   return (
@@ -77,29 +90,35 @@ export const DashboardPage: React.FC = () => {
       <Navbar />
 
       <main className="flex-grow px-6 pt-28 pb-10">
-        {/* Input de búsqueda */}
-        <div className="mb-6">
+        {/* 🔹 Input de búsqueda visible */}
+        <div className="mb-6 flex flex-col md:flex-row items-center gap-3">
           <input
             type="text"
             placeholder="Buscar video..."
-            className="w-full md:w-1/2 p-2 rounded-lg text-black"
+            className="w-full md:w-1/2 p-3 rounded-lg text-black text-lg"
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
+            onKeyDown={handleKeyPress}
           />
+          <button
+            onClick={buscarVideos}
+            className="px-5 py-3 bg-yellow-500 text-black rounded-lg font-semibold hover:bg-yellow-400 transition"
+          >
+            Buscar
+          </button>
         </div>
 
         {loading ? (
           <p className="text-center text-gray-400 mt-10">Cargando videos...</p>
         ) : (
           Object.entries(videos).map(([categoria, lista]) => {
-            const listaFiltrada = filtrarVideos(lista);
-            if (listaFiltrada.length === 0) return null;
+            if (!lista || lista.length === 0) return null;
 
             return (
               <section key={categoria} className="mb-10">
                 <h2 className="text-xl font-semibold mb-4">{categoria}</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {listaFiltrada.map((video) => {
+                  {lista.map((video) => {
                     const esFavorito = favoritos.some((f) => f.id === video.id);
                     const latido = animando === video.id;
 
