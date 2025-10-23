@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Film, Star, Search } from "lucide-react";
+import { Film, Heart, Search } from "lucide-react";
 
 interface NavbarProps {
   buscarVideos?: (termino: string) => void;
@@ -70,7 +70,7 @@ export const Navbar: React.FC<NavbarProps> = ({ buscarVideos }) => {
             to="/FavoritosPage"
             className="flex items-center gap-2 text-white font-medium hover:text-yellow-400 transition"
           >
-            <Star className="w-5 h-5 text-yellow-400" />
+            <Heart className="w-5 h-5 text-yellow-400" />
             Favoritos
           </Link>
 
