@@ -13,7 +13,6 @@ export const DashboardPage: React.FC = () => {
 
   const toggleMenu = () => setMenuAbierto(!menuAbierto);
 
-  // 🔹 Cargar favoritos guardados
   useEffect(() => {
     const favs = localStorage.getItem("favoritos");
     if (favs) setFavoritos(JSON.parse(favs));
@@ -32,7 +31,6 @@ export const DashboardPage: React.FC = () => {
     guardarFavoritos(nuevos);
   };
 
-  // 🔹 Cargar categorías
   const loadVideosByCategory = async () => {
     const categorias = ["Comedia", "Terror", "Acción", "Naturaleza", "Animales"];
     const resultado: any = {};
@@ -60,7 +58,7 @@ export const DashboardPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#2b2f33] text-white flex flex-col relative">
-      {/* ==== NAVBAR ORIGINAL ==== */}
+      {/* ==== NAVBAR SOLO LOGO ==== */}
       <Navbar />
 
       {/* ==== BOTÓN MENÚ ==== */}
@@ -134,11 +132,24 @@ export const DashboardPage: React.FC = () => {
         </nav>
       </div>
 
-      {/* ==== CONTENIDO ==== */}
-      <main className="flex-grow px-6 py-10">
-        
+      {/* ==== BOTONES CATÁLOGO Y FAVORITOS EN LA VISTA ==== */}
+      <div className="flex items-center gap-4 mt-6 ml-8">
+        <Link
+          to="/dashboard"
+          className="bg-[#3a3f45] hover:bg-[#4a4f55] text-white font-medium px-4 py-2 rounded-xl shadow-md transition"
+        >
+          📺 Catálogo
+        </Link>
+        <Link
+          to="/favorites"
+          className="bg-[#3a3f45] hover:bg-[#4a4f55] text-white font-medium px-4 py-2 rounded-xl shadow-md transition"
+        >
+          ⭐ Favoritos
+        </Link>
+      </div>
 
-        {/* Contenido principal */}
+      {/* ==== CONTENIDO ==== */}
+      <main className="flex-grow px-6 py-10 mt-4">
         {loading ? (
           <p className="text-center text-gray-400 mt-10">Cargando videos...</p>
         ) : (
