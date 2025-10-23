@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Star } from "lucide-react";
+import { Star, Film } from "lucide-react";
 import { Navbar } from "../components/Navbar";
 
 export const DashboardPage: React.FC = () => {
@@ -61,11 +61,29 @@ export const DashboardPage: React.FC = () => {
       {/* ==== NAVBAR SOLO LOGO ==== */}
       <Navbar />
 
+      {/* ==== BOTONES CATÁLOGO Y FAVORITOS CERCA DEL MENÚ ==== */}
+      <div className="absolute top-6 right-20 flex gap-3 z-50">
+        <Link
+          to="/dashboard"
+          className="flex items-center gap-2 bg-[#3a3f45] hover:bg-[#4a4f55] text-white px-3 py-2 rounded-lg transition"
+        >
+          <Film className="w-4 h-4 text-blue-400" />
+          Catálogo
+        </Link>
+        <Link
+          to="/favorites"
+          className="flex items-center gap-2 bg-[#3a3f45] hover:bg-[#4a4f55] text-white px-3 py-2 rounded-lg transition"
+        >
+          <Star className="w-4 h-4 text-yellow-400" />
+          Favoritos
+        </Link>
+      </div>
+
       {/* ==== BOTÓN MENÚ ==== */}
       <button
         onClick={toggleMenu}
         aria-label={menuAbierto ? "Cerrar menú" : "Abrir menú"}
-        className="absolute top-10 right-6 text-white hover:text-red-500 transition focus:outline-none z-50"
+        className="absolute top-7 right-6 text-white hover:text-red-500 transition focus:outline-none z-50"
       >
         {menuAbierto ? (
           <svg
@@ -75,7 +93,12 @@ export const DashboardPage: React.FC = () => {
             viewBox="0 0 24 24"
             stroke="currentColor"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         ) : (
           <svg
@@ -85,7 +108,12 @@ export const DashboardPage: React.FC = () => {
             viewBox="0 0 24 24"
             stroke="currentColor"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 6h16M4 12h16M4 18h16"
+            />
           </svg>
         )}
       </button>
@@ -98,7 +126,7 @@ export const DashboardPage: React.FC = () => {
         />
       )}
 
-      {/* ==== MENÚ LATERAL ==== */}
+      {/* ==== MENÚ LATERAL (NO MODIFICADO) ==== */}
       <div
         className={`fixed top-0 right-0 h-full w-64 bg-[#3a3f45] shadow-lg z-50 transform transition-transform duration-300 ease-in-out ${
           menuAbierto ? "translate-x-0" : "translate-x-full"
@@ -116,40 +144,31 @@ export const DashboardPage: React.FC = () => {
 
         <nav className="flex flex-col p-4 space-y-3">
           <Link
-            to="/dashboard"
-            className="text-white hover:bg-[#4a4f55] rounded-lg px-2 py-2 transition"
+            to="/profile"
+            className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
             onClick={toggleMenu}
           >
-            📺 Catálogo
+            👤 Perfil
           </Link>
           <Link
-            to="/favorites"
-            className="text-white hover:bg-[#4a4f55] rounded-lg p2-3 py-2 transition"
+            to="/about"
+            className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
             onClick={toggleMenu}
           >
-            ⭐ Favoritos
+            ℹ️ Sobre nosotros
+          </Link>
+          <Link
+            to="/"
+            className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
+            onClick={toggleMenu}
+          >
+            🚪 Cerrar sesión
           </Link>
         </nav>
       </div>
 
-      {/* ==== BOTONES CATÁLOGO Y FAVORITOS EN LA VISTA ==== */}
-      <div className="flex items-center gap-4 mt-6 ml-8">
-        <Link
-          to="/dashboard"
-          className="bg-[#3a3f45] hover:bg-[#4a4f55] text-white font-medium px-4 py-2 rounded-xl shadow-md transition"
-        >
-          📺 Catálogo
-        </Link>
-        <Link
-          to="/favorites"
-          className="bg-[#3a3f45] hover:bg-[#4a4f55] text-white font-medium px-4 py-2 rounded-xl shadow-md transition"
-        >
-          ⭐ Favoritos
-        </Link>
-      </div>
-
       {/* ==== CONTENIDO ==== */}
-      <main className="flex-grow px-6 py-10 mt-4">
+      <main className="flex-grow px-6 py-20">
         {loading ? (
           <p className="text-center text-gray-400 mt-10">Cargando videos...</p>
         ) : (
