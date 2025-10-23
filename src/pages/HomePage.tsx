@@ -37,7 +37,8 @@ export const HomePage: React.FC = () => {
 
      
 
-      <main className="flex flex-col items-center justify-center text-center flex-grow mt-40 px-4">
+      <main className="flex flex-col items-center justify-center text-center flex-grow mt-16 md:mt-24 lg:mt-28 px-4">
+
         <h2 className="text-3xl md:text-5xl font-bold mb-4 leading-tight">
           Las mejores <br /> Películas están aquí
         </h2>
