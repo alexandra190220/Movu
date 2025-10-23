@@ -92,101 +92,82 @@ export const EditProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#2B2E33] px-6">
-      <div className="bg-[#3B3E43] shadow-xl rounded-2xl p-8 w-full max-w-md">
-        <h1 className="text-3xl font-semibold text-center text-white mb-6">
-          Editar perfil
-        </h1>
+    <div className="bg-[#2b2f33] text-white px-4 pt-20 pb-10 min-h-[80vh] flex justify-center items-center">
+      <div className="bg-[#3a3f45] p-8 rounded-2xl shadow-lg w-full max-w-md">
+        <h2 className="text-3xl font-bold mb-6 text-center">Editar Perfil</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label htmlFor="firstName" className="block text-gray-300 mb-1">
-              Nombre
-            </label>
+            <label className="block text-sm mb-1">Nombre</label>
             <input
-              id="firstName"
               type="text"
               name="firstName"
               value={formData.firstName}
               onChange={handleChange}
-              className="w-full p-2 rounded-lg bg-[#2B2E33] text-white
-                 border border-gray-600
-                 focus:outline-none focus:border-[#E50914]
-                 hover:border-[#E50914] transition"
               required
+              placeholder="Nombre"
+              className="w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400
+                         focus:outline-none focus:ring-2 focus:ring-red-500 hover:ring-2 hover:ring-red-500 transition"
             />
           </div>
 
           <div>
-            <label htmlFor="lastName" className="block text-gray-300 mb-1">
-              Apellido
-            </label>
+            <label className="block text-sm mb-1">Apellido</label>
             <input
-              id="lastName"
               type="text"
               name="lastName"
               value={formData.lastName}
               onChange={handleChange}
-              className="w-full p-2 rounded-lg bg-[#2B2E33] text-white
-                 border border-gray-600
-                 focus:outline-none focus:border-[#E50914]
-                 hover:border-[#E50914] transition"
               required
+              placeholder="Apellido"
+              className="w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400
+                         focus:outline-none focus:ring-2 focus:ring-red-500 hover:ring-2 hover:ring-red-500 transition"
             />
           </div>
 
           <div>
-            <label htmlFor="age" className="block text-gray-300 mb-1">
-              Edad
-            </label>
+            <label className="block text-sm mb-1">Edad</label>
             <input
-              id="age"
               type="number"
               name="age"
               value={formData.age}
               onChange={handleChange}
-              className="w-full p-2 rounded-lg bg-[#2B2E33] text-white
-                 border border-gray-600
-                 focus:outline-none focus:border-[#E50914]
-                 hover:border-[#E50914] transition"
+              placeholder="Edad"
+              className="w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400
+                         focus:outline-none focus:ring-2 focus:ring-red-500 hover:ring-2 hover:ring-red-500 transition"
             />
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-gray-300 mb-1">
-              Correo electrónico
-            </label>
+            <label className="block text-sm mb-1">Correo electrónico</label>
             <input
-              id="email"
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full p-2 rounded-lg bg-[#2B2E33] text-white
-                 border border-gray-600
-                 focus:outline-none focus:border-[#E50914]
-                 hover:border-[#E50914] transition"
               required
+              placeholder="ejemplo@correo.com"
+              className="w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400
+                         focus:outline-none focus:ring-2 focus:ring-red-500 hover:ring-2 hover:ring-red-500 transition"
             />
           </div>
 
           <button
             type="submit"
             disabled={saving}
-            className="w-full bg-[#E50914] hover:bg-[#b0060f] text-white font-semibold py-2 px-4 rounded-lg transition"
+            className={`w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-md font-semibold transition ${
+              saving ? "opacity-70 cursor-not-allowed" : ""
+            }`}
           >
             {saving ? "Guardando..." : "Guardar cambios"}
           </button>
         </form>
 
-        <div className="mt-6 text-center">
-          <Link
-            to="/ProfilePage"
-            className="text-[#E50914] font-medium hover:underline"
-          >
+        <p className="text-gray-300 text-sm text-center mt-6">
+          <Link to="/ProfilePage" className="text-red-500 hover:underline font-medium">
             Volver al perfil
           </Link>
-        </div>
+        </p>
       </div>
     </div>
   );
