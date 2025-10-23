@@ -13,7 +13,12 @@ export const Navbar: React.FC<NavbarProps> = ({ buscarVideos }) => {
 
   const toggleMenu = () => setMenuAbierto(!menuAbierto);
 
-  const rutasConMenu = ["/dashboard", "/AboutPage", "/ProfilePage", "/FavoritosPage"];
+  const rutasConMenu = [
+    "/dashboard",
+    "/AboutPage",
+    "/ProfilePage",
+    "/FavoritosPage",
+  ];
   const mostrarOpciones = rutasConMenu.includes(location.pathname);
   const mostrarLogin = location.pathname === "/";
 
@@ -75,14 +80,14 @@ export const Navbar: React.FC<NavbarProps> = ({ buscarVideos }) => {
               <input
                 type="text"
                 placeholder="Buscar..."
-                className="px-3 py-1 rounded-full text-black w-48 focus:outline-none"
+                className="px-3 py-1 rounded-full w-48 text-black border border-white bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-400"
                 value={termino}
                 onChange={(e) => setTermino(e.target.value)}
                 onKeyDown={handleKeyPress}
               />
               <button
                 onClick={handleBuscar}
-                className="absolute right-0 top-0 mt-1 mr-1 text-red-500 hover:text-red-600"
+                className="absolute right-1 top-1 text-red-500 hover:text-red-600"
               >
                 <Search className="w-5 h-5" />
               </button>
@@ -103,7 +108,12 @@ export const Navbar: React.FC<NavbarProps> = ({ buscarVideos }) => {
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             ) : (
               <svg
@@ -113,7 +123,12 @@ export const Navbar: React.FC<NavbarProps> = ({ buscarVideos }) => {
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
               </svg>
             )}
           </button>
@@ -121,7 +136,12 @@ export const Navbar: React.FC<NavbarProps> = ({ buscarVideos }) => {
       )}
 
       {/* Overlay */}
-      {menuAbierto && <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40" onClick={toggleMenu} />}
+      {menuAbierto && (
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+          onClick={toggleMenu}
+        />
+      )}
 
       {/* Menú lateral */}
       <div
@@ -131,18 +151,33 @@ export const Navbar: React.FC<NavbarProps> = ({ buscarVideos }) => {
       >
         <div className="flex justify-between items-center p-4 border-b border-gray-700">
           <h2 className="text-lg font-semibold text-white">Menú</h2>
-          <button onClick={toggleMenu} className="text-gray-300 hover:text-red-500 transition">
+          <button
+            onClick={toggleMenu}
+            className="text-gray-300 hover:text-red-500 transition"
+          >
             ✖
           </button>
         </div>
         <nav className="flex flex-col p-4 space-y-3">
-          <Link to="/ProfilePage" className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition" onClick={toggleMenu}>
+          <Link
+            to="/ProfilePage"
+            className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
+            onClick={toggleMenu}
+          >
             👤 Perfil
           </Link>
-          <Link to="/AboutPage" className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition" onClick={toggleMenu}>
+          <Link
+            to="/AboutPage"
+            className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
+            onClick={toggleMenu}
+          >
             ℹ️ Sobre nosotros
           </Link>
-          <Link to="/" className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition" onClick={toggleMenu}>
+          <Link
+            to="/"
+            className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
+            onClick={toggleMenu}
+          >
             🚪 Cerrar sesión
           </Link>
         </nav>
