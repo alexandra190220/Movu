@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HomePage } from "../pages/HomePage";
 import { AboutPage } from "../pages/AboutPage";
 import { LoginPage } from "../pages/LoginPage";
@@ -11,40 +11,25 @@ import { ProfilePage } from "../pages/ProfilePage";
 import { EditProfilePage } from "../pages/EditProfilePage";
 import ConfirResetPage from "../pages/ConfirResetPage";
 
-/**
- * Main routing configuration for the Movu application.
- * Includes both public pages (login, register, reset) and internal pages that use the main layout.
- *
- * @component
- * @returns {JSX.Element} The application's route structure with layout and nested routes.
- */
 const RoutesMovu = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* 🔓 Routes without layout (public pages) */}
+        {/* 🔓 Páginas públicas (sin layout) */}
+        <Route path="/" element={<HomePage />} />
         <Route path="/loginPage" element={<LoginPage />} />
         <Route path="/registerPage" element={<RegisterPage />} />
         <Route path="/resetPage" element={<ResetPage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/confirResetPage" element={<ConfirResetPage />} />
 
-        {/* 🔒 Routes with layout (navbar and footer included) */}
-        <Route
-          path="/*"
-          element={
-            <LayoutMovu>
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/aboutPage" element={<AboutPage />} />
-                <Route path="/SiteMapPage" element={<SiteMapPage />} />
-                <Route path="/dashboard" element={<DashboardPage />} />
-                <Route path="/ProfilePage" element={<ProfilePage />} />
-                <Route path="/EditProfilePage" element={<EditProfilePage />} />
-              </Routes>
-            </LayoutMovu>
-          }
-        />
+        {/* 🔒 Páginas internas con Layout */}
+        <Route element={<LayoutMovu />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/aboutPage" element={<AboutPage />} />
+          <Route path="/ProfilePage" element={<ProfilePage />} />
+          <Route path="/EditProfilePage" element={<EditProfilePage />} />
+          <Route path="/SiteMapPage" element={<SiteMapPage />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

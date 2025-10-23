@@ -1,34 +1,17 @@
 import React from "react";
 import { Navbar } from "./Navbar";
-import { Link } from "react-router";
+import { Link, Outlet } from "react-router-dom";
 
-/**
- * Main layout component for the Movu application.
- * Wraps internal pages with the Navbar and basic layout structure.
- *
- * @component
- * @param {Object} props - Component properties.
- * @param {React.ReactNode} props.children - The child components to render inside the layout.
- * @returns {JSX.Element} The main layout with a header, content area, and footer.
- */
-interface LayoutProps {
-  children: React.ReactNode;
-}
-
-const LayoutMovu: React.FC<LayoutProps> = ({ children }) => {
+const LayoutMovu: React.FC = () => {
   return (
     <div className="layout-container">
       <Navbar />
-      <main style={{ padding: "1rem", minHeight: "80vh" }}>{children}</main>
-      <footer
-        style={{
-          textAlign: "center",
-          padding: "1rem",
-          background: "#111",
-          color: "#aaa",
-        }}
-      >
-        <p className="text-gray-300 text-sm text-center mt-6">
+      {/* 🔹 Espacio entre el navbar y el contenido */}
+      <main className="pt-28 px-4 min-h-[80vh]">
+        <Outlet />
+      </main>
+      <footer className="text-center p-4 bg-[#111] text-gray-400 text-sm">
+        <p className="mb-2">
           <Link
             to="/SiteMapPage"
             className="text-red-500 hover:underline font-medium"
