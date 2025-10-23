@@ -227,33 +227,50 @@ export const ProfilePage: React.FC = () => {
           </div>
 
           {!isEditing ? (
-            <div className="space-y-4 text-center">
-              <div>
-                <p className="text-gray-400 text-sm">Nombre completo</p>
-                <p className="text-lg font-medium">
-                  {user.firstName && user.lastName
-                    ? `${user.firstName} ${user.lastName}`
-                    : ""}
-                </p>
-              </div>
-              <div>
-                <p className="text-gray-400 text-sm">Correo electrónico</p>
-                <p className="text-lg font-medium">{user.email ?? ""}</p>
-              </div>
-              <div>
-                <p className="text-gray-400 text-sm">Edad</p>
-                <p className="text-lg font-medium">
-                  {user.age ? `${user.age} años` : ""}
-                </p>
-              </div>
-              {user.createdAt && (
-                <div>
-                  <p className="text-gray-400 text-sm">Cuenta creada</p>
-                  <p className="text-lg font-medium">
-                    {new Date(user.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
-              )}
+            <div className="space-y-4">
+              <input
+                name="firstName"
+                value={formData.firstName || ""}
+                onChange={handleEditChange}
+                placeholder="Nombre"
+                className="w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400
+                 focus:outline-none focus:ring-2 focus:ring-red-500 hover:border-red-500 transition"
+              />
+              <input
+                name="lastName"
+                value={formData.lastName || ""}
+                onChange={handleEditChange}
+                placeholder="Apellido"
+                className="w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400
+                 focus:outline-none focus:ring-2 focus:ring-red-500 hover:border-red-500 transition"
+              />
+              <input
+                name="age"
+                type="number"
+                value={formData.age || ""}
+                onChange={handleEditChange}
+                placeholder="Edad"
+                className="w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400
+                 focus:outline-none focus:ring-2 focus:ring-red-500 hover:border-red-500 transition"
+              />
+              <input
+                name="email"
+                type="email"
+                value={formData.email || ""}
+                onChange={handleEditChange}
+                placeholder="Correo electrónico"
+                className="w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400
+                 focus:outline-none focus:ring-2 focus:ring-red-500 hover:border-red-500 transition"
+              />
+              <input
+                name="password"
+                type="password"
+                value={formData.password || ""}
+                onChange={handleEditChange}
+                placeholder="Nueva contraseña (opcional)"
+                className="w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400
+                 focus:outline-none focus:ring-2 focus:ring-red-500 hover:border-red-500 transition"
+              />
             </div>
           ) : (
             <div className="space-y-4">
