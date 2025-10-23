@@ -15,7 +15,7 @@ export const DashboardPage: React.FC = () => {
   const [query, setQuery] = useState("");
 
   // ⚙️ URL del backend — usa la de Render o localhost según el entorno
-  const API_URL = "https://movu-backend.onrender.com/api/v1/pexels";
+  const API_URL = "https://movu-back-4mcj.onrender.com/api/v1/pexels";
 
   const toggleMenu = () => setMenuAbierto(!menuAbierto);
 
