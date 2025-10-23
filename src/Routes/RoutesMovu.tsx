@@ -15,15 +15,13 @@ const RoutesMovu = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* 🔓 Páginas públicas (sin layout) */}
-        <Route path="/" element={<HomePage />} />
-        <Route path="/loginPage" element={<LoginPage />} />
-        <Route path="/registerPage" element={<RegisterPage />} />
-        <Route path="/resetPage" element={<ResetPage />} />
-        <Route path="/confirResetPage" element={<ConfirResetPage />} />
-
-        {/* 🔒 Páginas internas con Layout */}
+        {/* ✅ Todas las rutas dentro del layout */}
         <Route element={<LayoutMovu />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/loginPage" element={<LoginPage />} />
+          <Route path="/registerPage" element={<RegisterPage />} />
+          <Route path="/resetPage" element={<ResetPage />} />
+          <Route path="/confirResetPage" element={<ConfirResetPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/aboutPage" element={<AboutPage />} />
           <Route path="/ProfilePage" element={<ProfilePage />} />
