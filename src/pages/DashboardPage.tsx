@@ -1,46 +1,67 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Navbar } from "../components/Navbar";
 import { Link } from "react-router-dom";
 
 /**
  * @file DashboardPage.tsx
- * @description The main dashboard page of the Movu application. 
- * Provides navigation through a responsive hamburger menu and 
- * displays the main user interface options such as profile, featured movies, and settings.
- * 
- * @component
- * @example
- * return (
- *   <DashboardPage />
- * );
+ * @description Main dashboard page for Movu. Displays navigation, search,
+ * and Pexels videos fetched through the backend API.
  */
 
-/**
- * DashboardPage Component
- * 
- * @function
- * @name DashboardPage
- * @description Renders the main dashboard page with navigation, 
- * an interactive side menu, and shortcut cards for quick access to user features.
- * 
- * @returns {JSX.Element} A styled dashboard page with navigation and quick links.
- */
 export const DashboardPage: React.FC = () => {
   const [menuAbierto, setMenuAbierto] = useState(false);
+  const [videos, setVideos] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState("");
 
-  /**
-   * @function toggleMenu
-   * @description Toggles the sidebar menu visibility state.
-   * @returns {void}
-   */
+  // ⚙️ URL del backend — usa la de Render o localhost según el entorno
+  const API_URL = "https://movu-backend.onrender.com/api/v1/pexels";
+
   const toggleMenu = () => setMenuAbierto(!menuAbierto);
+
+  /** 🔹 Cargar videos populares */
+  const loadPopularVideos = async () => {
+    try {
+      const res = await fetch(`${API_URL}/videos/popular`);
+      const data = await res.json();
+      setVideos(data.videos || []);
+    } catch (err) {
+      console.error("Error cargando videos populares:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /** 🔹 Buscar videos por palabra clave */
+  const searchVideos = async () => {
+    if (!query.trim()) {
+      loadPopularVideos();
+      return;
+    }
+    try {
+      setLoading(true);
+      const res = await fetch(
+        `${API_URL}/videos/search?query=${encodeURIComponent(query)}&per_page=6`
+      );
+      const data = await res.json();
+      setVideos(data.videos || []);
+    } catch (err) {
+      console.error("Error buscando videos:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadPopularVideos();
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#2b2f33] text-white flex flex-col relative">
       {/* ==== NAVBAR ==== */}
       <Navbar />
 
-      {/* ==== HAMBURGER MENU BUTTON ==== */}
+      {/* ==== BOTÓN MENÚ ==== */}
       <button
         onClick={toggleMenu}
         aria-label={menuAbierto ? "Cerrar menú" : "Abrir menú"}
@@ -53,8 +74,6 @@ export const DashboardPage: React.FC = () => {
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
-            role="img"
-            aria-hidden="true"
           >
             <path
               strokeLinecap="round"
@@ -70,8 +89,6 @@ export const DashboardPage: React.FC = () => {
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
-            role="img"
-            aria-hidden="true"
           >
             <path
               strokeLinecap="round"
@@ -83,28 +100,24 @@ export const DashboardPage: React.FC = () => {
         )}
       </button>
 
-      {/* ==== BACKGROUND OVERLAY WHEN MENU IS OPEN ==== */}
+      {/* ==== OVERLAY ==== */}
       {menuAbierto && (
         <div
           className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
           onClick={toggleMenu}
-          aria-hidden="true"
         />
       )}
 
-      {/* ==== SIDE MENU PANEL ==== */}
+      {/* ==== MENÚ LATERAL ==== */}
       <div
         className={`fixed top-0 right-0 h-full w-64 bg-[#3a3f45] shadow-lg z-50 transform transition-transform duration-300 ease-in-out ${
           menuAbierto ? "translate-x-0" : "translate-x-full"
         }`}
-        role="navigation"
-        aria-label="Menú lateral del panel"
       >
         <div className="flex justify-between items-center p-4 border-b border-gray-700">
           <h2 className="text-lg font-semibold text-white">Menú</h2>
           <button
             onClick={toggleMenu}
-            aria-label="Cerrar menú lateral"
             className="text-gray-300 hover:text-red-500 transition"
           >
             ✖
@@ -119,7 +132,6 @@ export const DashboardPage: React.FC = () => {
           >
             👤 Perfil
           </Link>
-
           <Link
             to="/aboutPage"
             className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
@@ -127,8 +139,6 @@ export const DashboardPage: React.FC = () => {
           >
             ℹ️ Sobre nosotros
           </Link>
-
-          {/* ==== LOGOUT (redirects to home) ==== */}
           <Link
             to="/"
             onClick={() => {
@@ -142,63 +152,46 @@ export const DashboardPage: React.FC = () => {
         </nav>
       </div>
 
-      {/* ==== MAIN CONTENT ==== */}
-      <main
-        className="flex-grow flex justify-center items-center px-4 py-12"
-        role="main"
-      >
-        <div className="bg-[#3a3f45] p-8 rounded-2xl shadow-lg w-full max-w-3xl text-center">
-          <h2 className="text-3xl font-bold mb-6">Bienvenido a Movu 🎬</h2>
+      {/* ==== CONTENIDO PRINCIPAL ==== */}
+      <main className="flex-grow px-6 py-10">
+        <h2 className="text-3xl font-bold mb-6 text-center">🎬 Explora videos de Pexels</h2>
 
-          <>
-            <p className="text-gray-300 mb-8 max-w-lg mx-auto">
-              Disfruta de una experiencia personalizada con las mejores
-              películas y series. Administra tu perfil, descubre nuevo contenido
-              y mantente al día con los últimos estrenos del cine.
-            </p>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              <Card icon="🎬" text="Películas destacadas" />
-              <Card icon="⭐" text="Recomendaciones" />
-              <Card icon="👤" text="Mi lista" />
-              <Card icon="⚙️" text="Configuración" />
-            </div>
-          </>
+        {/* Barra de búsqueda */}
+        <div className="flex justify-center gap-3 mb-8">
+          <input
+            type="text"
+            placeholder="Buscar videos..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="p-2 rounded-lg text-black w-72"
+          />
+          <button
+            onClick={searchVideos}
+            className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg font-medium"
+          >
+            Buscar
+          </button>
         </div>
+
+        {/* Lista de videos */}
+        {loading ? (
+          <p className="text-center text-gray-300">Cargando videos...</p>
+        ) : videos.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 justify-items-center">
+            {videos.map((video) => (
+              <video
+                key={video.id}
+                controls
+                className="rounded-xl shadow-md max-w-full"
+              >
+                <source src={video.video_files?.[0]?.link} type="video/mp4" />
+              </video>
+            ))}
+          </div>
+        ) : (
+          <p className="text-center text-gray-400">No se encontraron videos.</p>
+        )}
       </main>
     </div>
   );
 };
-
-/**
- * @interface CardProps
- * @description Props for the Card component.
- * @property {string} icon - The emoji or icon displayed at the top of the card.
- * @property {string} text - The descriptive text displayed below the icon.
- */
-interface CardProps {
-  icon: string;
-  text: string;
-}
-
-/**
- * Card Component
- * 
- * @function
- * @name Card
- * @description Displays a simple icon-based card used on the dashboard to highlight key features.
- * 
- * @param {CardProps} props - The component properties.
- * @returns {JSX.Element} A stylized card with an icon and descriptive text.
- */
-const Card: React.FC<CardProps> = ({ icon, text }) => (
-  <div
-    className="bg-gray-700 p-6 rounded-xl shadow-lg hover:scale-105 transition text-center border border-gray-600"
-    role="button"
-    tabIndex={0}
-    aria-label={text}
-  >
-    <div className="text-3xl mb-2">{icon}</div>
-    <p className="font-semibold">{text}</p>
-  </div>
-);
