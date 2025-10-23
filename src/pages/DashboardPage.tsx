@@ -154,7 +154,9 @@ export const DashboardPage: React.FC = () => {
 
       {/* ==== CONTENIDO PRINCIPAL ==== */}
       <main className="flex-grow px-6 py-10">
-        <h2 className="text-3xl font-bold mb-6 text-center">🎬 Explora videos de Pexels</h2>
+        <h2 className="text-3xl font-bold mb-6 text-center">
+          🎬 Explora videos de Pexels
+        </h2>
 
         {/* Barra de búsqueda */}
         <div className="flex justify-center gap-3 mb-8">
