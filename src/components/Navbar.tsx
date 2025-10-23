@@ -68,9 +68,9 @@ export const Navbar: React.FC<NavbarProps> = ({ buscarVideos }) => {
           {/* Favoritos */}
           <Link
             to="/FavoritosPage"
-            className="flex items-center gap-2 text-white font-medium hover:text-yellow-400 transition"
+            className="flex items-center gap-2 text-white font-medium hover:text-red-400 transition"
           >
-            <Heart className="w-5 h-5 text-yellow-400" />
+            <Heart className="w-5 h-5 text-red-400" />
             Favoritos
           </Link>
 
