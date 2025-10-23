@@ -109,7 +109,10 @@ export const EditProfilePage: React.FC = () => {
               name="firstName"
               value={formData.firstName}
               onChange={handleChange}
-              className="w-full p-2 rounded-lg bg-[#2B2E33] text-white focus:outline-none focus:ring-2 focus:ring-[#E50914]"
+              className="w-full p-2 rounded-lg bg-[#2B2E33] text-white
+                 border border-gray-600
+                 focus:outline-none focus:border-[#E50914]
+                 hover:border-[#E50914] transition"
               required
             />
           </div>
@@ -124,7 +127,10 @@ export const EditProfilePage: React.FC = () => {
               name="lastName"
               value={formData.lastName}
               onChange={handleChange}
-              className="w-full p-2 rounded-lg bg-[#2B2E33] text-white focus:outline-none focus:ring-2 focus:ring-[#E50914]"
+              className="w-full p-2 rounded-lg bg-[#2B2E33] text-white
+                 border border-gray-600
+                 focus:outline-none focus:border-[#E50914]
+                 hover:border-[#E50914] transition"
               required
             />
           </div>
@@ -139,7 +145,10 @@ export const EditProfilePage: React.FC = () => {
               name="age"
               value={formData.age}
               onChange={handleChange}
-              className="w-full p-2 rounded-lg bg-[#2B2E33] text-white focus:outline-none focus:ring-2 focus:ring-[#E50914]"
+              className="w-full p-2 rounded-lg bg-[#2B2E33] text-white
+                 border border-gray-600
+                 focus:outline-none focus:border-[#E50914]
+                 hover:border-[#E50914] transition"
             />
           </div>
 
@@ -153,7 +162,10 @@ export const EditProfilePage: React.FC = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full p-2 rounded-lg bg-[#2B2E33] text-white focus:outline-none focus:ring-2 focus:ring-[#E50914]"
+              className="w-full p-2 rounded-lg bg-[#2B2E33] text-white
+                 border border-gray-600
+                 focus:outline-none focus:border-[#E50914]
+                 hover:border-[#E50914] transition"
               required
             />
           </div>
