@@ -7,7 +7,7 @@ const LayoutMovu: React.FC = () => {
     <div className="layout-container">
       <Navbar />
       {/* 🔹 Espacio entre el navbar y el contenido */}
-      <main className="pt-28 px-4 min-h-[80vh]">
+      <main className="pt-22 px-4 min-h-[80vh]">
         <Outlet />
       </main>
       <footer className="text-center p-4 bg-[#111] text-gray-400 text-sm">
