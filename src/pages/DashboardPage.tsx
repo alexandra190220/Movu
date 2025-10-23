@@ -68,7 +68,9 @@ export const DashboardPage: React.FC = () => {
     setLoading(true);
     try {
       const res = await fetch(
-        `${API_URL}/videos/search?query=${encodeURIComponent(busqueda)}&per_page=10`
+        `${API_URL}/videos/search?query=${encodeURIComponent(
+          busqueda
+        )}&per_page=10`
       );
       const data = await res.json();
       setVideos({ Resultado: data.videos || [] }); // mostramos bajo categoría "Resultado"
@@ -91,18 +93,19 @@ export const DashboardPage: React.FC = () => {
 
       <main className="flex-grow px-6 pt-28 pb-10">
         {/* 🔹 Input de búsqueda visible */}
+        {/* 🔹 Input de búsqueda y botón */}
         <div className="mb-6 flex flex-col md:flex-row items-center gap-3">
           <input
             type="text"
             placeholder="Buscar video..."
-            className="w-full md:w-1/2 p-3 rounded-lg text-black text-lg"
+            className="w-full md:w-1/3 p-2 rounded-l-lg text-black text-base border-2 border-red-500 focus:outline-none focus:ring-2 focus:ring-red-400"
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
             onKeyDown={handleKeyPress}
           />
           <button
             onClick={buscarVideos}
-            className="px-5 py-3 bg-yellow-500 text-black rounded-lg font-semibold hover:bg-yellow-400 transition"
+            className="px-5 py-2 bg-red-500 text-white rounded-r-lg font-semibold hover:bg-red-600 transition"
           >
             Buscar
           </button>
