@@ -6,10 +6,11 @@ const LayoutMovu: React.FC = () => {
   return (
     <div className="layout-container">
       <Navbar />
-      {/* 🔹 Espacio entre el navbar y el contenido */}
-      <main className="pt-20 px-4 min-h-[80vh]">
+      {/* 🔹 Espaciado más pequeño en móvil y normal en pantallas grandes */}
+      <main className="pt-12 sm:pt-20 px-4 min-h-[80vh]">
         <Outlet />
       </main>
+
       <footer className="text-center p-4 bg-[#111] text-gray-400 text-sm">
         <p className="mb-2">
           <Link
