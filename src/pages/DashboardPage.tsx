@@ -1,44 +1,42 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Star } from "lucide-react";
 import { Navbar } from "../components/Navbar";
 
-/**
- * Catálogo con categorías tipo Netflix
- */
 export const DashboardPage: React.FC = () => {
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [videos, setVideos] = useState<{ [key: string]: any[] }>({});
   const [favoritos, setFavoritos] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const API_URL = "https://movu-back-4mcj.onrender.com/api/v1/pexels";
 
   const toggleMenu = () => setMenuAbierto(!menuAbierto);
 
-  /** Cargar favoritos guardados */
+  // 🔹 Cargar favoritos guardados
   useEffect(() => {
     const favs = localStorage.getItem("favoritos");
     if (favs) setFavoritos(JSON.parse(favs));
   }, []);
 
-  /** Guardar favoritos */
-  const guardarFavoritos = (nuevosFavs: any[]) => {
-    setFavoritos(nuevosFavs);
-    localStorage.setItem("favoritos", JSON.stringify(nuevosFavs));
+  const guardarFavoritos = (nuevos: any[]) => {
+    setFavoritos(nuevos);
+    localStorage.setItem("favoritos", JSON.stringify(nuevos));
   };
 
-  /** Agregar o quitar de favoritos */
   const toggleFavorito = (video: any) => {
     const existe = favoritos.some((f) => f.id === video.id);
-    const nuevosFavs = existe
+    const nuevos = existe
       ? favoritos.filter((f) => f.id !== video.id)
       : [...favoritos, video];
-    guardarFavoritos(nuevosFavs);
+    guardarFavoritos(nuevos);
   };
 
-  /** Cargar categorías (simulado con diferentes búsquedas en Pexels) */
+  // 🔹 Cargar categorías
   const loadVideosByCategory = async () => {
-    const categorias = ["Comedia", "Terror", "Acción"];
+    const categorias = ["Comedia", "Terror", "Acción", "Naturaleza", "Animales"];
     const resultado: any = {};
+    setLoading(true);
 
     for (const cat of categorias) {
       try {
@@ -53,6 +51,7 @@ export const DashboardPage: React.FC = () => {
     }
 
     setVideos(resultado);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -61,10 +60,10 @@ export const DashboardPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#2b2f33] text-white flex flex-col relative">
-      {/* NAVBAR */}
+      {/* ==== NAVBAR ORIGINAL ==== */}
       <Navbar />
 
-      {/* BOTÓN MENÚ */}
+      {/* ==== BOTÓN MENÚ ==== */}
       <button
         onClick={toggleMenu}
         aria-label={menuAbierto ? "Cerrar menú" : "Abrir menú"}
@@ -78,12 +77,7 @@ export const DashboardPage: React.FC = () => {
             viewBox="0 0 24 24"
             stroke="currentColor"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         ) : (
           <svg
@@ -93,17 +87,12 @@ export const DashboardPage: React.FC = () => {
             viewBox="0 0 24 24"
             stroke="currentColor"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6h16M4 12h16M4 18h16"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         )}
       </button>
 
-      {/* OVERLAY */}
+      {/* ==== OVERLAY ==== */}
       {menuAbierto && (
         <div
           className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
@@ -111,7 +100,7 @@ export const DashboardPage: React.FC = () => {
         />
       )}
 
-      {/* MENÚ LATERAL */}
+      {/* ==== MENÚ LATERAL ==== */}
       <div
         className={`fixed top-0 right-0 h-full w-64 bg-[#3a3f45] shadow-lg z-50 transform transition-transform duration-300 ease-in-out ${
           menuAbierto ? "translate-x-0" : "translate-x-full"
@@ -128,75 +117,82 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         <nav className="flex flex-col p-4 space-y-3">
-          <a
-            href="#catalogo"
+          <Link
+            to="/dashboard"
             className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
             onClick={toggleMenu}
           >
             📺 Catálogo
-          </a>
-          <a
-            href="#favoritos"
+          </Link>
+          <Link
+            to="/favorites"
             className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
             onClick={toggleMenu}
           >
             ⭐ Favoritos
-          </a>
+          </Link>
         </nav>
       </div>
 
-      {/* CONTENIDO PRINCIPAL */}
-      <main className="flex-grow px-8 py-8 space-y-10">
+      {/* ==== CONTENIDO ==== */}
+      <main className="flex-grow px-6 py-10">
         {/* Encabezado */}
-        <header className="flex items-center justify-between mb-6">
+        <header className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gray-400 rounded-md" /> {/* Logo */}
-            <h1 className="text-2xl font-semibold">Catálogo</h1>
+            <img
+              src="/logo-movu.png" // coloca aquí tu logo real
+              alt="Movu"
+              className="h-10 w-auto object-contain"
+            />
           </div>
-          <div className="flex gap-5 text-gray-300">
-            <span className="font-bold text-white">Catálogo</span>
+
+          <div className="flex gap-8 text-gray-300 text-lg">
+            <span className="font-bold text-white cursor-pointer">Catálogo</span>
             <span className="hover:text-white cursor-pointer">Favoritos</span>
           </div>
         </header>
 
-        {/* Secciones por categoría */}
-        {Object.entries(videos).map(([categoria, lista]) => (
-          <section key={categoria}>
-            <h2 className="text-xl font-semibold mb-4">{categoria}</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              {lista.map((video) => {
-                const esFavorito = favoritos.some((f) => f.id === video.id);
-                return (
-                  <div
-                    key={video.id}
-                    className="relative bg-[#1f1f1f] rounded-xl overflow-hidden aspect-video hover:scale-105 transition-transform shadow-md"
-                  >
-                    <button
-                      onClick={() => toggleFavorito(video)}
-                      className="absolute top-2 right-2 bg-black/40 hover:bg-black/60 rounded-full p-2 transition"
+        {/* Contenido principal */}
+        {loading ? (
+          <p className="text-center text-gray-400 mt-10">Cargando videos...</p>
+        ) : (
+          Object.entries(videos).map(([categoria, lista]) => (
+            <section key={categoria} className="mb-10">
+              <h2 className="text-xl font-semibold mb-4">{categoria}</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {lista.map((video) => {
+                  const esFavorito = favoritos.some((f) => f.id === video.id);
+                  return (
+                    <div
+                      key={video.id}
+                      className="relative bg-[#1f1f1f] rounded-xl overflow-hidden aspect-video hover:scale-105 transition-transform shadow-md"
                     >
-                      <Star
-                        className={`w-5 h-5 ${
-                          esFavorito
-                            ? "text-yellow-400 fill-yellow-400"
-                            : "text-white"
-                        }`}
-                      />
-                    </button>
+                      <button
+                        onClick={() => toggleFavorito(video)}
+                        className="absolute top-2 right-2 bg-black/40 hover:bg-black/70 rounded-full p-2 transition"
+                      >
+                        <Star
+                          className={`w-5 h-5 ${
+                            esFavorito
+                              ? "text-yellow-400 fill-yellow-400"
+                              : "text-white"
+                          }`}
+                        />
+                      </button>
 
-                    <video
-                      src={video.video_files?.[0]?.link}
-                      controls
-                      muted
-                      loop
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-        ))}
+                      <video
+                        src={video.video_files?.[0]?.link}
+                        controls
+                        muted
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          ))
+        )}
       </main>
     </div>
   );
