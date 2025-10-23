@@ -34,13 +34,7 @@ export const DashboardPage: React.FC = () => {
 
   // 🔹 Cargar categorías
   const loadVideosByCategory = async () => {
-    const categorias = [
-      "Comedia",
-      "Terror",
-      "Acción",
-      "Naturaleza",
-      "Animales",
-    ];
+    const categorias = ["Comedia", "Terror", "Acción", "Naturaleza", "Animales"];
     const resultado: any = {};
     setLoading(true);
 
@@ -83,12 +77,7 @@ export const DashboardPage: React.FC = () => {
             viewBox="0 0 24 24"
             stroke="currentColor"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         ) : (
           <svg
@@ -98,12 +87,7 @@ export const DashboardPage: React.FC = () => {
             viewBox="0 0 24 24"
             stroke="currentColor"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6h16M4 12h16M4 18h16"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         )}
       </button>
@@ -132,17 +116,17 @@ export const DashboardPage: React.FC = () => {
           </button>
         </div>
 
-        <nav className="flex flex-col pl-2 pr-1 py-4 space-y-2 text-left">
+        <nav className="flex flex-col p-4 space-y-3">
           <Link
             to="/dashboard"
-            className="text-white hover:bg-[#4a4f55] rounded-lg px-2 py-2 transition text-left"
+            className="text-white hover:bg-[#4a4f55] rounded-lg px-2 py-2 transition"
             onClick={toggleMenu}
           >
             📺 Catálogo
           </Link>
           <Link
             to="/favorites"
-            className="text-white hover:bg-[#4a4f55] rounded-lg px-2 py-2 transition text-left"
+            className="text-white hover:bg-[#4a4f55] rounded-lg p2-3 py-2 transition"
             onClick={toggleMenu}
           >
             ⭐ Favoritos
@@ -152,6 +136,8 @@ export const DashboardPage: React.FC = () => {
 
       {/* ==== CONTENIDO ==== */}
       <main className="flex-grow px-6 py-10">
+        
+
         {/* Contenido principal */}
         {loading ? (
           <p className="text-center text-gray-400 mt-10">Cargando videos...</p>
