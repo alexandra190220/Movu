@@ -2,20 +2,24 @@ import React, { useState, useEffect } from "react";
 import { Navbar } from "../components/Navbar";
 import { Link } from "react-router-dom";
 
-import { Heart } from "lucide-react";
+/**
+ * @file DashboardPage.tsx
+ * @description Main dashboard page for Movu. Displays navigation, search,
+ * and Pexels videos fetched through the backend API.
+ */
 
 export const DashboardPage: React.FC = () => {
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [videos, setVideos] = useState<any[]>([]);
-  const [favoritos, setFavoritos] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
 
+  // ⚙️ URL del backend — usa la de Render o localhost según el entorno
   const API_URL = "https://movu-back-4mcj.onrender.com/api/v1/pexels";
 
   const toggleMenu = () => setMenuAbierto(!menuAbierto);
 
-  /** Cargar videos populares */
+  /** 🔹 Cargar videos populares */
   const loadPopularVideos = async () => {
     try {
       const res = await fetch(`${API_URL}/videos/popular`);
@@ -28,7 +32,7 @@ export const DashboardPage: React.FC = () => {
     }
   };
 
-  /** Buscar videos por palabra clave */
+  /** 🔹 Buscar videos por palabra clave */
   const searchVideos = async () => {
     if (!query.trim()) {
       loadPopularVideos();
@@ -48,87 +52,111 @@ export const DashboardPage: React.FC = () => {
     }
   };
 
-  /** Añadir o quitar favoritos */
-  const toggleFavorito = (id: number) => {
-    setFavoritos((prev) =>
-      prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]
-    );
-  };
-
   useEffect(() => {
     loadPopularVideos();
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#1c1c1c] text-white flex flex-col relative">
-      {/* === NAVBAR === */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-700">
-        <div className="flex items-center gap-2">
-          <img src="/logo.png" alt="Movu" className="w-8 h-8" />
-          <h1 className="text-2xl font-bold">Movu</h1>
+    <div className="min-h-screen bg-[#2b2f33] text-white flex flex-col relative">
+      {/* ==== NAVBAR ==== */}
+      <Navbar />
+
+      {/* ==== BOTÓN MENÚ ==== */}
+      <button
+        onClick={toggleMenu}
+        aria-label={menuAbierto ? "Cerrar menú" : "Abrir menú"}
+        className="absolute top-10 right-6 text-white hover:text-red-500 transition focus:outline-none z-50"
+      >
+        {menuAbierto ? (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-7 h-7"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        ) : (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-7 h-7"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        )}
+      </button>
+
+      {/* ==== OVERLAY ==== */}
+      {menuAbierto && (
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+          onClick={toggleMenu}
+        />
+      )}
+
+      {/* ==== MENÚ LATERAL ==== */}
+      <div
+        className={`fixed top-0 right-0 h-full w-64 bg-[#3a3f45] shadow-lg z-50 transform transition-transform duration-300 ease-in-out ${
+          menuAbierto ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="flex justify-between items-center p-4 border-b border-gray-700">
+          <h2 className="text-lg font-semibold text-white">Menú</h2>
+          <button
+            onClick={toggleMenu}
+            className="text-gray-300 hover:text-red-500 transition"
+          >
+            ✖
+          </button>
         </div>
 
-        <nav className="hidden sm:flex gap-6">
+        <nav className="flex flex-col p-4 space-y-3">
           <Link
-            to="/dashboard"
-            className="text-gray-300 hover:text-white font-medium"
+            to="/ProfilePage"
+            className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
+            onClick={toggleMenu}
           >
-            Catálogo
+            👤 Perfil
           </Link>
           <Link
-            to="/favoritos"
-            className="text-gray-300 hover:text-white font-medium"
+            to="/aboutPage"
+            className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
+            onClick={toggleMenu}
           >
-            Favoritos
+            ℹ️ Sobre nosotros
+          </Link>
+          <Link
+            to="/"
+            onClick={() => {
+              localStorage.removeItem("token");
+              toggleMenu();
+            }}
+            className="text-left text-white hover:bg-red-600 rounded-lg px-3 py-2 transition"
+          >
+            🚪 Cerrar sesión
           </Link>
         </nav>
-
-        {/* Menú hamburguesa */}
-        <button
-          onClick={toggleMenu}
-          aria-label={menuAbierto ? "Cerrar menú" : "Abrir menú"}
-          className="sm:hidden text-white hover:text-red-500 transition focus:outline-none"
-        >
-          {menuAbierto ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-7 h-7"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          ) : (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-7 h-7"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          )}
-        </button>
       </div>
 
-      {/* === BARRA DE BÚSQUEDA === */}
-      <main className="flex-grow px-6 py-8">
-        <h2 className="text-3xl font-bold mb-6 text-center">
-          🎬 Explora videos de Pexels
-        </h2>
+      {/* ==== CONTENIDO PRINCIPAL ==== */}
+      <main className="flex-grow px-6 py-10">
+        <h2 className="text-3xl font-bold mb-6 text-center">🎬 Explora videos de Pexels</h2>
 
+        {/* Barra de búsqueda */}
         <div className="flex justify-center gap-3 mb-8">
           <input
             type="text"
@@ -145,42 +173,19 @@ export const DashboardPage: React.FC = () => {
           </button>
         </div>
 
-        {/* === GRID DE VIDEOS === */}
+        {/* Lista de videos */}
         {loading ? (
-          <p className="text-center text-gray-400">Cargando videos...</p>
+          <p className="text-center text-gray-300">Cargando videos...</p>
         ) : videos.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 justify-items-center">
             {videos.map((video) => (
-              <div
+              <video
                 key={video.id}
-                className="relative group bg-[#2b2f33] rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300"
+                controls
+                className="rounded-xl shadow-md max-w-full"
               >
-                <video
-                  controls
-                  className="w-full h-48 object-cover rounded-t-xl"
-                >
-                  <source src={video.video_files?.[0]?.link} type="video/mp4" />
-                </video>
-
-                {/* ❤️ BOTÓN FAVORITO */}
-                <button
-                  onClick={() => toggleFavorito(video.id)}
-                  className="absolute top-2 right-2 bg-black/40 rounded-full p-2 hover:bg-black/60 transition"
-                >
-                  <Heart
-                    className={`w-5 h-5 ${
-                      favoritos.includes(video.id)
-                        ? "text-red-500 fill-red-500"
-                        : "text-white"
-                    }`}
-                  />
-                </button>
-
-                {/* Título */}
-                <div className="p-2 text-sm text-center font-medium text-gray-200 truncate">
-                  {video.user?.name || "Autor desconocido"}
-                </div>
-              </div>
+                <source src={video.video_files?.[0]?.link} type="video/mp4" />
+              </video>
             ))}
           </div>
         ) : (
