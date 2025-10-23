@@ -1,31 +1,35 @@
 import React, { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Film, Star, Search } from "lucide-react";
 
-export const Navbar: React.FC = () => {
+interface NavbarProps {
+  buscarVideos?: (termino: string) => void;
+}
+
+export const Navbar: React.FC<NavbarProps> = ({ buscarVideos }) => {
   const [menuAbierto, setMenuAbierto] = useState(false);
-  const [busqueda, setBusqueda] = useState("");
+  const [termino, setTermino] = useState(""); // input de búsqueda
   const location = useLocation();
-  const navigate = useNavigate();
 
   const toggleMenu = () => setMenuAbierto(!menuAbierto);
 
-  const abrirBusqueda = () => {
-    if (!busqueda.trim()) return;
-    if (location.pathname !== "/dashboard") navigate("/dashboard");
-    // Aquí puedes pasar el término de búsqueda a Dashboard via Context o prop
-  };
-
-  // 🔹 Rutas donde se muestran Catálogo, Favoritos y Menú
   const rutasConMenu = ["/dashboard", "/AboutPage", "/ProfilePage", "/FavoritosPage"];
   const mostrarOpciones = rutasConMenu.includes(location.pathname);
-
-  // 🔹 Mostrar botón "Iniciar sesión" solo en HomePage
   const mostrarLogin = location.pathname === "/";
+
+  const handleBuscar = () => {
+    if (buscarVideos && termino.trim()) {
+      buscarVideos(termino);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") handleBuscar();
+  };
 
   return (
     <nav className="fixed top-0 left-0 w-full bg-[#2b2f33] flex items-center justify-between px-6 py-3 shadow-md z-50">
-      {/* ==== LOGO ==== */}
+      {/* Logo */}
       <Link to="/" className="flex items-center">
         <img
           src="/logo.png"
@@ -34,25 +38,7 @@ export const Navbar: React.FC = () => {
         />
       </Link>
 
-      {/* ==== INPUT DE BÚSQUEDA + LUPA SOLO EN DASHBOARD ==== */}
-      {location.pathname === "/dashboard" && (
-        <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-2">
-          <input
-            type="text"
-            placeholder="Buscar..."
-            className="w-40 p-1 rounded-lg text-black text-sm border-2 border-red-500 focus:outline-none focus:ring-2 focus:ring-red-400"
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && abrirBusqueda()}
-          />
-          <Search
-            className="w-5 h-5 text-white cursor-pointer"
-            onClick={abrirBusqueda}
-          />
-        </div>
-      )}
-
-      {/* ==== BOTÓN INICIAR SESIÓN SOLO EN HOME ==== */}
+      {/* Botón Iniciar sesión */}
       {mostrarLogin && (
         <Link
           to="/loginPage"
@@ -62,9 +48,10 @@ export const Navbar: React.FC = () => {
         </Link>
       )}
 
-      {/* ==== OPCIONES SOLO EN CIERTAS RUTAS ==== */}
+      {/* Opciones de menú */}
       {mostrarOpciones && (
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4">
+          {/* Catálogo */}
           <Link
             to="/dashboard"
             className="flex items-center gap-2 text-white font-medium hover:text-blue-400 transition"
@@ -73,6 +60,7 @@ export const Navbar: React.FC = () => {
             Catálogo
           </Link>
 
+          {/* Favoritos */}
           <Link
             to="/FavoritosPage"
             className="flex items-center gap-2 text-white font-medium hover:text-yellow-400 transition"
@@ -81,7 +69,27 @@ export const Navbar: React.FC = () => {
             Favoritos
           </Link>
 
-          {/* ==== BOTÓN MENÚ HAMBURGUESA ==== */}
+          {/* 🔹 Búsqueda (solo en Dashboard) */}
+          {location.pathname === "/dashboard" && (
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Buscar..."
+                className="px-3 py-1 rounded-full text-black w-48 focus:outline-none"
+                value={termino}
+                onChange={(e) => setTermino(e.target.value)}
+                onKeyDown={handleKeyPress}
+              />
+              <button
+                onClick={handleBuscar}
+                className="absolute right-0 top-0 mt-1 mr-1 text-red-500 hover:text-red-600"
+              >
+                <Search className="w-5 h-5" />
+              </button>
+            </div>
+          )}
+
+          {/* Menú hamburguesa */}
           <button
             onClick={toggleMenu}
             aria-label={menuAbierto ? "Cerrar menú" : "Abrir menú"}
@@ -95,12 +103,7 @@ export const Navbar: React.FC = () => {
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             ) : (
               <svg
@@ -110,27 +113,17 @@ export const Navbar: React.FC = () => {
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             )}
           </button>
         </div>
       )}
 
-      {/* ==== OVERLAY ==== */}
-      {menuAbierto && (
-        <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
-          onClick={toggleMenu}
-        />
-      )}
+      {/* Overlay */}
+      {menuAbierto && <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40" onClick={toggleMenu} />}
 
-      {/* ==== MENÚ LATERAL ==== */}
+      {/* Menú lateral */}
       <div
         className={`fixed top-0 right-0 h-full w-64 bg-[#3a3f45] shadow-lg z-50 transform transition-transform duration-300 ease-in-out ${
           menuAbierto ? "translate-x-0" : "translate-x-full"
@@ -138,34 +131,18 @@ export const Navbar: React.FC = () => {
       >
         <div className="flex justify-between items-center p-4 border-b border-gray-700">
           <h2 className="text-lg font-semibold text-white">Menú</h2>
-          <button
-            onClick={toggleMenu}
-            className="text-gray-300 hover:text-red-500 transition"
-          >
+          <button onClick={toggleMenu} className="text-gray-300 hover:text-red-500 transition">
             ✖
           </button>
         </div>
-
         <nav className="flex flex-col p-4 space-y-3">
-          <Link
-            to="/ProfilePage"
-            className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
-            onClick={toggleMenu}
-          >
+          <Link to="/ProfilePage" className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition" onClick={toggleMenu}>
             👤 Perfil
           </Link>
-          <Link
-            to="/AboutPage"
-            className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
-            onClick={toggleMenu}
-          >
+          <Link to="/AboutPage" className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition" onClick={toggleMenu}>
             ℹ️ Sobre nosotros
           </Link>
-          <Link
-            to="/"
-            className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
-            onClick={toggleMenu}
-          >
+          <Link to="/" className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition" onClick={toggleMenu}>
             🚪 Cerrar sesión
           </Link>
         </nav>

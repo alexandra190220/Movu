@@ -7,7 +7,6 @@ export const DashboardPage: React.FC = () => {
   const [favoritos, setFavoritos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [animando, setAnimando] = useState<string | null>(null);
-  const [busqueda, setBusqueda] = useState<string>("");
 
   const API_URL = "https://movu-back-4mcj.onrender.com/api/v1/pexels";
 
@@ -36,7 +35,7 @@ export const DashboardPage: React.FC = () => {
     }
   };
 
-  // Cargar videos por categoría
+  // Cargar videos por categoría inicial
   const loadVideosByCategory = async () => {
     const categorias = ["Terror", "Acción", "Naturaleza", "Animales"];
     const resultado: any = {};
@@ -62,55 +61,28 @@ export const DashboardPage: React.FC = () => {
     loadVideosByCategory();
   }, []);
 
-  // 🔹 Buscar videos desde backend
-  const buscarVideos = async () => {
-    if (!busqueda.trim()) return;
+  // 🔹 Función que recibirá la búsqueda desde Navbar
+  const buscarVideos = async (termino: string) => {
+    if (!termino.trim()) return;
     setLoading(true);
     try {
       const res = await fetch(
-        `${API_URL}/videos/search?query=${encodeURIComponent(
-          busqueda
-        )}&per_page=10`
+        `${API_URL}/videos/search?query=${encodeURIComponent(termino)}&per_page=10`
       );
       const data = await res.json();
-      setVideos({ Resultado: data.videos || [] }); // mostramos bajo categoría "Resultado"
+      setVideos({ Resultado: data.videos || [] });
     } catch (err) {
       console.error(err);
     }
     setLoading(false);
   };
 
-  // Permitir buscar con Enter
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      buscarVideos();
-    }
-  };
-
   return (
     <div className="min-h-screen bg-[#2b2f33] text-white flex flex-col relative">
-      <Navbar />
+      {/* Le pasamos buscarVideos al Navbar para que la lupa funcione */}
+      <Navbar buscarVideos={buscarVideos} />
 
       <main className="flex-grow px-6 pt-28 pb-10">
-        {/* 🔹 Input de búsqueda visible */}
-        {/* 🔹 Input de búsqueda y botón */}
-        <div className="mb-6 flex flex-col md:flex-row items-center gap-3">
-          <input
-            type="text"
-            placeholder="Buscar video..."
-            className="w-full md:w-1/3 p-2 rounded-l-lg text-black text-base border-2 border-red-500 focus:outline-none focus:ring-2 focus:ring-red-400"
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-            onKeyDown={handleKeyPress}
-          />
-          <button
-            onClick={buscarVideos}
-            className="px-5 py-2 bg-red-500 text-white rounded-r-lg font-semibold hover:bg-red-600 transition"
-          >
-            Buscar
-          </button>
-        </div>
-
         {loading ? (
           <p className="text-center text-gray-400 mt-10">Cargando videos...</p>
         ) : (
