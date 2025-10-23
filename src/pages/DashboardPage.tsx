@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Star, Heart } from "lucide-react";
+import { Heart } from "lucide-react";
 import { Navbar } from "../components/Navbar";
 
 export const DashboardPage: React.FC = () => {
