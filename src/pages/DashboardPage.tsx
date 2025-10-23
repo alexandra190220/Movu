@@ -6,10 +6,11 @@ export const DashboardPage: React.FC = () => {
   const [videos, setVideos] = useState<{ [key: string]: any[] }>({});
   const [favoritos, setFavoritos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [animando, setAnimando] = useState<string | null>(null);
 
   const API_URL = "https://movu-back-4mcj.onrender.com/api/v1/pexels";
 
-  // 🔹 Cargar favoritos guardados al iniciar
+  // 🔹 Cargar favoritos al iniciar
   useEffect(() => {
     const favs = localStorage.getItem("favoritos");
     if (favs) setFavoritos(JSON.parse(favs));
@@ -25,7 +26,14 @@ export const DashboardPage: React.FC = () => {
     const nuevos = existe
       ? favoritos.filter((f) => f.id !== video.id)
       : [...favoritos, video];
+
     guardarFavoritos(nuevos);
+
+    // 🔹 Animación solo si agregamos
+    if (!existe) {
+      setAnimando(video.id);
+      setTimeout(() => setAnimando(null), 300); // duración del latido
+    }
   };
 
   // 🔹 Cargar videos por categoría
@@ -68,14 +76,19 @@ export const DashboardPage: React.FC = () => {
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 {lista.map((video) => {
                   const esFavorito = favoritos.some((f) => f.id === video.id);
+                  const latido = animando === video.id;
+
                   return (
                     <div
                       key={video.id}
                       className="relative bg-[#1f1f1f] rounded-xl overflow-hidden aspect-video hover:scale-105 transition-transform shadow-md"
                     >
+                      {/* Botón favorito */}
                       <button
                         onClick={() => toggleFavorito(video)}
-                        className="absolute top-2 right-2 p-2 transition rounded-full bg-black/40 hover:bg-black/70"
+                        className={`absolute top-2 right-2 z-20 p-2 rounded-full bg-black/40 hover:bg-black/70 transition-transform ${
+                          latido ? "animate-pulse scale-125" : ""
+                        }`}
                       >
                         {esFavorito ? (
                           <Heart className="w-5 h-5 text-red-500 fill-red-500" />
@@ -84,6 +97,7 @@ export const DashboardPage: React.FC = () => {
                         )}
                       </button>
 
+                      {/* Video */}
                       <video
                         src={video.video_files?.[0]?.link}
                         controls

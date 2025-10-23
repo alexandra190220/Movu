@@ -9,7 +9,7 @@ export const Navbar: React.FC = () => {
   const toggleMenu = () => setMenuAbierto(!menuAbierto);
 
   // 🔹 Rutas donde se muestran Catálogo, Favoritos y Menú
-  const rutasConMenu = ["/dashboard", "/AboutPage", "/ProfilePage"];
+  const rutasConMenu = ["/dashboard", "/AboutPage", "/ProfilePage", "/FavoritosPage"];
   const mostrarOpciones = rutasConMenu.includes(location.pathname);
 
   // 🔹 Mostrar botón "Iniciar sesión" solo en HomePage
