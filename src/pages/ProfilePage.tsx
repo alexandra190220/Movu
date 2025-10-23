@@ -214,7 +214,7 @@ export const ProfilePage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#2B2E33] text-white">
-      <div className="flex flex-col items-center justify-center flex-grow mt-24 sm:mt-20 px-6">
+      <div className="flex flex-col items-center justify-center flex-grow mt-24 sm:mt-20 px-6 pb-20">
         <div className="bg-[#3B3E43] shadow-lg rounded-2xl p-8 w-full max-w-md">
           <div className="flex flex-col items-center mb-6">
             <div className="bg-[#E50914]/20 p-4 rounded-full mb-3">
