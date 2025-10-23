@@ -1,12 +1,20 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Film, Star } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Film, Star, Search } from "lucide-react";
 
 export const Navbar: React.FC = () => {
   const [menuAbierto, setMenuAbierto] = useState(false);
+  const [busqueda, setBusqueda] = useState("");
   const location = useLocation();
+  const navigate = useNavigate();
 
   const toggleMenu = () => setMenuAbierto(!menuAbierto);
+
+  const abrirBusqueda = () => {
+    if (!busqueda.trim()) return;
+    if (location.pathname !== "/dashboard") navigate("/dashboard");
+    // Aquí puedes pasar el término de búsqueda a Dashboard via Context o prop
+  };
 
   // 🔹 Rutas donde se muestran Catálogo, Favoritos y Menú
   const rutasConMenu = ["/dashboard", "/AboutPage", "/ProfilePage", "/FavoritosPage"];
@@ -16,19 +24,33 @@ export const Navbar: React.FC = () => {
   const mostrarLogin = location.pathname === "/";
 
   return (
-    <nav
-     className={`fixed top-0 left-0 w-full bg-[#2b2f33] flex items-center justify-between px-6 py-3 shadow-md z-50`}
-
-    >
+    <nav className="fixed top-0 left-0 w-full bg-[#2b2f33] flex items-center justify-between px-6 py-3 shadow-md z-50">
       {/* ==== LOGO ==== */}
       <Link to="/" className="flex items-center">
         <img
           src="/logo.png"
           alt="Movu Logo"
           className="h-16 md:h-20 w-auto object-contain drop-shadow-lg transition-all duration-300"
-
         />
       </Link>
+
+      {/* ==== INPUT DE BÚSQUEDA + LUPA SOLO EN DASHBOARD ==== */}
+      {location.pathname === "/dashboard" && (
+        <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-2">
+          <input
+            type="text"
+            placeholder="Buscar..."
+            className="w-40 p-1 rounded-lg text-black text-sm border-2 border-red-500 focus:outline-none focus:ring-2 focus:ring-red-400"
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && abrirBusqueda()}
+          />
+          <Search
+            className="w-5 h-5 text-white cursor-pointer"
+            onClick={abrirBusqueda}
+          />
+        </div>
+      )}
 
       {/* ==== BOTÓN INICIAR SESIÓN SOLO EN HOME ==== */}
       {mostrarLogin && (
