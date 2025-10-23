@@ -34,14 +34,20 @@ export const DashboardPage: React.FC = () => {
 
   // 🔹 Cargar categorías
   const loadVideosByCategory = async () => {
-    const categorias = ["Comedia", "Terror", "Acción", "Naturaleza", "Animales"];
+    const categorias = [
+      "Comedia",
+      "Terror",
+      "Acción",
+      "Naturaleza",
+      "Animales",
+    ];
     const resultado: any = {};
     setLoading(true);
 
     for (const cat of categorias) {
       try {
         const res = await fetch(
-          `${API_URL}/videos/search?query=${encodeURIComponent(cat)}&per_page=6`
+          `${API_URL}/videos/search?query=${encodeURIComponent(cat)}&per_page=4`
         );
         const data = await res.json();
         resultado[cat] = data.videos || [];
@@ -77,7 +83,12 @@ export const DashboardPage: React.FC = () => {
             viewBox="0 0 24 24"
             stroke="currentColor"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         ) : (
           <svg
@@ -87,7 +98,12 @@ export const DashboardPage: React.FC = () => {
             viewBox="0 0 24 24"
             stroke="currentColor"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 6h16M4 12h16M4 18h16"
+            />
           </svg>
         )}
       </button>
@@ -116,17 +132,17 @@ export const DashboardPage: React.FC = () => {
           </button>
         </div>
 
-        <nav className="flex flex-col p-4 space-y-3">
+        <nav className="flex flex-col pl-2 pr-1 py-4 space-y-2 text-left">
           <Link
             to="/dashboard"
-            className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
+            className="text-white hover:bg-[#4a4f55] rounded-lg px-2 py-2 transition text-left"
             onClick={toggleMenu}
           >
             📺 Catálogo
           </Link>
           <Link
             to="/favorites"
-            className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
+            className="text-white hover:bg-[#4a4f55] rounded-lg px-2 py-2 transition text-left"
             onClick={toggleMenu}
           >
             ⭐ Favoritos
@@ -136,22 +152,6 @@ export const DashboardPage: React.FC = () => {
 
       {/* ==== CONTENIDO ==== */}
       <main className="flex-grow px-6 py-10">
-        {/* Encabezado */}
-        <header className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <img
-              src="/logo-movu.png" // coloca aquí tu logo real
-              alt="Movu"
-              className="h-10 w-auto object-contain"
-            />
-          </div>
-
-          <div className="flex gap-8 text-gray-300 text-lg">
-            <span className="font-bold text-white cursor-pointer">Catálogo</span>
-            <span className="hover:text-white cursor-pointer">Favoritos</span>
-          </div>
-        </header>
-
         {/* Contenido principal */}
         {loading ? (
           <p className="text-center text-gray-400 mt-10">Cargando videos...</p>
