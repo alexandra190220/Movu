@@ -38,7 +38,7 @@ export const DashboardPage: React.FC = () => {
 
   // 🔹 Cargar videos por categoría
   const loadVideosByCategory = async () => {
-    const categorias = ["Comedia", "Terror", "Acción", "Naturaleza", "Animales"];
+    const categorias = ["Terror", "Acción", "Naturaleza", "Animales"];
     const resultado: any = {};
     setLoading(true);
 
@@ -93,7 +93,7 @@ export const DashboardPage: React.FC = () => {
                         {esFavorito ? (
                           <Heart className="w-5 h-5 text-red-500 fill-red-500" />
                         ) : (
-                          <Star className="w-5 h-5 text-white" />
+                          <Heart className="w-5 h-5 text-white" fill="none" />
                         )}
                       </button>
 
