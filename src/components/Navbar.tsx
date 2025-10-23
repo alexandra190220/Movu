@@ -12,8 +12,19 @@ export const Navbar: React.FC = () => {
   const rutasConMenu = ["/dashboard", "/about", "/profile"];
   const mostrarOpciones = rutasConMenu.includes(location.pathname);
 
+  // 🔹 Mostrar botón "Iniciar sesión" solo en HomePage
+  const mostrarLogin = location.pathname === "/";
+
   return (
-    <nav className="fixed top-0 left-0 w-full bg-[#2b2f33] flex items-center justify-between px-6 py-3 shadow-md z-50">
+    <nav
+      className={`fixed top-0 left-0 w-full bg-[#2b2f33] flex items-center px-6 py-3 shadow-md z-50 ${
+        mostrarOpciones
+          ? "justify-between"
+          : mostrarLogin
+          ? "justify-between"
+          : "justify-center"
+      }`}
+    >
       {/* ==== LOGO ==== */}
       <Link to="/" className="flex items-center">
         <img
@@ -22,6 +33,16 @@ export const Navbar: React.FC = () => {
           className="h-14 w-auto object-contain drop-shadow-lg"
         />
       </Link>
+
+      {/* ==== BOTÓN INICIAR SESIÓN SOLO EN HOME ==== */}
+      {mostrarLogin && (
+        <Link
+          to="/login"
+          className="bg-blue-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+        >
+          Iniciar sesión
+        </Link>
+      )}
 
       {/* ==== OPCIONES SOLO EN CIERTAS RUTAS ==== */}
       {mostrarOpciones && (
@@ -109,14 +130,14 @@ export const Navbar: React.FC = () => {
 
         <nav className="flex flex-col p-4 space-y-3">
           <Link
-            to="/profile"
+            to="/ProfilePage"
             className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
             onClick={toggleMenu}
           >
             👤 Perfil
           </Link>
           <Link
-            to="/about"
+            to="/AboutPage"
             className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
             onClick={toggleMenu}
           >
