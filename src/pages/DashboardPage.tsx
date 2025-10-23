@@ -82,7 +82,7 @@ export const DashboardPage: React.FC = () => {
       {/* Le pasamos buscarVideos al Navbar para que la lupa funcione */}
       <Navbar buscarVideos={buscarVideos} />
 
-      <main className="flex-grow px-6 pt-28 pb-10">
+      <main className="flex-grow px-6 pt-22 pb-10">
         {loading ? (
           <p className="text-center text-gray-400 mt-10">Cargando videos...</p>
         ) : (
