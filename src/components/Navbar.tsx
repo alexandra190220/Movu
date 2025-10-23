@@ -9,7 +9,7 @@ export const Navbar: React.FC = () => {
   const toggleMenu = () => setMenuAbierto(!menuAbierto);
 
   // 🔹 Rutas donde se muestran Catálogo, Favoritos y Menú
-  const rutasConMenu = ["/dashboard", "/about", "/profile"];
+  const rutasConMenu = ["/dashboard", "/AboutPage", "/ProfilePage"];
   const mostrarOpciones = rutasConMenu.includes(location.pathname);
 
   // 🔹 Mostrar botón "Iniciar sesión" solo en HomePage
@@ -17,20 +17,16 @@ export const Navbar: React.FC = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 w-full bg-[#2b2f33] flex items-center px-6 py-3 shadow-md z-50 ${
-        mostrarOpciones
-          ? "justify-between"
-          : mostrarLogin
-          ? "justify-between"
-          : "justify-center"
-      }`}
+     className={`fixed top-0 left-0 w-full bg-[#2b2f33] flex items-center justify-between px-6 py-3 shadow-md z-50`}
+
     >
       {/* ==== LOGO ==== */}
       <Link to="/" className="flex items-center">
         <img
           src="/logo.png"
           alt="Movu Logo"
-          className="h-14 w-auto object-contain drop-shadow-lg"
+          className="h-16 md:h-20 w-auto object-contain drop-shadow-lg transition-all duration-300"
+
         />
       </Link>
 
