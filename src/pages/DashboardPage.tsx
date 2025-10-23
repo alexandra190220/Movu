@@ -7,10 +7,11 @@ export const DashboardPage: React.FC = () => {
   const [favoritos, setFavoritos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [animando, setAnimando] = useState<string | null>(null);
+  const [busqueda, setBusqueda] = useState<string>("");
 
   const API_URL = "https://movu-back-4mcj.onrender.com/api/v1/pexels";
 
-  // 🔹 Cargar favoritos al iniciar
+  // Cargar favoritos al iniciar
   useEffect(() => {
     const favs = localStorage.getItem("favoritos");
     if (favs) setFavoritos(JSON.parse(favs));
@@ -29,14 +30,13 @@ export const DashboardPage: React.FC = () => {
 
     guardarFavoritos(nuevos);
 
-    // 🔹 Animación solo si agregamos
     if (!existe) {
       setAnimando(video.id);
-      setTimeout(() => setAnimando(null), 300); // duración del latido
+      setTimeout(() => setAnimando(null), 300);
     }
   };
 
-  // 🔹 Cargar videos por categoría
+  // Cargar videos por categoría
   const loadVideosByCategory = async () => {
     const categorias = ["Terror", "Acción", "Naturaleza", "Animales"];
     const resultado: any = {};
@@ -62,54 +62,79 @@ export const DashboardPage: React.FC = () => {
     loadVideosByCategory();
   }, []);
 
+  // Filtrado por búsqueda (título o descripción)
+  const filtrarVideos = (lista: any[]) => {
+    if (!busqueda) return lista;
+    return lista.filter((v) => {
+      const title = v.title?.toLowerCase() || "";
+      const desc = v.description?.toLowerCase() || "";
+      return title.includes(busqueda.toLowerCase()) || desc.includes(busqueda.toLowerCase());
+    });
+  };
+
   return (
     <div className="min-h-screen bg-[#2b2f33] text-white flex flex-col relative">
       <Navbar />
 
       <main className="flex-grow px-6 pt-28 pb-10">
+        {/* Input de búsqueda */}
+        <div className="mb-6">
+          <input
+            type="text"
+            placeholder="Buscar video..."
+            className="w-full md:w-1/2 p-2 rounded-lg text-black"
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+          />
+        </div>
+
         {loading ? (
           <p className="text-center text-gray-400 mt-10">Cargando videos...</p>
         ) : (
-          Object.entries(videos).map(([categoria, lista]) => (
-            <section key={categoria} className="mb-10">
-              <h2 className="text-xl font-semibold mb-4">{categoria}</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                {lista.map((video) => {
-                  const esFavorito = favoritos.some((f) => f.id === video.id);
-                  const latido = animando === video.id;
+          Object.entries(videos).map(([categoria, lista]) => {
+            const listaFiltrada = filtrarVideos(lista);
+            if (listaFiltrada.length === 0) return null;
 
-                  return (
-                    <div
-                      key={video.id}
-                      className="relative bg-[#1f1f1f] rounded-xl overflow-hidden aspect-video hover:scale-105 transition-transform shadow-md"
-                    >
-                      {/* Botón favorito */}
-                      <button
-                        onClick={() => toggleFavorito(video)}
-                        className={`absolute top-2 right-2 z-20 p-2 rounded-full bg-black/40 hover:bg-black/70 transition-transform ${
-                          latido ? "animate-pulse scale-125" : ""
-                        }`}
+            return (
+              <section key={categoria} className="mb-10">
+                <h2 className="text-xl font-semibold mb-4">{categoria}</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {listaFiltrada.map((video) => {
+                    const esFavorito = favoritos.some((f) => f.id === video.id);
+                    const latido = animando === video.id;
+
+                    return (
+                      <div
+                        key={video.id}
+                        className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-md w-full h-64 sm:h-80 md:h-96"
                       >
-                        {esFavorito ? (
-                          <Heart className="w-5 h-5 text-red-500 fill-red-500" />
-                        ) : (
-                          <Heart className="w-5 h-5 text-white" fill="none" />
-                        )}
-                      </button>
+                        {/* Botón favorito */}
+                        <button
+                          onClick={() => toggleFavorito(video)}
+                          className={`absolute top-2 right-2 z-20 p-2 rounded-full bg-black/40 hover:bg-black/70 transition-transform ${
+                            latido ? "animate-pulse scale-125" : ""
+                          }`}
+                        >
+                          {esFavorito ? (
+                            <Heart className="w-5 h-5 text-red-500 fill-red-500" />
+                          ) : (
+                            <Heart className="w-5 h-5 text-white" fill="none" />
+                          )}
+                        </button>
 
-                      {/* Video */}
-                      <video
-                        src={video.video_files?.[0]?.link}
-                        controls
-                        muted
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
-          ))
+                        <video
+                          src={video.video_files?.[0]?.link}
+                          controls
+                          muted
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            );
+          })
         )}
       </main>
     </div>
