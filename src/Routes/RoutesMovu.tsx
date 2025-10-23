@@ -10,6 +10,7 @@ import { DashboardPage } from "../pages/DashboardPage";
 import { ProfilePage } from "../pages/ProfilePage";
 import { EditProfilePage } from "../pages/EditProfilePage";
 import ConfirResetPage from "../pages/ConfirResetPage";
+import { FavoritosPage } from "../pages/FavoritosPage";
 
 const RoutesMovu = () => {
   return (
@@ -27,6 +28,7 @@ const RoutesMovu = () => {
           <Route path="/ProfilePage" element={<ProfilePage />} />
           <Route path="/EditProfilePage" element={<EditProfilePage />} />
           <Route path="/SiteMapPage" element={<SiteMapPage />} />
+          <Route path="/FavoritosPage" element={<FavoritosPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

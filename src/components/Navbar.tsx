@@ -52,7 +52,7 @@ export const Navbar: React.FC = () => {
           </Link>
 
           <Link
-            to="/favorites"
+            to="/FavoritosPage"
             className="flex items-center gap-2 text-white font-medium hover:text-yellow-400 transition"
           >
             <Star className="w-5 h-5 text-yellow-400" />

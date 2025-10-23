@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Star } from "lucide-react";
+import { Star, Heart } from "lucide-react";
 import { Navbar } from "../components/Navbar";
 
 export const DashboardPage: React.FC = () => {
@@ -56,10 +56,8 @@ export const DashboardPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#2b2f33] text-white flex flex-col relative">
-      {/* ==== NAVBAR ==== */}
       <Navbar />
 
-      {/* ==== CONTENIDO ==== */}
       <main className="flex-grow px-6 pt-28 pb-10">
         {loading ? (
           <p className="text-center text-gray-400 mt-10">Cargando videos...</p>
@@ -77,15 +75,13 @@ export const DashboardPage: React.FC = () => {
                     >
                       <button
                         onClick={() => toggleFavorito(video)}
-                        className="absolute top-2 right-2 bg-black/40 hover:bg-black/70 rounded-full p-2 transition"
+                        className="absolute top-2 right-2 p-2 transition rounded-full bg-black/40 hover:bg-black/70"
                       >
-                        <Star
-                          className={`w-5 h-5 ${
-                            esFavorito
-                              ? "text-yellow-400 fill-yellow-400"
-                              : "text-white"
-                          }`}
-                        />
+                        {esFavorito ? (
+                          <Heart className="w-5 h-5 text-red-500 fill-red-500" />
+                        ) : (
+                          <Star className="w-5 h-5 text-white" />
+                        )}
                       </button>
 
                       <video
