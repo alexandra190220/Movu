@@ -175,19 +175,29 @@ export const DashboardPage: React.FC = () => {
           </button>
         </div>
 
-        {/* Lista de videos */}
+        {/* 🎬 Lista de videos estilo Netflix */}
         {loading ? (
           <p className="text-center text-gray-300">Cargando videos...</p>
         ) : videos.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 justify-items-center">
+          <div
+            className="grid gap-6 px-6 py-8 justify-items-center"
+            style={{
+              gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
+            }}
+          >
             {videos.map((video) => (
-              <video
+              <div
                 key={video.id}
-                controls
-                className="rounded-xl shadow-md max-w-full"
+                className="relative overflow-hidden rounded-2xl shadow-lg transition-transform duration-300 ease-in-out cursor-pointer bg-[#1f1f1f] aspect-[16/9] hover:scale-105 hover:shadow-2xl"
               >
-                <source src={video.video_files?.[0]?.link} type="video/mp4" />
-              </video>
+                <video
+                  src={video.video_files?.[0]?.link}
+                  controls
+                  muted
+                  loop
+                  className="w-full h-full object-cover"
+                />
+              </div>
             ))}
           </div>
         ) : (
