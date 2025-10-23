@@ -37,8 +37,8 @@ export const Navbar: React.FC = () => {
       {/* ==== BOTÓN INICIAR SESIÓN SOLO EN HOME ==== */}
       {mostrarLogin && (
         <Link
-          to="/login"
-          className="bg-blue-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+          to="/loginPage"
+          className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded text-sm md:text-base transition"
         >
           Iniciar sesión
         </Link>

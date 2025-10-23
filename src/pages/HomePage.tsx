@@ -35,14 +35,7 @@ export const HomePage: React.FC = () => {
     <div className="min-h-screen bg-[#2b2f33] text-white flex flex-col items-center relative">
       <Navbar />
 
-      <div className="absolute top-10 right-8">
-        <Link
-          to="/loginPage"
-          className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded text-sm md:text-base transition"
-        >
-          Iniciar sesión
-        </Link>
-      </div>
+     
 
       <main className="flex flex-col items-center justify-center text-center flex-grow mt-40 px-4">
         <h2 className="text-3xl md:text-5xl font-bold mb-4 leading-tight">
