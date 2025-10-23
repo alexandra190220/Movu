@@ -38,7 +38,7 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-[70vh] bg-[#2b2f33] text-white px-4">
+    <div className="bg-[#2b2f33] text-white px-4 pt-20 pb-10 min-h-[80vh] flex justify-center items-center">
       <div className="bg-[#3a3f45] p-8 rounded-2xl shadow-lg w-full max-w-md">
         <h2 className="text-3xl font-bold mb-6 text-center">Iniciar Sesión</h2>
 
