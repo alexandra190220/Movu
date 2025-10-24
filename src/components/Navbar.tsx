@@ -76,8 +76,8 @@ export const Navbar: React.FC<NavbarProps> = ({ buscarVideos }) => {
 
           {/* 🔹 Búsqueda (solo en Dashboard) */}
           {location.pathname === "/dashboard" && (
-            <div className="flex-1 flex justify-center md:justify-center">
-              <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
+            <div className="flex-1 flex justify-center">
+              <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg mx-auto">
                 <input
                   type="text"
                   placeholder="Buscar..."
