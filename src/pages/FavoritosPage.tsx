@@ -36,7 +36,7 @@ export const FavoritosPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#2b2f33] text-white flex flex-col relative">
       <Navbar />
-      <main className="flex-grow px-6 pt-28 pb-10">
+      <main className="flex-grow px-6 pt-14 pb-10">
         <h2 className="text-xl font-semibold mb-4">Mis Favoritos</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {favoritos.map((video) => {
