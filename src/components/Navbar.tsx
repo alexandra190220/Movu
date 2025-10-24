@@ -76,21 +76,23 @@ export const Navbar: React.FC<NavbarProps> = ({ buscarVideos }) => {
 
           {/* 🔹 Búsqueda (solo en Dashboard) */}
           {location.pathname === "/dashboard" && (
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Buscar..."
-                className="px-3 py-1 rounded-full w-48 text-black border border-white bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-400"
-                value={termino}
-                onChange={(e) => setTermino(e.target.value)}
-                onKeyDown={handleKeyPress}
-              />
-              <button
-                onClick={handleBuscar}
-                className="absolute right-1 top-1 text-red-500 hover:text-red-600"
-              >
-                <Search className="w-5 h-5" />
-              </button>
+            <div className="absolute left-1/2 transform -translate-x-1/2">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Buscar..."
+                  className="px-4 py-2 rounded-full w-64 text-black bg-white/70 border border-white/30 focus:outline-none focus:ring-2 focus:ring-red-400"
+                  value={termino}
+                  onChange={(e) => setTermino(e.target.value)}
+                  onKeyDown={handleKeyPress}
+                />
+                <button
+                  onClick={handleBuscar}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-red-500 hover:text-red-600"
+                >
+                  <Search className="w-5 h-5" />
+                </button>
+              </div>
             </div>
           )}
 
