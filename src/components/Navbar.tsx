@@ -18,6 +18,7 @@ export const Navbar: React.FC<NavbarProps> = ({ buscarVideos }) => {
     "/AboutPage",
     "/ProfilePage",
     "/FavoritosPage",
+    "/video",
   ];
   const mostrarOpciones = rutasConMenu.includes(location.pathname);
   const mostrarLogin = location.pathname === "/";
