@@ -180,7 +180,7 @@ export const Navbar: React.FC<NavbarProps> = ({ buscarVideos }) => {
             className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
             onClick={toggleMenu}
           >
-            🚪 Cerrar sesión
+            🚪 Cerrar sesióon
           </Link>
         </nav>
       </div>
