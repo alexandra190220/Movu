@@ -13,12 +13,16 @@ export const DashboardPage: React.FC = () => {
   // Cargar favoritos al iniciar
   useEffect(() => {
     const favs = localStorage.getItem("favoritos");
-    if (favs) setFavoritos(JSON.parse(favs));
+    if (favs) {
+      setFavoritos(JSON.parse(favs));
+      console.log("Favoritos cargados:", JSON.parse(favs));
+    }
   }, []);
 
   const guardarFavoritos = (nuevos: any[]) => {
     setFavoritos(nuevos);
     localStorage.setItem("favoritos", JSON.stringify(nuevos));
+    console.log("Favoritos actualizados:", nuevos);
   };
 
   const toggleFavorito = (video: any) => {
@@ -47,13 +51,13 @@ export const DashboardPage: React.FC = () => {
           `${API_URL}/videos/search?query=${encodeURIComponent(cat)}&per_page=4`
         );
         const data = await res.json();
+        console.log(`Datos recibidos para categoría ${cat}:`, data);
 
-        console.log("Primer video de la categoría", cat, data.videos[0]); //
-
-        // 🔹 Filtrar solo los videos con links válidos
+        // Filtrar solo videos con links válidos
         const videosValidos = (data.videos || []).filter((v: any) =>
           v.video_files?.some((f: any) => f.link)
         );
+        console.log(`Videos válidos para ${cat}:`, videosValidos);
 
         resultado[cat] = videosValidos;
       } catch (err) {
@@ -63,13 +67,14 @@ export const DashboardPage: React.FC = () => {
 
     setVideos(resultado);
     setLoading(false);
+    console.log("Videos por categoría cargados:", resultado);
   };
 
   useEffect(() => {
     loadVideosByCategory();
   }, []);
 
-  // 🔹 Función que recibirá la búsqueda desde Navbar
+  // Función que recibirá la búsqueda desde Navbar
   const buscarVideos = async (termino: string) => {
     if (!termino.trim()) return;
     setLoading(true);
@@ -80,11 +85,13 @@ export const DashboardPage: React.FC = () => {
         )}&per_page=10`
       );
       const data = await res.json();
+      console.log("Resultado de búsqueda:", data);
 
-      // 🔹 Filtrar solo videos válidos
+      // Filtrar solo videos válidos
       const videosValidos = (data.videos || []).filter((v: any) =>
         v.video_files?.some((f: any) => f.link)
       );
+      console.log("Videos válidos de búsqueda:", videosValidos);
 
       setVideos({ Resultado: videosValidos });
     } catch (err) {
@@ -95,7 +102,6 @@ export const DashboardPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#2b2f33] text-white flex flex-col relative">
-      {/* Navbar con función de búsqueda */}
       <Navbar buscarVideos={buscarVideos} />
 
       <main className="flex-grow px-6 pt-14 pb-10">
@@ -118,7 +124,6 @@ export const DashboardPage: React.FC = () => {
                         key={video.id}
                         className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-md w-full h-64 sm:h-80 md:h-96"
                       >
-                        {/* Botón favorito */}
                         <button
                           onClick={() => toggleFavorito(video)}
                           className={`absolute top-2 right-2 z-20 p-2 rounded-full bg-black/40 hover:bg-black/70 transition-transform ${
