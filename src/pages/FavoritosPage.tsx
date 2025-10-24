@@ -38,14 +38,14 @@ export const FavoritosPage: React.FC = () => {
       <Navbar />
       <main className="flex-grow px-6 pt-28 pb-10">
         <h2 className="text-xl font-semibold mb-4">Mis Favoritos</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {favoritos.map((video) => {
             const latido = animando === video.id;
 
             return (
               <div
                 key={video.id}
-                className="relative bg-[#1f1f1f] rounded-xl overflow-hidden aspect-video hover:scale-105 transition-transform shadow-md"
+                className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-md w-full h-64 sm:h-80 md:h-96"
               >
                 {/* Botón para eliminar de favoritos */}
                 <button
