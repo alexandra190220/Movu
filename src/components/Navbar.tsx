@@ -8,17 +8,12 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ buscarVideos }) => {
   const [menuAbierto, setMenuAbierto] = useState(false);
-  const [termino, setTermino] = useState(""); // input de búsqueda
+  const [termino, setTermino] = useState("");
   const location = useLocation();
 
   const toggleMenu = () => setMenuAbierto(!menuAbierto);
 
-  const rutasConMenu = [
-    "/dashboard",
-    "/AboutPage",
-    "/ProfilePage",
-    "/FavoritosPage",
-  ];
+  const rutasConMenu = ["/dashboard", "/AboutPage", "/ProfilePage", "/FavoritosPage"];
   const mostrarOpciones = rutasConMenu.includes(location.pathname);
   const mostrarLogin = location.pathname === "/";
 
@@ -55,11 +50,11 @@ export const Navbar: React.FC<NavbarProps> = ({ buscarVideos }) => {
 
       {/* Opciones de menú */}
       {mostrarOpciones && (
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-1 relative">
           {/* Catálogo */}
           <Link
             to="/dashboard"
-            className="flex items-center gap-2 text-white font-medium hover:text-blue-400 transition"
+            className="flex items-center gap-2 text-white font-medium hover:text-blue-400 transition z-20"
           >
             <Film className="w-5 h-5 text-blue-400" />
             Catálogo
@@ -68,69 +63,70 @@ export const Navbar: React.FC<NavbarProps> = ({ buscarVideos }) => {
           {/* Favoritos */}
           <Link
             to="/FavoritosPage"
-            className="flex items-center gap-2 text-white font-medium hover:text-red-400 transition"
+            className="flex items-center gap-2 text-white font-medium hover:text-red-400 transition z-20"
           >
             <Heart className="w-5 h-5 text-red-400" />
             Favoritos
           </Link>
 
-          {/* 🔹 Búsqueda (solo en Dashboard) */}
+          {/* 🔹 Búsqueda */}
           {location.pathname === "/dashboard" && (
-            <div className="flex-1 flex justify-center">
-              <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg mx-auto">
-                <input
-                  type="text"
-                  placeholder="Buscar..."
-                  className="px-4 py-2 rounded-full w-full text-black bg-white/70 border border-white/30 focus:outline-none focus:ring-2 focus:ring-red-400"
-                  value={termino}
-                  onChange={(e) => setTermino(e.target.value)}
-                  onKeyDown={handleKeyPress}
-                />
-                <button
-                  onClick={handleBuscar}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-red-500 hover:text-red-600"
-                >
-                  <Search className="w-5 h-5" />
-                </button>
+            <>
+              {/* Desktop & tablet grande */}
+              <div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 z-10">
+                <div className="relative w-full max-w-lg">
+                  <input
+                    type="text"
+                    placeholder="Buscar..."
+                    className="px-4 py-2 rounded-full w-full text-black bg-white/80 border border-white/30 focus:outline-none focus:ring-2 focus:ring-red-400"
+                    value={termino}
+                    onChange={(e) => setTermino(e.target.value)}
+                    onKeyDown={handleKeyPress}
+                  />
+                  <button
+                    onClick={handleBuscar}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-red-500 hover:text-red-600"
+                  >
+                    <Search className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
-            </div>
+
+              {/* Móvil & tablet pequeña */}
+              <div className="flex md:hidden flex-1 justify-center z-10 mt-2">
+                <div className="relative w-full max-w-xs mx-2">
+                  <input
+                    type="text"
+                    placeholder="Buscar..."
+                    className="px-3 py-2 rounded-full w-full text-black bg-white/80 border border-white/30 focus:outline-none focus:ring-2 focus:ring-red-400"
+                    value={termino}
+                    onChange={(e) => setTermino(e.target.value)}
+                    onKeyDown={handleKeyPress}
+                  />
+                  <button
+                    onClick={handleBuscar}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-red-500 hover:text-red-600"
+                  >
+                    <Search className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            </>
           )}
 
           {/* Menú hamburguesa */}
           <button
             onClick={toggleMenu}
             aria-label={menuAbierto ? "Cerrar menú" : "Abrir menú"}
-            className="text-white hover:text-red-500 transition focus:outline-none"
+            className="text-white hover:text-red-500 transition focus:outline-none z-20"
           >
             {menuAbierto ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-7 h-7"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-7 h-7"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             )}
           </button>
@@ -139,10 +135,7 @@ export const Navbar: React.FC<NavbarProps> = ({ buscarVideos }) => {
 
       {/* Overlay */}
       {menuAbierto && (
-        <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
-          onClick={toggleMenu}
-        />
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40" onClick={toggleMenu} />
       )}
 
       {/* Menú lateral */}
@@ -153,33 +146,18 @@ export const Navbar: React.FC<NavbarProps> = ({ buscarVideos }) => {
       >
         <div className="flex justify-between items-center p-4 border-b border-gray-700">
           <h2 className="text-lg font-semibold text-white">Menú</h2>
-          <button
-            onClick={toggleMenu}
-            className="text-gray-300 hover:text-red-500 transition"
-          >
+          <button onClick={toggleMenu} className="text-gray-300 hover:text-red-500 transition">
             ✖
           </button>
         </div>
         <nav className="flex flex-col p-4 space-y-3">
-          <Link
-            to="/ProfilePage"
-            className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
-            onClick={toggleMenu}
-          >
+          <Link to="/ProfilePage" className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition" onClick={toggleMenu}>
             👤 Perfil
           </Link>
-          <Link
-            to="/AboutPage"
-            className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
-            onClick={toggleMenu}
-          >
+          <Link to="/AboutPage" className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition" onClick={toggleMenu}>
             ℹ️ Sobre nosotros
           </Link>
-          <Link
-            to="/"
-            className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
-            onClick={toggleMenu}
-          >
+          <Link to="/" className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition" onClick={toggleMenu}>
             🚪 Cerrar sesión
           </Link>
         </nav>
