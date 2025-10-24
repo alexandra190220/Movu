@@ -76,12 +76,12 @@ export const Navbar: React.FC<NavbarProps> = ({ buscarVideos }) => {
 
           {/* 🔹 Búsqueda (solo en Dashboard) */}
           {location.pathname === "/dashboard" && (
-            <div className="absolute left-1/2 transform -translate-x-1/2">
+            <div className="absolute left-1/2 transform -translate-x-1/2 w-11/12 sm:w-64 md:w-80 lg:w-96">
               <div className="relative">
                 <input
                   type="text"
                   placeholder="Buscar..."
-                  className="px-4 py-2 rounded-full w-64 text-black bg-white/80 border border-white/30 focus:outline-none focus:ring-2 focus:ring-red-400"
+                  className="px-4 py-2 rounded-full w-full text-black bg-white/70 border border-white/30 focus:outline-none focus:ring-2 focus:ring-red-400"
                   value={termino}
                   onChange={(e) => setTermino(e.target.value)}
                   onKeyDown={handleKeyPress}
