@@ -47,7 +47,13 @@ export const DashboardPage: React.FC = () => {
           `${API_URL}/videos/search?query=${encodeURIComponent(cat)}&per_page=4`
         );
         const data = await res.json();
-        resultado[cat] = data.videos || [];
+
+        // 🔹 Filtrar solo los videos con links válidos
+        const videosValidos = (data.videos || []).filter(
+          (v: any) => v.video_files?.some((f: any) => f.link)
+        );
+
+        resultado[cat] = videosValidos;
       } catch (err) {
         console.error("Error cargando categoría:", cat, err);
       }
@@ -70,7 +76,13 @@ export const DashboardPage: React.FC = () => {
         `${API_URL}/videos/search?query=${encodeURIComponent(termino)}&per_page=10`
       );
       const data = await res.json();
-      setVideos({ Resultado: data.videos || [] });
+
+      // 🔹 Filtrar solo videos válidos
+      const videosValidos = (data.videos || []).filter(
+        (v: any) => v.video_files?.some((f: any) => f.link)
+      );
+
+      setVideos({ Resultado: videosValidos });
     } catch (err) {
       console.error(err);
     }
@@ -79,7 +91,7 @@ export const DashboardPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#2b2f33] text-white flex flex-col relative">
-      {/* Le pasamos buscarVideos al Navbar para que la lupa funcione */}
+      {/* Navbar con función de búsqueda */}
       <Navbar buscarVideos={buscarVideos} />
 
       <main className="flex-grow px-6 pt-14 pb-10">
