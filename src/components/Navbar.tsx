@@ -8,7 +8,7 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ buscarVideos }) => {
   const [menuAbierto, setMenuAbierto] = useState(false);
-  const [termino, setTermino] = useState(""); // input de búsqueda
+  const [termino, setTermino] = useState("");
   const location = useLocation();
 
   const toggleMenu = () => setMenuAbierto(!menuAbierto);
@@ -47,7 +47,7 @@ export const Navbar: React.FC<NavbarProps> = ({ buscarVideos }) => {
       {mostrarLogin && (
         <Link
           to="/loginPage"
-          className="bg-red-600 hover:bg-red-700 text-white px-3 sm:px-5 py-1 sm:py-2 rounded text-xs sm:text-sm md:text-base transition"
+          className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 sm:px-5 sm:py-2 rounded text-xs sm:text-sm md:text-base transition"
         >
           Iniciar sesión
         </Link>
@@ -59,38 +59,38 @@ export const Navbar: React.FC<NavbarProps> = ({ buscarVideos }) => {
           {/* Catálogo */}
           <Link
             to="/dashboard"
-            className="flex items-center gap-1 sm:gap-2 text-white font-medium hover:text-blue-400 transition text-xs sm:text-sm md:text-base"
+            className="flex items-center gap-1 sm:gap-2 text-white font-medium hover:text-blue-400 transition"
           >
-            <Film className="w-4 sm:w-5 h-4 sm:h-5 text-blue-400" />
+            <Film className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
             <span className="hidden sm:inline">Catálogo</span>
           </Link>
 
           {/* Favoritos */}
           <Link
             to="/FavoritosPage"
-            className="flex items-center gap-1 sm:gap-2 text-white font-medium hover:text-red-400 transition text-xs sm:text-sm md:text-base"
+            className="flex items-center gap-1 sm:gap-2 text-white font-medium hover:text-red-400 transition"
           >
-            <Heart className="w-4 sm:w-5 h-4 sm:h-5 text-red-400" />
+            <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-red-400" />
             <span className="hidden sm:inline">Favoritos</span>
           </Link>
 
-          {/* 🔹 Búsqueda (solo en Dashboard) */}
+          {/* Búsqueda (solo en Dashboard) */}
           {location.pathname === "/dashboard" && (
-            <div className="flex-1 flex justify-center">
-              <div className="relative w-full max-w-[140px] sm:max-w-xs md:max-w-md lg:max-w-lg mx-auto">
+            <div className="absolute left-1/2 transform -translate-x-1/2 w-32 sm:w-64">
+              <div className="relative">
                 <input
                   type="text"
                   placeholder="Buscar..."
-                  className="px-3 sm:px-4 py-1 sm:py-2 rounded-full w-full text-black bg-white/70 border border-white/30 focus:outline-none focus:ring-2 focus:ring-red-400 text-xs sm:text-sm"
+                  className="px-3 py-1 sm:px-4 sm:py-2 rounded-full w-full text-black bg-white/70 border border-white/30 focus:outline-none focus:ring-2 focus:ring-red-400 text-xs sm:text-sm"
                   value={termino}
                   onChange={(e) => setTermino(e.target.value)}
                   onKeyDown={handleKeyPress}
                 />
                 <button
                   onClick={handleBuscar}
-                  className="absolute right-1 top-1/2 -translate-y-1/2 text-red-500 hover:text-red-600"
+                  className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 text-red-500 hover:text-red-600"
                 >
-                  <Search className="w-4 sm:w-5 h-4 sm:h-5" />
+                  <Search className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </div>
             </div>
@@ -105,7 +105,7 @@ export const Navbar: React.FC<NavbarProps> = ({ buscarVideos }) => {
             {menuAbierto ? (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-6 sm:w-7 h-6 sm:h-7"
+                className="w-6 h-6 sm:w-7 sm:h-7"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -120,7 +120,7 @@ export const Navbar: React.FC<NavbarProps> = ({ buscarVideos }) => {
             ) : (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-6 sm:w-7 h-6 sm:h-7"
+                className="w-6 h-6 sm:w-7 sm:h-7"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
