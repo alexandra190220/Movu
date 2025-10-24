@@ -48,9 +48,11 @@ export const DashboardPage: React.FC = () => {
         );
         const data = await res.json();
 
+        console.log("Primer video de la categoría", cat, data.videos[0]); //
+
         // 🔹 Filtrar solo los videos con links válidos
-        const videosValidos = (data.videos || []).filter(
-          (v: any) => v.video_files?.some((f: any) => f.link)
+        const videosValidos = (data.videos || []).filter((v: any) =>
+          v.video_files?.some((f: any) => f.link)
         );
 
         resultado[cat] = videosValidos;
@@ -73,13 +75,15 @@ export const DashboardPage: React.FC = () => {
     setLoading(true);
     try {
       const res = await fetch(
-        `${API_URL}/videos/search?query=${encodeURIComponent(termino)}&per_page=10`
+        `${API_URL}/videos/search?query=${encodeURIComponent(
+          termino
+        )}&per_page=10`
       );
       const data = await res.json();
 
       // 🔹 Filtrar solo videos válidos
-      const videosValidos = (data.videos || []).filter(
-        (v: any) => v.video_files?.some((f: any) => f.link)
+      const videosValidos = (data.videos || []).filter((v: any) =>
+        v.video_files?.some((f: any) => f.link)
       );
 
       setVideos({ Resultado: videosValidos });
