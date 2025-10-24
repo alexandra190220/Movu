@@ -1,6 +1,8 @@
+// DashboardPage.tsx
 import React, { useState, useEffect } from "react";
 import { Heart } from "lucide-react";
 import { Navbar } from "../components/Navbar";
+import { useNavigate } from "react-router-dom";
 
 export const DashboardPage: React.FC = () => {
   const [videos, setVideos] = useState<{ [key: string]: any[] }>({});
@@ -8,9 +10,9 @@ export const DashboardPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [animando, setAnimando] = useState<string | null>(null);
 
+  const navigate = useNavigate();
   const API_URL = "https://movu-back-4mcj.onrender.com/api/v1/pexels";
 
-  // Cargar favoritos al iniciar
   useEffect(() => {
     const favs = localStorage.getItem("favoritos");
     if (favs) setFavoritos(JSON.parse(favs));
@@ -35,7 +37,6 @@ export const DashboardPage: React.FC = () => {
     }
   };
 
-  // Cargar videos por categoría inicial
   const loadVideosByCategory = async () => {
     const categorias = ["Terror", "Acción", "Naturaleza", "Animales"];
     const resultado: any = {};
@@ -47,13 +48,9 @@ export const DashboardPage: React.FC = () => {
           `${API_URL}/videos/search?query=${encodeURIComponent(cat)}&per_page=4`
         );
         const data = await res.json();
+        console.log("Videos categoría", cat, data.videos);
 
-        // 🔹 Filtrar solo los videos con links válidos
-        const videosValidos = (data.videos || []).filter(
-          (v: any) => v.video_files?.some((f: any) => f.link)
-        );
-
-        resultado[cat] = videosValidos;
+        resultado[cat] = data.videos || [];
       } catch (err) {
         console.error("Error cargando categoría:", cat, err);
       }
@@ -67,7 +64,6 @@ export const DashboardPage: React.FC = () => {
     loadVideosByCategory();
   }, []);
 
-  // 🔹 Función que recibirá la búsqueda desde Navbar
   const buscarVideos = async (termino: string) => {
     if (!termino.trim()) return;
     setLoading(true);
@@ -76,22 +72,22 @@ export const DashboardPage: React.FC = () => {
         `${API_URL}/videos/search?query=${encodeURIComponent(termino)}&per_page=10`
       );
       const data = await res.json();
+      console.log("Resultado de búsqueda:", data.videos);
 
-      // 🔹 Filtrar solo videos válidos
-      const videosValidos = (data.videos || []).filter(
-        (v: any) => v.video_files?.some((f: any) => f.link)
-      );
-
-      setVideos({ Resultado: videosValidos });
+      setVideos({ Resultado: data.videos || [] }); // se muestra como categoría "Resultado"
     } catch (err) {
       console.error(err);
     }
     setLoading(false);
   };
 
+  const handleClickVideo = (video: any) => {
+    // navegar a otra página para reproducir el video
+    navigate("/video", { state: { video } });
+  };
+
   return (
     <div className="min-h-screen bg-[#2b2f33] text-white flex flex-col relative">
-      {/* Navbar con función de búsqueda */}
       <Navbar buscarVideos={buscarVideos} />
 
       <main className="flex-grow px-6 pt-14 pb-10">
@@ -112,11 +108,14 @@ export const DashboardPage: React.FC = () => {
                     return (
                       <div
                         key={video.id}
-                        className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-md w-full h-64 sm:h-80 md:h-96"
+                        className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-md cursor-pointer"
                       >
                         {/* Botón favorito */}
                         <button
-                          onClick={() => toggleFavorito(video)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleFavorito(video);
+                          }}
                           className={`absolute top-2 right-2 z-20 p-2 rounded-full bg-black/40 hover:bg-black/70 transition-transform ${
                             latido ? "animate-pulse scale-125" : ""
                           }`}
@@ -128,11 +127,12 @@ export const DashboardPage: React.FC = () => {
                           )}
                         </button>
 
-                        <video
-                          src={video.video_files?.[0]?.link}
-                          controls
-                          muted
-                          className="w-full h-full object-cover"
+                        {/* Imagen del video */}
+                        <img
+                          src={video.image || video.video_pictures?.[0]?.picture}
+                          alt="thumbnail"
+                          className="w-full h-64 sm:h-80 md:h-96 object-cover"
+                          onClick={() => handleClickVideo(video)}
                         />
                       </div>
                     );
