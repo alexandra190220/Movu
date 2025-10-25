@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Film, Heart, Search } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Film, Heart, Search, ArrowLeft } from "lucide-react";
 
 interface NavbarProps {
   buscarVideos?: (termino: string) => void;
@@ -10,6 +10,7 @@ export const Navbar: React.FC<NavbarProps> = ({ buscarVideos }) => {
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [termino, setTermino] = useState("");
   const location = useLocation();
+  const navigate = useNavigate();
 
   const toggleMenu = () => setMenuAbierto(!menuAbierto);
 
@@ -35,6 +36,18 @@ export const Navbar: React.FC<NavbarProps> = ({ buscarVideos }) => {
 
   return (
     <nav className="fixed top-0 left-0 w-full bg-[#2b2f33] flex items-center justify-between px-4 sm:px-6 py-2 sm:py-3 shadow-md z-50">
+      
+      {/* Flecha volver en móviles */}
+      {location.pathname !== "/" && location.pathname !== "/dashboard" && (
+        <button
+          onClick={() => navigate(-1)}
+          className="sm:hidden mr-2 text-white hover:text-red-500 transition"
+          aria-label="Volver"
+        >
+          <ArrowLeft className="w-6 h-6" />
+        </button>
+      )}
+
       {/* Logo */}
       <Link to="/" className="flex items-center">
         <img

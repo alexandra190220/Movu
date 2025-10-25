@@ -61,7 +61,7 @@ export const DashboardPage: React.FC = () => {
 
   // Cargar videos por categoría
   const loadVideosByCategory = async () => {
-    const categorias = ["Terror", "Acción", "Naturaleza", "Animales"];
+    const categorias = ["Terror", "Naturaleza", "Animales","Acción"];
     const resultado: any = {};
     setLoading(true);
 
