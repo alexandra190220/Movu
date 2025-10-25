@@ -35,7 +35,7 @@ export const FavoritosPage: React.FC = () => {
       <div className="min-h-screen bg-[#2b2f33] text-white flex flex-col relative">
         <Navbar />
         <main className="flex-grow flex items-center justify-center">
-          <p className="text-gray-400">No tienes videos favoritos aún.</p>
+          <p className="text-gray-300">No tienes videos favoritos aún.</p>
         </main>
       </div>
     );
@@ -45,6 +45,7 @@ export const FavoritosPage: React.FC = () => {
       <Navbar />
       <main className="flex-grow px-6 pt-14 pb-10">
         <h2 className="text-xl font-semibold mb-4">Mis Favoritos</h2>
+
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {favoritos.map((video) => {
             const latido = animando === video.id;
@@ -77,19 +78,29 @@ export const FavoritosPage: React.FC = () => {
                       eliminarFavorito(video);
                     }}
                     aria-label={tooltipText}
-                    className={`p-2 rounded-full bg-black/40 hover:bg-black/70 transition-transform relative ${
+                    className={`p-2 rounded-full bg-black/50 hover:bg-[#2f3338] transition-all duration-200 relative focus:outline-none focus:ring-2 focus:ring-red-500 ${
                       latido ? "animate-pulse scale-125" : ""
                     }`}
                   >
                     <Heart className="w-5 h-5 text-red-500 fill-red-500" />
                   </button>
 
-                  {/* Tooltip */}
+                  {/* Tooltip accesible */}
                   {hoveredId === video.id && (
-                    <span className="absolute right-10 top-1/2 -translate-y-1/2 bg-black text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap">
+                    <span
+                      role="tooltip"
+                      className="absolute right-10 top-1/2 -translate-y-1/2 bg-[#2f3338] text-white text-xs font-medium px-2 py-1 rounded-md shadow-md whitespace-nowrap"
+                    >
                       {tooltipText}
                     </span>
                   )}
+                </div>
+
+                {/* Nombre del video */}
+                <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent px-2 py-1">
+                  <p className="text-sm text-white font-medium truncate">
+                    {video.title || "Video sin título"}
+                  </p>
                 </div>
               </div>
             );
