@@ -70,7 +70,7 @@ export const VideoPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-[#141414] to-[#1f1f1f] text-white flex flex-col items-center justify-center p-4">
-      <div className="relative w-full max-w-3xl aspect-video rounded-lg overflow-hidden shadow-2xl group">
+      <div className="relative w-full max-w-2xl aspect-video rounded-lg overflow-hidden shadow-2xl group">
         {/* Video */}
         <video
           ref={videoRef}
