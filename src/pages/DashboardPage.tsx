@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Heart } from "lucide-react";
 import { Navbar } from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
+import { FavoriteService } from "../Services/FavoriteService";
 
 export const DashboardPage: React.FC = () => {
   const [videos, setVideos] = useState<{ [key: string]: any[] }>({});
@@ -9,34 +10,52 @@ export const DashboardPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [animando, setAnimando] = useState<string | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
 
   const navigate = useNavigate();
   const API_URL = "https://movu-back-4mcj.onrender.com/api/v1/pexels";
 
+  // Obtener el userId del localStorage y cargar favoritos desde backend
   useEffect(() => {
-    const favs = localStorage.getItem("favoritos");
-    if (favs) setFavoritos(JSON.parse(favs));
+    const loadUserAndFavorites = async () => {
+      const storedUserId = localStorage.getItem("userId");
+      if (!storedUserId) return;
+
+      setUserId(storedUserId);
+
+      try {
+        const favs = await FavoriteService.getFavorites(storedUserId);
+        setFavoritos(favs);
+      } catch (err) {
+        console.error("Error cargando favoritos:", err);
+      }
+    };
+
+    loadUserAndFavorites();
   }, []);
 
-  const guardarFavoritos = (nuevos: any[]) => {
-    setFavoritos(nuevos);
-    localStorage.setItem("favoritos", JSON.stringify(nuevos));
-  };
+  // Toggle favorito con backend
+  const toggleFavorito = async (video: any) => {
+    if (!userId) return;
 
-  const toggleFavorito = (video: any) => {
     const existe = favoritos.some((f) => f.id === video.id);
-    const nuevos = existe
-      ? favoritos.filter((f) => f.id !== video.id)
-      : [...favoritos, video];
 
-    guardarFavoritos(nuevos);
-
-    if (!existe) {
-      setAnimando(video.id);
-      setTimeout(() => setAnimando(null), 300);
+    try {
+      if (existe) {
+        await FavoriteService.removeFavorite(userId, video.id);
+        setFavoritos(favoritos.filter((f) => f.id !== video.id));
+      } else {
+        await FavoriteService.addFavorite(userId, video.id);
+        setFavoritos([...favoritos, video]);
+        setAnimando(video.id);
+        setTimeout(() => setAnimando(null), 300);
+      }
+    } catch (error) {
+      console.error("Error al actualizar favorito:", error);
     }
   };
 
+  // Cargar videos por categoría
   const loadVideosByCategory = async () => {
     const categorias = ["Terror", "Acción", "Naturaleza", "Animales"];
     const resultado: any = {};
@@ -62,6 +81,7 @@ export const DashboardPage: React.FC = () => {
     loadVideosByCategory();
   }, []);
 
+  // Buscar videos
   const buscarVideos = async (termino: string) => {
     if (!termino.trim()) return;
     setLoading(true);
@@ -100,7 +120,6 @@ export const DashboardPage: React.FC = () => {
                   {categoria}
                 </h2>
 
-                {/* Rejilla accesible */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                   {lista.map((video) => {
                     const esFavorito = favoritos.some((f) => f.id === video.id);
@@ -116,7 +135,6 @@ export const DashboardPage: React.FC = () => {
                         key={video.id}
                         className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-md cursor-pointer group"
                       >
-                        {/* Imagen del video */}
                         <img
                           src={thumbnail}
                           alt={video.alt || "Miniatura del video"}
@@ -124,7 +142,6 @@ export const DashboardPage: React.FC = () => {
                           onClick={() => handleClickVideo(video)}
                         />
 
-                        {/* Botón de favoritos con accesibilidad */}
                         <div
                           onMouseEnter={() => setHoveredId(video.id)}
                           onMouseLeave={() => setHoveredId(null)}
@@ -147,7 +164,6 @@ export const DashboardPage: React.FC = () => {
                             )}
                           </button>
 
-                          {/* Tooltip accesible */}
                           {hoveredId === video.id && (
                             <span
                               role="tooltip"
@@ -158,7 +174,6 @@ export const DashboardPage: React.FC = () => {
                           )}
                         </div>
 
-                        {/* Nombre del video con contraste alto */}
                         <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent px-2 py-1">
                           <p className="text-sm text-gray-100 font-medium truncate">
                             {video.title || "Video sin título"}

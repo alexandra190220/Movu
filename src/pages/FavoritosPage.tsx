@@ -2,30 +2,50 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { Navbar } from "../components/Navbar";
+import { FavoriteService } from "../Services/FavoriteService";
 
 export const FavoritosPage: React.FC = () => {
   const [favoritos, setFavoritos] = useState<any[]>([]);
   const [animando, setAnimando] = useState<string | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  // Cargar favoritos al iniciar
+  // Cargar userId y favoritos desde backend al iniciar
   useEffect(() => {
-    const favs = localStorage.getItem("favoritos");
-    if (favs) setFavoritos(JSON.parse(favs));
+    const loadFavorites = async () => {
+      const storedUserId = localStorage.getItem("userId");
+      if (!storedUserId) return;
+
+      setUserId(storedUserId);
+
+      try {
+        const favs = await FavoriteService.getFavorites(storedUserId);
+        setFavoritos(favs);
+      } catch (err) {
+        console.error("Error cargando favoritos:", err);
+      }
+    };
+
+    loadFavorites();
   }, []);
 
-  // Eliminar de favoritos
-  const eliminarFavorito = (video: any) => {
-    const nuevos = favoritos.filter((f) => f.id !== video.id);
-    setFavoritos(nuevos);
-    localStorage.setItem("favoritos", JSON.stringify(nuevos));
+  // Eliminar un video de favoritos
+  const eliminarFavorito = async (video: any) => {
+    if (!userId) return;
 
-    setAnimando(video.id);
-    setTimeout(() => setAnimando(null), 200);
+    try {
+      await FavoriteService.removeFavorite(userId, video.id);
+      setFavoritos(favoritos.filter((f) => f.id !== video.id));
+
+      setAnimando(video.id);
+      setTimeout(() => setAnimando(null), 200);
+    } catch (err) {
+      console.error("Error eliminando favorito:", err);
+    }
   };
 
-  // Ir al VideoPage
+  // Navegar a la página de video
   const verVideo = (video: any) => {
     navigate("/video", { state: { video } });
   };
@@ -58,7 +78,6 @@ export const FavoritosPage: React.FC = () => {
                 key={video.id}
                 className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-md cursor-pointer group"
               >
-                {/* Imagen del video */}
                 <img
                   src={thumbnail}
                   alt={video.alt || "Miniatura del video"}
@@ -66,7 +85,6 @@ export const FavoritosPage: React.FC = () => {
                   onClick={() => verVideo(video)}
                 />
 
-                {/* Botón del corazón con tooltip */}
                 <div
                   onMouseEnter={() => setHoveredId(video.id)}
                   onMouseLeave={() => setHoveredId(null)}
@@ -85,7 +103,6 @@ export const FavoritosPage: React.FC = () => {
                     <Heart className="w-5 h-5 text-red-500 fill-red-500" />
                   </button>
 
-                  {/* Tooltip accesible */}
                   {hoveredId === video.id && (
                     <span
                       role="tooltip"
@@ -96,7 +113,6 @@ export const FavoritosPage: React.FC = () => {
                   )}
                 </div>
 
-                {/* Nombre del video */}
                 <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent px-2 py-1">
                   <p className="text-sm text-white font-medium truncate">
                     {video.title || "Video sin título"}
