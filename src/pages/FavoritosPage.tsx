@@ -15,12 +15,16 @@ export const FavoritosPage: React.FC = () => {
     const fetchFavorites = async () => {
       const storedUserId = localStorage.getItem("userId");
       if (!storedUserId) return;
-
       setUserId(storedUserId);
 
       try {
         const favs = await FavoriteService.getFavorites(storedUserId);
-        setFavoritos(favs);
+        // Mapear para que cada favorito tenga la información completa del video
+        const favoritosMapeados = favs.map((f: any) => ({
+          ...f.video,
+          id: f.videoId // aseguramos que 'id' exista
+        }));
+        setFavoritos(favoritosMapeados);
       } catch (error) {
         console.error("Error cargando favoritos:", error);
       }
