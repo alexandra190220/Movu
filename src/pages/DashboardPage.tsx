@@ -1,4 +1,3 @@
-// DashboardPage.tsx
 import React, { useState, useEffect } from "react";
 import { Heart } from "lucide-react";
 import { Navbar } from "../components/Navbar";
@@ -9,6 +8,7 @@ export const DashboardPage: React.FC = () => {
   const [favoritos, setFavoritos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [animando, setAnimando] = useState<string | null>(null);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   const navigate = useNavigate();
   const API_URL = "https://movu-back-4mcj.onrender.com/api/v1/pexels";
@@ -48,8 +48,6 @@ export const DashboardPage: React.FC = () => {
           `${API_URL}/videos/search?query=${encodeURIComponent(cat)}&per_page=4`
         );
         const data = await res.json();
-        console.log("Videos categoría", cat, data.videos);
-
         resultado[cat] = data.videos || [];
       } catch (err) {
         console.error("Error cargando categoría:", cat, err);
@@ -69,12 +67,12 @@ export const DashboardPage: React.FC = () => {
     setLoading(true);
     try {
       const res = await fetch(
-        `${API_URL}/videos/search?query=${encodeURIComponent(termino)}&per_page=10`
+        `${API_URL}/videos/search?query=${encodeURIComponent(
+          termino
+        )}&per_page=10`
       );
       const data = await res.json();
-      console.log("Resultado de búsqueda:", data.videos);
-
-      setVideos({ Resultado: data.videos || [] }); // se muestra como categoría "Resultado"
+      setVideos({ Resultado: data.videos || [] });
     } catch (err) {
       console.error(err);
     }
@@ -82,7 +80,6 @@ export const DashboardPage: React.FC = () => {
   };
 
   const handleClickVideo = (video: any) => {
-    // navegar a otra página para reproducir el video
     navigate("/video", { state: { video } });
   };
 
@@ -104,36 +101,62 @@ export const DashboardPage: React.FC = () => {
                   {lista.map((video) => {
                     const esFavorito = favoritos.some((f) => f.id === video.id);
                     const latido = animando === video.id;
+                    const tooltipText = esFavorito
+                      ? "Quitar de favoritos"
+                      : "Añadir a favoritos";
 
                     return (
                       <div
                         key={video.id}
                         className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-md cursor-pointer"
                       >
-                        {/* Botón favorito */}
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleFavorito(video);
-                          }}
-                          className={`absolute top-2 right-2 z-20 p-2 rounded-full bg-black/40 hover:bg-black/70 transition-transform ${
-                            latido ? "animate-pulse scale-125" : ""
-                          }`}
+                        {/* Botón favorito con tooltip */}
+                        <div
+                          onMouseEnter={() => setHoveredId(video.id)}
+                          onMouseLeave={() => setHoveredId(null)}
+                          className="absolute top-2 right-2 z-20"
                         >
-                          {esFavorito ? (
-                            <Heart className="w-5 h-5 text-red-500 fill-red-500" />
-                          ) : (
-                            <Heart className="w-5 h-5 text-white" fill="none" />
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleFavorito(video);
+                            }}
+                            aria-label={tooltipText} // accesible para lectores de pantalla
+                            className={`p-2 rounded-full bg-black/40 hover:bg-black/70 transition-transform relative ${
+                              latido ? "animate-pulse scale-125" : ""
+                            }`}
+                          >
+                            {esFavorito ? (
+                              <Heart className="w-5 h-5 text-red-500 fill-red-500" />
+                            ) : (
+                              <Heart
+                                className="w-5 h-5 text-white"
+                                fill="none"
+                              />
+                            )}
+                          </button>
+
+                          {/* Tooltip */}
+                          {hoveredId === video.id && (
+                            <span className="absolute right-10 top-1/2 -translate-y-1/2 bg-black text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap">
+                              {tooltipText}
+                            </span>
                           )}
-                        </button>
+                        </div>
 
                         {/* Imagen del video */}
-                        <img
-                          src={video.image || video.video_pictures?.[0]?.picture}
-                          alt="thumbnail"
-                          className="w-full h-64 sm:h-80 md:h-96 object-cover"
+                        <div
                           onClick={() => handleClickVideo(video)}
-                        />
+                          className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-md w-full h-64 sm:h-80 md:h-96 cursor-pointer"
+                        >
+                          <img
+                            src={
+                              video.image || video.video_pictures?.[0]?.picture
+                            }
+                            alt="thumbnail"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
                       </div>
                     );
                   })}
