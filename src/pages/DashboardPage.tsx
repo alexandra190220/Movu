@@ -15,7 +15,7 @@ export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const API_URL = "https://movu-back-4mcj.onrender.com/api/v1/pexels";
 
-  // Obtener el userId del localStorage y cargar favoritos desde backend
+  // Obtener userId y favoritos del backend
   useEffect(() => {
     const loadUserAndFavorites = async () => {
       const storedUserId = localStorage.getItem("userId");
@@ -34,10 +34,9 @@ export const DashboardPage: React.FC = () => {
     loadUserAndFavorites();
   }, []);
 
-  // Toggle favorito con backend
+  // Toggle favorito
   const toggleFavorito = async (video: any) => {
     if (!userId) return;
-
     const existe = favoritos.some((f) => f.id === video.id);
 
     try {
@@ -158,7 +157,7 @@ export const DashboardPage: React.FC = () => {
                             }`}
                           >
                             {esFavorito ? (
-                              <Heart className="w-5 h-5 text-red-400 fill-red-400" />
+                              <Heart className="w-5 h-5 text-red-500" fill="currentColor" />
                             ) : (
                               <Heart className="w-5 h-5 text-gray-100" fill="none" />
                             )}
