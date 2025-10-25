@@ -13,7 +13,6 @@ export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const API_URL = "https://movu-back-4mcj.onrender.com/api/v1/pexels";
 
-  // Cargar favoritos
   useEffect(() => {
     const favs = localStorage.getItem("favoritos");
     if (favs) setFavoritos(JSON.parse(favs));
@@ -85,7 +84,7 @@ export const DashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#2b2f33] text-white flex flex-col relative">
+    <div className="min-h-screen bg-[#2b2f33] text-gray-100 flex flex-col relative">
       <Navbar buscarVideos={buscarVideos} />
 
       <main className="flex-grow px-6 pt-14 pb-10">
@@ -97,7 +96,9 @@ export const DashboardPage: React.FC = () => {
 
             return (
               <section key={categoria} className="mb-10">
-                <h2 className="text-xl font-semibold mb-4">{categoria}</h2>
+                <h2 className="text-xl font-semibold mb-4 text-gray-100">
+                  {categoria}
+                </h2>
 
                 {/* Rejilla accesible */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -140,9 +141,9 @@ export const DashboardPage: React.FC = () => {
                             }`}
                           >
                             {esFavorito ? (
-                              <Heart className="w-5 h-5 text-red-500 fill-red-500" />
+                              <Heart className="w-5 h-5 text-red-400 fill-red-400" />
                             ) : (
-                              <Heart className="w-5 h-5 text-white" fill="none" />
+                              <Heart className="w-5 h-5 text-gray-100" fill="none" />
                             )}
                           </button>
 
@@ -150,7 +151,7 @@ export const DashboardPage: React.FC = () => {
                           {hoveredId === video.id && (
                             <span
                               role="tooltip"
-                              className="absolute right-10 top-1/2 -translate-y-1/2 bg-[#2f3338] text-white text-xs font-medium px-2 py-1 rounded-md shadow-md whitespace-nowrap"
+                              className="absolute right-10 top-1/2 -translate-y-1/2 bg-[#2f3338] text-gray-100 text-xs font-medium px-2 py-1 rounded-md shadow-md whitespace-nowrap"
                             >
                               {tooltipText}
                             </span>
@@ -159,7 +160,7 @@ export const DashboardPage: React.FC = () => {
 
                         {/* Nombre del video con contraste alto */}
                         <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent px-2 py-1">
-                          <p className="text-sm text-white font-medium truncate">
+                          <p className="text-sm text-gray-100 font-medium truncate">
                             {video.title || "Video sin título"}
                           </p>
                         </div>
