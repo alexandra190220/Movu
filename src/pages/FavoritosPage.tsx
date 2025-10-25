@@ -4,8 +4,6 @@ import { Heart } from "lucide-react";
 import { Navbar } from "../components/Navbar";
 import { FavoriteService } from "../Services/FavoriteService";
 
-const API_URL = "https://movu-back-4mcj.onrender.com/api/v1/pexels";
-
 export const FavoritosPage: React.FC = () => {
   const [favoritos, setFavoritos] = useState<any[]>([]);
   const [animando, setAnimando] = useState<string | null>(null);
@@ -20,24 +18,13 @@ export const FavoritosPage: React.FC = () => {
       setUserId(storedUserId);
 
       try {
-        // Obtener solo los videoId de favoritos
         const favs = await FavoriteService.getFavorites(storedUserId);
-
-        // Traer datos completos de cada video desde Pexels
-        const favsCompletos = await Promise.all(
-          favs.map(async (f: any) => {
-            try {
-              const res = await fetch(`${API_URL}/videos/${f.videoId}`);
-              const data = await res.json();
-              return { ...data, id: f.videoId }; // Aseguramos que tenga 'id'
-            } catch (err) {
-              console.error("Error cargando video:", f.videoId, err);
-              return null;
-            }
-          })
-        );
-
-        setFavoritos(favsCompletos.filter((v) => v !== null));
+        // Mapear para que cada favorito tenga la información completa del video
+        const favoritosMapeados = favs.map((f: any) => ({
+          ...f.video,
+          id: f.videoId // aseguramos que 'id' exista
+        }));
+        setFavoritos(favoritosMapeados);
       } catch (error) {
         console.error("Error cargando favoritos:", error);
       }
