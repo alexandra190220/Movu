@@ -124,7 +124,7 @@ export const DashboardPage: React.FC = () => {
                   {categoria}
                 </h2>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                   {lista.map((video) => {
                     const esFavorito = favoritos.some((f) => f.id === video.id);
                     const latido = animando === video.id;
@@ -137,15 +137,16 @@ export const DashboardPage: React.FC = () => {
                     return (
                       <div
                         key={video.id}
-                        className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-110 transition-transform shadow-md cursor-pointer group"
+                        className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-md cursor-pointer group min-h-[24rem] sm:min-h-[28rem]"
                       >
                         <img
                           src={thumbnail}
                           alt={video.alt || "Miniatura del video"}
-                          className="w-full h-56 sm:h-64 object-cover transition-opacity duration-300 group-hover:opacity-80"
+                          className="w-full h-64 sm:h-72 md:h-80 lg:h-88 object-cover transition-transform duration-300 group-hover:opacity-80 group-hover:scale-105"
                           onClick={() => handleClickVideo(video)}
                         />
 
+                        {/* Botón de favorito */}
                         <div
                           onMouseEnter={() => setHoveredId(video.id)}
                           onMouseLeave={() => setHoveredId(null)}
@@ -162,10 +163,10 @@ export const DashboardPage: React.FC = () => {
                             }`}
                           >
                             {esFavorito ? (
-                              <Heart className="w-5 h-5 text-red-400 fill-red-400" />
+                              <Heart className="w-6 h-6 text-red-400 fill-red-400" />
                             ) : (
                               <Heart
-                                className="w-5 h-5 text-gray-100"
+                                className="w-6 h-6 text-gray-100"
                                 fill="none"
                               />
                             )}
@@ -181,8 +182,9 @@ export const DashboardPage: React.FC = () => {
                           )}
                         </div>
 
+                        {/* Título del video */}
                         <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent px-2 py-1">
-                          <p className="text-sm text-gray-100 font-medium truncate">
+                          <p className="text-sm sm:text-base text-gray-100 font-medium truncate">
                             {video.title || "Video sin título"}
                           </p>
                         </div>
