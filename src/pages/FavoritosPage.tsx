@@ -6,6 +6,7 @@ import { Navbar } from "../components/Navbar";
 export const FavoritosPage: React.FC = () => {
   const [favoritos, setFavoritos] = useState<any[]>([]);
   const [animando, setAnimando] = useState<string | null>(null);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   // Cargar favoritos al iniciar
@@ -49,6 +50,7 @@ export const FavoritosPage: React.FC = () => {
             const latido = animando === video.id;
             const thumbnail =
               video.image || video.video_pictures?.[0]?.picture || "";
+            const tooltipText = "Quitar de favoritos";
 
             return (
               <div
@@ -63,14 +65,19 @@ export const FavoritosPage: React.FC = () => {
                   onClick={() => verVideo(video)}
                 />
 
-                {/* Botón de corazón con tooltip */}
-                <div className="absolute top-2 right-2 z-20 group/heart">
+                {/* Botón del corazón con tooltip */}
+                <div
+                  onMouseEnter={() => setHoveredId(video.id)}
+                  onMouseLeave={() => setHoveredId(null)}
+                  className="absolute top-2 right-2 z-20"
+                >
                   <button
                     onClick={(e) => {
-                      e.stopPropagation(); // evita abrir el video al quitar favorito
+                      e.stopPropagation();
                       eliminarFavorito(video);
                     }}
-                    className={`p-2 rounded-full bg-black/40 hover:bg-black/70 transition-transform ${
+                    aria-label={tooltipText}
+                    className={`p-2 rounded-full bg-black/40 hover:bg-black/70 transition-transform relative ${
                       latido ? "animate-pulse scale-125" : ""
                     }`}
                   >
@@ -78,9 +85,11 @@ export const FavoritosPage: React.FC = () => {
                   </button>
 
                   {/* Tooltip */}
-                  <span className="absolute top-full right-1/2 translate-x-1/2 mt-1 px-2 py-1 text-xs text-white bg-black/80 rounded opacity-0 group-hover/heart:opacity-100 transition-opacity duration-300 pointer-events-none">
-                    Quitar de favoritos
-                  </span>
+                  {hoveredId === video.id && (
+                    <span className="absolute right-10 top-1/2 -translate-y-1/2 bg-black text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap">
+                      {tooltipText}
+                    </span>
+                  )}
                 </div>
               </div>
             );
