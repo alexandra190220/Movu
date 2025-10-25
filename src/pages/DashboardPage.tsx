@@ -25,10 +25,9 @@ export const DashboardPage: React.FC = () => {
 
       try {
         const favs = await FavoriteService.getFavorites(storedUserId);
-        // Mapear videoId a id para que coincida con los objetos de videos
         const favoritosMapeados = favs.map((f: any) => ({
-          ...f.video,       // si guardaste todo el objeto video en backend
-          id: f.videoId,    // aseguramos que la propiedad se llama 'id'
+          ...f.videoData,
+          id: f.videoId,
         }));
         setFavoritos(favoritosMapeados);
       } catch (err) {
@@ -39,7 +38,7 @@ export const DashboardPage: React.FC = () => {
     loadUserAndFavorites();
   }, []);
 
-  // Toggle favorito con backend
+  // Toggle favorito
   const toggleFavorito = async (video: any) => {
     if (!userId) return;
 
@@ -50,7 +49,7 @@ export const DashboardPage: React.FC = () => {
         await FavoriteService.removeFavorite(userId, video.id);
         setFavoritos(favoritos.filter((f) => f.id !== video.id));
       } else {
-        await FavoriteService.addFavorite(userId, video.id);
+        await FavoriteService.addFavorite(userId, video.id, video);
         setFavoritos([...favoritos, video]);
         setAnimando(video.id);
         setTimeout(() => setAnimando(null), 300);
@@ -92,7 +91,9 @@ export const DashboardPage: React.FC = () => {
     setLoading(true);
     try {
       const res = await fetch(
-        `${API_URL}/videos/search?query=${encodeURIComponent(termino)}&per_page=10`
+        `${API_URL}/videos/search?query=${encodeURIComponent(
+          termino
+        )}&per_page=10`
       );
       const data = await res.json();
       setVideos({ Resultado: data.videos || [] });
