@@ -64,7 +64,7 @@ export const FavoritosPage: React.FC = () => {
                 />
 
                 {/* Botón de corazón con tooltip */}
-                <div className="absolute top-2 right-2 z-20 relative group/heart">
+                <div className="absolute top-2 right-2 z-20 group/heart">
                   <button
                     onClick={(e) => {
                       e.stopPropagation(); // evita abrir el video al quitar favorito
@@ -78,7 +78,7 @@ export const FavoritosPage: React.FC = () => {
                   </button>
 
                   {/* Tooltip */}
-                  <span className="absolute right-0 mt-2 px-2 py-1 text-xs text-white bg-black/70 rounded opacity-0 group-hover/heart:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                  <span className="absolute top-full right-1/2 translate-x-1/2 mt-1 px-2 py-1 text-xs text-white bg-black/80 rounded opacity-0 group-hover/heart:opacity-100 transition-opacity duration-300 pointer-events-none">
                     Quitar de favoritos
                   </span>
                 </div>
