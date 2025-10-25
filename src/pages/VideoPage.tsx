@@ -1,7 +1,7 @@
 // src/pages/VideoPage.tsx
 import React, { useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { useLocation } from "react-router-dom";
+
 
 interface VideoState {
   video: any;
@@ -9,7 +9,7 @@ interface VideoState {
 
 export const VideoPage: React.FC = () => {
   const location = useLocation();
-  const navigate = useNavigate();
+
   const { video } = location.state as VideoState;
 
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -25,14 +25,7 @@ export const VideoPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#2b2f33] text-white flex flex-col items-center p-6">
-      {/* Botón volver */}
-      <button
-        onClick={() => navigate(-1)}
-        className="flex items-center gap-2 self-start mb-4 text-white hover:text-red-500 transition"
-      >
-        <ArrowLeft className="w-5 h-5" />
-        Volver
-      </button>
+      
 
       <h1 className="text-2xl font-semibold mb-4">{video.user?.name}</h1>
 
