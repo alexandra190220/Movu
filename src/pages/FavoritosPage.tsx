@@ -68,7 +68,7 @@ export const FavoritosPage: React.FC = () => {
       <main className="flex-grow px-6 pt-14 pb-10">
         <h2 className="text-xl font-semibold mb-4">Mis Favoritos</h2>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {favoritos.map((video) => {
             const latido = animando === video.id;
             const thumbnail =
@@ -78,13 +78,13 @@ export const FavoritosPage: React.FC = () => {
             return (
               <div
                 key={video.id}
-                className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-md cursor-pointer group"
+                className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-md cursor-pointer group min-h-[24rem] sm:min-h-[28rem]"
               >
-                <div className="w-full aspect-video">
+                <div className="w-full aspect-video transition-transform duration-300 group-hover:scale-105">
                   <img
                     src={thumbnail}
                     alt={video.alt || "Miniatura del video"}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:opacity-80 group-hover:scale-105"
+                    className="w-full h-full object-cover"
                     onClick={() => verVideo(video)}
                   />
                 </div>
@@ -120,7 +120,7 @@ export const FavoritosPage: React.FC = () => {
 
                 {/* Título del video */}
                 <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent px-2 py-1">
-                  <p className="text-sm text-white font-medium truncate">
+                  <p className="text-sm sm:text-base text-white font-medium truncate">
                     {video.title || "Video sin título"}
                   </p>
                 </div>
