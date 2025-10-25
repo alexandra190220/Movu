@@ -140,7 +140,7 @@ export const DashboardPage: React.FC = () => {
                         <img
                           src={thumbnail}
                           alt={video.alt || "Miniatura del video"}
-                          className="w-full h-48 sm:h-56 object-cover transition-opacity duration-300 group-hover:opacity-80"
+                          className="w-full h-56 sm:h-64 object-cover transition-opacity duration-300 group-hover:opacity-80"
                           onClick={() => handleClickVideo(video)}
                         />
 
