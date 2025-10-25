@@ -1,22 +1,37 @@
 import axios from "axios";
 
-// URL de tu backend en Render
 const API_URL = "https://movu-back-4mcj.onrender.com/api/v1/favorites";
 
+/**
+ * @file FavoriteService.ts
+ * @description Service module for managing user favorite videos through API requests.
+ * Provides methods to get, add, remove, and check favorite videos for a specific user.
+ */
+
 export const FavoriteService = {
-  // Obtener todos los favoritos de un usuario
+  /**
+   * Retrieves all favorite videos of a given user.
+   * @async
+   * @param {string} userId - The unique identifier of the user.
+   * @returns {Promise<Array<{videoId: string, videoData: any}>>} List of favorite videos.
+   */
   async getFavorites(userId: string) {
     const res = await axios.get(`${API_URL}/${userId}`);
-    // El backend devuelve { videoId, userId, createdAt, updatedAt, videoData }
     return res.data.map((fav: any) => ({
       videoId: fav.videoId,
       videoData: fav.videoData,
     }));
   },
 
-  // Agregar un video a favoritos
+  /**
+   * Adds a video to the user's list of favorites.
+   * @async
+   * @param {string} userId - The unique identifier of the user.
+   * @param {string} videoId - The unique identifier of the video.
+   * @param {any} videoData - The complete video data object to be stored.
+   * @returns {Promise<{videoId: string, videoData: any}>} The added favorite video data.
+   */
   async addFavorite(userId: string, videoId: string, videoData: any) {
-    // Enviamos videoData completo al backend para almacenarlo
     const res = await axios.post(API_URL, { userId, videoId, videoData });
     return {
       videoId: res.data.videoId,
@@ -24,13 +39,25 @@ export const FavoriteService = {
     };
   },
 
-  // Eliminar un video de favoritos
+  /**
+   * Removes a video from the user's list of favorites.
+   * @async
+   * @param {string} userId - The unique identifier of the user.
+   * @param {string} videoId - The unique identifier of the video to be removed.
+   * @returns {Promise<any>} The server response after deletion.
+   */
   async removeFavorite(userId: string, videoId: string) {
     const res = await axios.delete(API_URL, { data: { userId, videoId } });
     return res.data;
   },
 
-  // Verificar si un video está en favoritos
+  /**
+   * Checks whether a specific video is in the user's list of favorites.
+   * @async
+   * @param {string} userId - The unique identifier of the user.
+   * @param {string} videoId - The unique identifier of the video to check.
+   * @returns {Promise<boolean>} True if the video is a favorite, false otherwise.
+   */
   async checkFavorite(userId: string, videoId: string) {
     const res = await axios.get(`${API_URL}/check/favorite`, {
       params: { userId, videoId },
