@@ -11,9 +11,8 @@ export const FavoritosPage: React.FC = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  // Cargar userId y favoritos desde backend al iniciar
   useEffect(() => {
-    const loadFavorites = async () => {
+    const fetchFavorites = async () => {
       const storedUserId = localStorage.getItem("userId");
       if (!storedUserId) return;
 
@@ -22,30 +21,27 @@ export const FavoritosPage: React.FC = () => {
       try {
         const favs = await FavoriteService.getFavorites(storedUserId);
         setFavoritos(favs);
-      } catch (err) {
-        console.error("Error cargando favoritos:", err);
+      } catch (error) {
+        console.error("Error cargando favoritos:", error);
       }
     };
 
-    loadFavorites();
+    fetchFavorites();
   }, []);
 
-  // Eliminar un video de favoritos
   const eliminarFavorito = async (video: any) => {
     if (!userId) return;
 
     try {
       await FavoriteService.removeFavorite(userId, video.id);
       setFavoritos(favoritos.filter((f) => f.id !== video.id));
-
       setAnimando(video.id);
       setTimeout(() => setAnimando(null), 200);
-    } catch (err) {
-      console.error("Error eliminando favorito:", err);
+    } catch (error) {
+      console.error("Error eliminando favorito:", error);
     }
   };
 
-  // Navegar a la página de video
   const verVideo = (video: any) => {
     navigate("/video", { state: { video } });
   };
@@ -100,7 +96,7 @@ export const FavoritosPage: React.FC = () => {
                       latido ? "animate-pulse scale-125" : ""
                     }`}
                   >
-                    <Heart className="w-5 h-5 text-red-500 fill-red-500" />
+                    <Heart className="w-5 h-5 text-red-500" fill="currentColor" />
                   </button>
 
                   {hoveredId === video.id && (
