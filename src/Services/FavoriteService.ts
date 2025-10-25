@@ -1,7 +1,7 @@
     import axios from "axios";
 
     // ⚠️ Reemplaza esta URL con la de tu backend en Render
-    const API_URL = "https://tu-backend.onrender.com/api/favorites";
+    const API_URL = "https://movu-back-4mcj.onrender.com/api/v1/favorite";
 
     export const FavoriteService = {
     // Obtener todos los favoritos de un usuario
