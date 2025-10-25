@@ -13,6 +13,7 @@ export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const API_URL = "https://movu-back-4mcj.onrender.com/api/v1/pexels";
 
+  // Cargar favoritos
   useEffect(() => {
     const favs = localStorage.getItem("favoritos");
     if (favs) setFavoritos(JSON.parse(favs));
@@ -97,20 +98,32 @@ export const DashboardPage: React.FC = () => {
             return (
               <section key={categoria} className="mb-10">
                 <h2 className="text-xl font-semibold mb-4">{categoria}</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+
+                {/* MISMA REJILLA que Favoritos */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                   {lista.map((video) => {
                     const esFavorito = favoritos.some((f) => f.id === video.id);
                     const latido = animando === video.id;
                     const tooltipText = esFavorito
                       ? "Quitar de favoritos"
                       : "Añadir a favoritos";
+                    const thumbnail =
+                      video.image || video.video_pictures?.[0]?.picture || "";
 
                     return (
                       <div
                         key={video.id}
-                        className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-md cursor-pointer"
+                        className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-md cursor-pointer group"
                       >
-                        {/* Botón favorito con tooltip */}
+                        {/* Imagen */}
+                        <img
+                          src={thumbnail}
+                          alt={video.alt || "Miniatura del video"}
+                          className="w-full h-48 sm:h-56 object-cover transition-opacity duration-300 group-hover:opacity-80"
+                          onClick={() => handleClickVideo(video)}
+                        />
+
+                        {/* Corazón con tooltip */}
                         <div
                           onMouseEnter={() => setHoveredId(video.id)}
                           onMouseLeave={() => setHoveredId(null)}
@@ -121,7 +134,7 @@ export const DashboardPage: React.FC = () => {
                               e.stopPropagation();
                               toggleFavorito(video);
                             }}
-                            aria-label={tooltipText} // accesible para lectores de pantalla
+                            aria-label={tooltipText}
                             className={`p-2 rounded-full bg-black/40 hover:bg-black/70 transition-transform relative ${
                               latido ? "animate-pulse scale-125" : ""
                             }`}
@@ -129,33 +142,15 @@ export const DashboardPage: React.FC = () => {
                             {esFavorito ? (
                               <Heart className="w-5 h-5 text-red-500 fill-red-500" />
                             ) : (
-                              <Heart
-                                className="w-5 h-5 text-white"
-                                fill="none"
-                              />
+                              <Heart className="w-5 h-5 text-white" fill="none" />
                             )}
                           </button>
 
-                          {/* Tooltip */}
                           {hoveredId === video.id && (
                             <span className="absolute right-10 top-1/2 -translate-y-1/2 bg-black text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap">
                               {tooltipText}
                             </span>
                           )}
-                        </div>
-
-                        {/* Imagen del video */}
-                        <div
-                          onClick={() => handleClickVideo(video)}
-                          className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-md w-full h-64 sm:h-80 md:h-96 cursor-pointer"
-                        >
-                          <img
-                            src={
-                              video.image || video.video_pictures?.[0]?.picture
-                            }
-                            alt="thumbnail"
-                            className="w-full h-full object-cover"
-                          />
                         </div>
                       </div>
                     );
