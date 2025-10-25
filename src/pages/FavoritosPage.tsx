@@ -63,18 +63,25 @@ export const FavoritosPage: React.FC = () => {
                   onClick={() => verVideo(video)}
                 />
 
-                {/* Botón de corazón */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation(); // evita abrir el video al quitar favorito
-                    eliminarFavorito(video);
-                  }}
-                  className={`absolute top-2 right-2 z-20 p-2 rounded-full bg-black/40 hover:bg-black/70 transition-transform ${
-                    latido ? "animate-pulse scale-125" : ""
-                  }`}
-                >
-                  <Heart className="w-5 h-5 text-red-500 fill-red-500" />
-                </button>
+                {/* Botón de corazón con tooltip */}
+                <div className="absolute top-2 right-2 z-20 relative group/heart">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation(); // evita abrir el video al quitar favorito
+                      eliminarFavorito(video);
+                    }}
+                    className={`p-2 rounded-full bg-black/40 hover:bg-black/70 transition-transform ${
+                      latido ? "animate-pulse scale-125" : ""
+                    }`}
+                  >
+                    <Heart className="w-5 h-5 text-red-500 fill-red-500" />
+                  </button>
+
+                  {/* Tooltip */}
+                  <span className="absolute right-0 mt-2 px-2 py-1 text-xs text-white bg-black/70 rounded opacity-0 group-hover/heart:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                    Quitar de favoritos
+                  </span>
+                </div>
               </div>
             );
           })}
