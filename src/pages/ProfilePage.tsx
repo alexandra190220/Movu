@@ -1,3 +1,21 @@
+/**
+ * @file ProfilePage.tsx
+ * @description Página de perfil del usuario donde puede visualizar, editar o eliminar su cuenta.
+ * Implementa validación de datos, persistencia de información y principios de accesibilidad (WCAG 2.1).
+ *
+ * @component
+ * @example
+ * return <ProfilePage />
+ *
+ * @remarks
+ * - Usa TailwindCSS para mantener una interfaz coherente y accesible.
+ * - Cumple pautas WCAG 2.1:
+ *   - Colores con alto contraste para texto y fondo.
+ *   - Indicadores de enfoque visibles para navegación con teclado.
+ *   - Uso semántico de encabezados y botones.
+ *   - Retroalimentación visual en acciones y estados.
+ */
+
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -7,6 +25,10 @@ import {
 } from "../Services/AuthService";
 import { User, Edit, Trash2, X, CheckCircle, Save } from "lucide-react";
 
+/**
+ * @interface User
+ * @description Define la estructura de los datos del usuario.
+ */
 interface User {
   id?: string;
   _id?: string;
@@ -18,6 +40,11 @@ interface User {
   updatedAt?: string;
 }
 
+/**
+ * @function ProfilePage
+ * @description Componente que muestra y permite gestionar el perfil del usuario.
+ * Permite editar la información, cambiar la contraseña o eliminar la cuenta.
+ */
 export const ProfilePage: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -33,6 +60,10 @@ export const ProfilePage: React.FC = () => {
   useEffect(() => {
     let mounted = true;
 
+    /**
+     * @function loadUser
+     * @description Carga los datos del usuario desde el backend o el localStorage.
+     */
     const loadUser = async () => {
       try {
         const userId = localStorage.getItem("userId");
@@ -88,6 +119,10 @@ export const ProfilePage: React.FC = () => {
     }
   }, [message]);
 
+  /**
+   * @function handleDeleteAccount
+   * @description Elimina la cuenta del usuario de la base de datos y limpia la sesión local.
+   */
   const handleDeleteAccount = async () => {
     if (!user) return;
     const userId = user._id ?? user.id;
@@ -124,12 +159,19 @@ export const ProfilePage: React.FC = () => {
     }
   };
 
+  /**
+   * @function handleEditChange
+   * @description Maneja los cambios en los campos del formulario al editar.
+   */
   const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 🔍 Validación de contraseña (igual que en el registro)
+  /**
+   * @function validatePassword
+   * @description Valida la seguridad de la contraseña según criterios definidos.
+   */
   const validatePassword = (password: string): string | null => {
     const minLength = 8;
     const regexUpper = /[A-Z]/;
@@ -150,6 +192,10 @@ export const ProfilePage: React.FC = () => {
     return null;
   };
 
+  /**
+   * @function handleSaveChanges
+   * @description Guarda los cambios del perfil y actualiza la información del usuario.
+   */
   const handleSaveChanges = async () => {
     if (!user) return;
     const userId = user._id ?? user.id;
