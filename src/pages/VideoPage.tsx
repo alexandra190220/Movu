@@ -18,7 +18,7 @@ export const VideoPage: React.FC = () => {
   const { video } = location.state as VideoState;
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const [volume, setVolume] = useState(1); // rango 0–1
+  const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
 
   const handlePlay = () => videoRef.current?.play();
@@ -65,20 +65,28 @@ export const VideoPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#1f2226] text-white flex flex-col items-center p-6">
-      <h1 className="text-2xl font-semibold mb-4">{video.user?.name}</h1>
+      {/* Título del video */}
+      <h1 className="text-3xl font-bold mb-2 text-center">
+        {video?.user?.name || "Autor desconocido"}
+      </h1>
+      <p className="text-gray-300 mb-6 text-center text-lg italic">
+        {video?.video_files?.[0]?.name ||
+          video?.alt ||
+          "Título del video no disponible"}
+      </p>
 
       {/* Video */}
-      <div className="relative w-full max-w-4xl">
+      <div className="relative w-full max-w-3xl">
         <video
           ref={videoRef}
           src={video.video_files?.[0]?.link}
           controls={false}
-          className="w-full rounded-lg shadow-lg mb-4"
+          className="w-full h-[60vh] object-contain rounded-lg shadow-lg mb-4"
         />
       </div>
 
       {/* Controles personalizados */}
-      <div className="flex flex-wrap gap-4 items-center justify-center bg-[#2b2f33] p-4 rounded-xl shadow-lg">
+      <div className="flex flex-wrap gap-4 items-center justify-center bg-[#2b2f33] p-4 rounded-xl shadow-lg mt-2 w-full max-w-3xl">
         <button
           onClick={handlePlay}
           className="flex items-center gap-2 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg shadow-md transition-all"
