@@ -3,14 +3,41 @@ import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../Services/AuthService";
 import { Loader2, Eye, EyeOff, CheckCircle, XCircle } from "lucide-react";
 
+/**
+ * LoginPage component that allows users to authenticate into the system.
+ * It includes input validation, loading feedback, success/error messages,
+ * and redirects to the dashboard after successful login.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered login page.
+ */
 export const LoginPage: React.FC = () => {
+  /** User email input state */
   const [email, setEmail] = useState("");
+
+  /** User password input state */
   const [password, setPassword] = useState("");
+
+  /** Controls whether the password is visible */
   const [showPassword, setShowPassword] = useState(false);
+
+  /** Controls the loading spinner state during login */
   const [loading, setLoading] = useState(false);
+
+  /** Stores success or error messages to display to the user */
   const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+
+  /** Navigation hook used to redirect users after login */
   const navigate = useNavigate();
 
+  /**
+   * Handles the login process, including authentication, error handling,
+   * loading state, and redirect to the dashboard if successful.
+   *
+   * @async
+   * @param {React.FormEvent} e - The form submit event.
+   * @returns {Promise<void>}
+   */
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -23,7 +50,10 @@ export const LoginPage: React.FC = () => {
         type: "success",
       });
 
+      // Auto-dismiss success message after 3 seconds
       setTimeout(() => setMessage(null), 3000);
+
+      // Redirect to dashboard after 1 second
       setTimeout(() => navigate("/dashboard"), 1000);
     } catch (err: any) {
       console.error("Login error:", err);
@@ -31,6 +61,7 @@ export const LoginPage: React.FC = () => {
         text: err.message || "Error al iniciar sesión 😞",
         type: "error",
       });
+      // Auto-dismiss error message after 3 seconds
       setTimeout(() => setMessage(null), 3000);
     } finally {
       setLoading(false);

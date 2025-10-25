@@ -4,18 +4,33 @@ import { Navbar } from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import { FavoriteService } from "../Services/FavoriteService";
 
+/**
+ * DashboardPage Component
+ * 
+ * Displays categorized videos retrieved from the Pexels API,
+ * allows users to mark/unmark videos as favorites,
+ * and navigate to the detailed video view.
+ */
 export const DashboardPage: React.FC = () => {
+  /** Stores videos grouped by category */
   const [videos, setVideos] = useState<{ [key: string]: any[] }>({});
+  /** Stores the user's favorite videos */
   const [favoritos, setFavoritos] = useState<any[]>([]);
+  /** Loading state indicator */
   const [loading, setLoading] = useState(true);
+  /** Handles the favorite button animation */
   const [animando, setAnimando] = useState<string | null>(null);
+  /** Tracks which video is currently hovered */
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  /** Stores the current user's ID */
   const [userId, setUserId] = useState<string | null>(null);
 
   const navigate = useNavigate();
   const API_URL = "https://movu-back-4mcj.onrender.com/api/v1/pexels";
 
-  // Cargar userId y favoritos del backend
+  /**
+   * Load user ID and favorites from backend
+   */
   useEffect(() => {
     const loadUserAndFavorites = async () => {
       const storedUserId = localStorage.getItem("userId");
@@ -25,27 +40,29 @@ export const DashboardPage: React.FC = () => {
 
       try {
         const favs = await FavoriteService.getFavorites(storedUserId);
-        const favoritosMapeados = favs.map((f: any) => ({
+        const mappedFavorites = favs.map((f: any) => ({
           ...f.videoData,
           id: f.videoId,
         }));
-        setFavoritos(favoritosMapeados);
+        setFavoritos(mappedFavorites);
       } catch (err) {
-        console.error("Error cargando favoritos:", err);
+        console.error("Error loading favorites:", err);
       }
     };
 
     loadUserAndFavorites();
   }, []);
 
-  // Toggle favorito
+  /**
+   * Add or remove a video from favorites
+   */
   const toggleFavorito = async (video: any) => {
     if (!userId) return;
 
-    const existe = favoritos.some((f) => f.id === video.id);
+    const exists = favoritos.some((f) => f.id === video.id);
 
     try {
-      if (existe) {
+      if (exists) {
         await FavoriteService.removeFavorite(userId, video.id);
         setFavoritos(favoritos.filter((f) => f.id !== video.id));
       } else {
@@ -55,14 +72,16 @@ export const DashboardPage: React.FC = () => {
         setTimeout(() => setAnimando(null), 300);
       }
     } catch (error) {
-      console.error("Error al actualizar favorito:", error);
+      console.error("Error updating favorite:", error);
     }
   };
 
-  // Cargar videos por categoría
+  /**
+   * Load videos by predefined categories
+   */
   const loadVideosByCategory = async () => {
     const categorias = ["Terror", "Naturaleza", "Animales", "Acción"];
-    const resultado: any = {};
+    const result: any = {};
     setLoading(true);
 
     for (const cat of categorias) {
@@ -71,13 +90,13 @@ export const DashboardPage: React.FC = () => {
           `${API_URL}/videos/search?query=${encodeURIComponent(cat)}&per_page=4`
         );
         const data = await res.json();
-        resultado[cat] = data.videos || [];
+        result[cat] = data.videos || [];
       } catch (err) {
-        console.error("Error cargando categoría:", cat, err);
+        console.error("Error loading category:", cat, err);
       }
     }
 
-    setVideos(resultado);
+    setVideos(result);
     setLoading(false);
   };
 
@@ -85,7 +104,9 @@ export const DashboardPage: React.FC = () => {
     loadVideosByCategory();
   }, []);
 
-  // Buscar videos
+  /**
+   * Search videos by term
+   */
   const buscarVideos = async (termino: string) => {
     if (!termino.trim()) return;
     setLoading(true);
@@ -103,14 +124,19 @@ export const DashboardPage: React.FC = () => {
     setLoading(false);
   };
 
+  /**
+   * Navigate to the selected video detail page
+   */
   const handleClickVideo = (video: any) => {
     navigate("/video", { state: { video } });
   };
 
   return (
     <div className="min-h-screen bg-[#2b2f33] text-gray-100 flex flex-col relative">
-      <Navbar buscarVideos={buscarVideos} />
+      {/* Top navigation bar */}
+      <Navbar searchVideos={buscarVideos} />
 
+      {/* Main content */}
       <main className="flex-grow px-6 pt-14 pb-10">
         {loading ? (
           <p className="text-center text-gray-300 mt-10">Cargando videos...</p>
@@ -148,7 +174,7 @@ export const DashboardPage: React.FC = () => {
                           />
                         </div>
 
-                        {/* Botón de favorito */}
+                        {/* Favorite button */}
                         <div
                           onMouseEnter={() => setHoveredId(video.id)}
                           onMouseLeave={() => setHoveredId(null)}
@@ -184,7 +210,7 @@ export const DashboardPage: React.FC = () => {
                           )}
                         </div>
 
-                        {/* Título del video */}
+                        {/* Video title overlay */}
                         <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent px-2 py-1">
                           <p className="text-sm sm:text-base text-gray-100 font-medium truncate">
                             {video.title || "Video sin título"}

@@ -4,13 +4,24 @@ import { Heart } from "lucide-react";
 import { Navbar } from "../components/Navbar";
 import { FavoriteService } from "../Services/FavoriteService";
 
+/**
+ * FavoritesPage component that displays a list of videos the user has marked as favorites.
+ * Allows users to view and remove their favorite videos.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered Favorites page interface.
+ */
 export const FavoritosPage: React.FC = () => {
   const [favoritos, setFavoritos] = useState<any[]>([]);
-  const [animando, setAnimando] = useState<string | null>(null);
+  const [animating, setAnimating] = useState<string | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  /**
+   * Fetches the list of favorite videos for the logged-in user when the component mounts.
+   * Retrieves the user ID from localStorage and calls the FavoriteService.
+   */
   useEffect(() => {
     const fetchFavorites = async () => {
       const storedUserId = localStorage.getItem("userId");
@@ -20,34 +31,46 @@ export const FavoritosPage: React.FC = () => {
       try {
         const favs = await FavoriteService.getFavorites(storedUserId);
 
-        const favoritosMapeados = favs.map((f: any) => ({
+        // Map favorites to extract video data and ID
+        const mappedFavorites = favs.map((f: any) => ({
           ...f.videoData,
           id: f.videoId,
         }));
 
-        setFavoritos(favoritosMapeados);
+        setFavoritos(mappedFavorites);
       } catch (error) {
-        console.error("Error cargando favoritos:", error);
+        console.error("Error loading favorites:", error);
       }
     };
 
     fetchFavorites();
   }, []);
 
-  const eliminarFavorito = async (video: any) => {
+  /**
+   * Removes a video from the user's list of favorites.
+   *
+   * @async
+   * @param {any} video - The video object to be removed from favorites.
+   */
+  const removeFavorite = async (video: any) => {
     if (!userId) return;
 
     try {
       await FavoriteService.removeFavorite(userId, video.id);
       setFavoritos(favoritos.filter((f) => f.id !== video.id));
-      setAnimando(video.id);
-      setTimeout(() => setAnimando(null), 200);
+      setAnimating(video.id);
+      setTimeout(() => setAnimating(null), 200);
     } catch (error) {
-      console.error("Error eliminando favorito:", error);
+      console.error("Error removing favorite:", error);
     }
   };
 
-  const verVideo = (video: any) => {
+  /**
+   * Navigates to the video playback page with the selected video data.
+   *
+   * @param {any} video - The video to view.
+   */
+  const viewVideo = (video: any) => {
     navigate("/video", { state: { video } });
   };
 
@@ -69,7 +92,7 @@ export const FavoritosPage: React.FC = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {favoritos.map((video) => {
-            const latido = animando === video.id;
+            const beating = animating === video.id;
             const thumbnail =
               video.image || video.video_pictures?.[0]?.picture || "";
             const tooltipText = "Quitar de favoritos";
@@ -79,17 +102,17 @@ export const FavoritosPage: React.FC = () => {
                 key={video.id}
                 className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-md cursor-pointer group"
               >
-                {/* Contenedor con la misma proporción que Dashboard */}
+                {/* Container with the same aspect ratio as the Dashboard */}
                 <div className="w-full aspect-video">
                   <img
                     src={thumbnail}
                     alt={video.alt || "Miniatura del video"}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:opacity-80 group-hover:scale-105"
-                    onClick={() => verVideo(video)}
+                    onClick={() => viewVideo(video)}
                   />
                 </div>
 
-                {/* Botón de favorito */}
+                {/* Favorite button */}
                 <div
                   onMouseEnter={() => setHoveredId(video.id)}
                   onMouseLeave={() => setHoveredId(null)}
@@ -98,11 +121,11 @@ export const FavoritosPage: React.FC = () => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      eliminarFavorito(video);
+                      removeFavorite(video);
                     }}
                     aria-label={tooltipText}
                     className={`p-2 rounded-full bg-black/50 hover:bg-[#2f3338] transition-all duration-200 relative focus:outline-none focus:ring-2 focus:ring-red-500 ${
-                      latido ? "animate-pulse scale-125" : ""
+                      beating ? "animate-pulse scale-125" : ""
                     }`}
                   >
                     <Heart className="w-6 h-6 text-red-500 fill-red-500" />
@@ -118,7 +141,7 @@ export const FavoritosPage: React.FC = () => {
                   )}
                 </div>
 
-                {/* Título del video */}
+                {/* Video title */}
                 <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent px-2 py-1">
                   <p className="text-sm sm:text-base text-white font-medium truncate">
                     {video.title || "Video sin título"}

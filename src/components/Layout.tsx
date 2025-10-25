@@ -2,12 +2,21 @@ import React from "react";
 import { Navbar } from "./Navbar";
 import { Link, Outlet } from "react-router-dom";
 
+/**
+ * LayoutMovu component that defines the general structure of the application.
+ * It includes the navigation bar, main content area, and footer.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered layout containing Navbar, main content, and footer.
+ */
 const LayoutMovu: React.FC = () => {
   return (
     <div className="layout-container">
+      {/* 🔹 Smaller spacing on mobile, normal spacing on larger screens */}
       <Navbar />
-      {/* 🔹 Espaciado más pequeño en móvil y normal en pantallas grandes */}
+
       <main className="pt-12 sm:pt-20 px-4 min-h-[80vh]">
+        {/* The <Outlet> renders the current route’s child component */}
         <Outlet />
       </main>
 

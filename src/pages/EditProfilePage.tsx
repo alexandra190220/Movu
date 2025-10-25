@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getUserData, updateUser } from "../Services/AuthService";
 
+/**
+ * Interface representing the structure of a user object.
+ */
 interface User {
   _id?: string;
   id?: string;
@@ -11,6 +14,16 @@ interface User {
   email: string;
 }
 
+/**
+ * EditProfilePage component
+ * 
+ * This page allows users to view and edit their profile information.
+ * It fetches data from the backend, updates user details, and provides
+ * validation and accessibility features.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered edit profile page.
+ */
 export const EditProfilePage: React.FC = () => {
   const [formData, setFormData] = useState<User>({
     firstName: "",
@@ -22,6 +35,10 @@ export const EditProfilePage: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const navigate = useNavigate();
 
+  /**
+   * Load user data from backend using the stored userId.
+   * Redirects to login page if user is not authenticated.
+   */
   useEffect(() => {
     const loadUserData = async () => {
       try {
@@ -42,7 +59,7 @@ export const EditProfilePage: React.FC = () => {
           });
         }
       } catch (err) {
-        console.error("Error al cargar los datos del usuario:", err);
+        console.error("Error loading user data:", err);
         alert("No se pudieron cargar los datos del usuario.");
       } finally {
         setLoading(false);
@@ -52,6 +69,9 @@ export const EditProfilePage: React.FC = () => {
     loadUserData();
   }, [navigate]);
 
+  /**
+   * Handles input changes and updates state.
+   */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -60,6 +80,9 @@ export const EditProfilePage: React.FC = () => {
     }));
   };
 
+  /**
+   * Handles form submission to update user data.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const userId = localStorage.getItem("userId");
@@ -76,13 +99,16 @@ export const EditProfilePage: React.FC = () => {
         alert("No se pudo actualizar el perfil.");
       }
     } catch (err) {
-      console.error("Error al actualizar el perfil:", err);
+      console.error("Error updating profile:", err);
       alert("Ocurrió un error al actualizar el perfil.");
     } finally {
       setSaving(false);
     }
   };
 
+  /**
+   * Display a loading message while fetching user data.
+   */
   if (loading) {
     return (
       <div
@@ -95,6 +121,9 @@ export const EditProfilePage: React.FC = () => {
     );
   }
 
+  /**
+   * Main form layout for editing user profile.
+   */
   return (
     <main
       className="bg-[#2b2f33] text-white px-4 pt-20 pb-10 min-h-[80vh] flex justify-center items-center"
@@ -121,6 +150,7 @@ export const EditProfilePage: React.FC = () => {
           className="space-y-5"
           aria-label="Formulario de edición de perfil"
         >
+          {/* First name */}
           <div>
             <label htmlFor="firstName" className="block text-sm mb-1">
               Nombre
@@ -139,6 +169,7 @@ export const EditProfilePage: React.FC = () => {
             />
           </div>
 
+          {/* Last name */}
           <div>
             <label htmlFor="lastName" className="block text-sm mb-1">
               Apellido
@@ -157,6 +188,7 @@ export const EditProfilePage: React.FC = () => {
             />
           </div>
 
+          {/* Age */}
           <div>
             <label htmlFor="age" className="block text-sm mb-1">
               Edad
@@ -175,6 +207,7 @@ export const EditProfilePage: React.FC = () => {
             />
           </div>
 
+          {/* Email */}
           <div>
             <label htmlFor="email" className="block text-sm mb-1">
               Correo electrónico
@@ -193,6 +226,7 @@ export const EditProfilePage: React.FC = () => {
             />
           </div>
 
+          {/* Submit button */}
           <button
             type="submit"
             disabled={saving}
