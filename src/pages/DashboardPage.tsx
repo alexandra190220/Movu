@@ -90,7 +90,7 @@ export const DashboardPage: React.FC = () => {
 
       <main className="flex-grow px-6 pt-14 pb-10">
         {loading ? (
-          <p className="text-center text-gray-400 mt-10">Cargando videos...</p>
+          <p className="text-center text-gray-300 mt-10">Cargando videos...</p>
         ) : (
           Object.entries(videos).map(([categoria, lista]) => {
             if (!lista || lista.length === 0) return null;
@@ -99,7 +99,7 @@ export const DashboardPage: React.FC = () => {
               <section key={categoria} className="mb-10">
                 <h2 className="text-xl font-semibold mb-4">{categoria}</h2>
 
-                {/* MISMA REJILLA que Favoritos */}
+                {/* Rejilla accesible */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                   {lista.map((video) => {
                     const esFavorito = favoritos.some((f) => f.id === video.id);
@@ -115,7 +115,7 @@ export const DashboardPage: React.FC = () => {
                         key={video.id}
                         className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-md cursor-pointer group"
                       >
-                        {/* Imagen */}
+                        {/* Imagen del video */}
                         <img
                           src={thumbnail}
                           alt={video.alt || "Miniatura del video"}
@@ -123,7 +123,7 @@ export const DashboardPage: React.FC = () => {
                           onClick={() => handleClickVideo(video)}
                         />
 
-                        {/* Corazón con tooltip */}
+                        {/* Botón de favoritos con accesibilidad */}
                         <div
                           onMouseEnter={() => setHoveredId(video.id)}
                           onMouseLeave={() => setHoveredId(null)}
@@ -135,7 +135,7 @@ export const DashboardPage: React.FC = () => {
                               toggleFavorito(video);
                             }}
                             aria-label={tooltipText}
-                            className={`p-2 rounded-full bg-black/40 hover:bg-black/70 transition-transform relative ${
+                            className={`p-2 rounded-full bg-black/50 hover:bg-[#2f3338] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 relative ${
                               latido ? "animate-pulse scale-125" : ""
                             }`}
                           >
@@ -146,11 +146,22 @@ export const DashboardPage: React.FC = () => {
                             )}
                           </button>
 
+                          {/* Tooltip accesible */}
                           {hoveredId === video.id && (
-                            <span className="absolute right-10 top-1/2 -translate-y-1/2 bg-black text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap">
+                            <span
+                              role="tooltip"
+                              className="absolute right-10 top-1/2 -translate-y-1/2 bg-[#2f3338] text-white text-xs font-medium px-2 py-1 rounded-md shadow-md whitespace-nowrap"
+                            >
                               {tooltipText}
                             </span>
                           )}
+                        </div>
+
+                        {/* Nombre del video con contraste alto */}
+                        <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent px-2 py-1">
+                          <p className="text-sm text-white font-medium truncate">
+                            {video.title || "Video sin título"}
+                          </p>
                         </div>
                       </div>
                     );
