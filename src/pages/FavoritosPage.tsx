@@ -80,13 +80,16 @@ export const FavoritosPage: React.FC = () => {
                 key={video.id}
                 className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-md cursor-pointer group"
               >
-                <img
-                  src={thumbnail}
-                  alt={video.alt || "Miniatura del video"}
-                  className="w-full h-48 sm:h-56 object-cover transition-opacity duration-300 group-hover:opacity-80"
-                  onClick={() => verVideo(video)}
-                />
+                <div className="w-full aspect-video">
+                  <img
+                    src={thumbnail}
+                    alt={video.alt || "Miniatura del video"}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:opacity-80 group-hover:scale-105"
+                    onClick={() => verVideo(video)}
+                  />
+                </div>
 
+                {/* Botón de favorito */}
                 <div
                   onMouseEnter={() => setHoveredId(video.id)}
                   onMouseLeave={() => setHoveredId(null)}
@@ -102,7 +105,7 @@ export const FavoritosPage: React.FC = () => {
                       latido ? "animate-pulse scale-125" : ""
                     }`}
                   >
-                    <Heart className="w-5 h-5 text-red-500" fill="currentColor" />
+                    <Heart className="w-6 h-6 text-red-500 fill-red-500" />
                   </button>
 
                   {hoveredId === video.id && (
@@ -115,6 +118,7 @@ export const FavoritosPage: React.FC = () => {
                   )}
                 </div>
 
+                {/* Título del video */}
                 <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent px-2 py-1">
                   <p className="text-sm text-white font-medium truncate">
                     {video.title || "Video sin título"}
