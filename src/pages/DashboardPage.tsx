@@ -15,7 +15,7 @@ export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const API_URL = "https://movu-back-4mcj.onrender.com/api/v1/pexels";
 
-  // Obtener userId y favoritos del backend
+  // Cargar userId y favoritos del backend
   useEffect(() => {
     const loadUserAndFavorites = async () => {
       const storedUserId = localStorage.getItem("userId");
@@ -25,7 +25,12 @@ export const DashboardPage: React.FC = () => {
 
       try {
         const favs = await FavoriteService.getFavorites(storedUserId);
-        setFavoritos(favs);
+        // Mapear videoId a id para que coincida con los objetos de videos
+        const favoritosMapeados = favs.map((f: any) => ({
+          ...f.video,       // si guardaste todo el objeto video en backend
+          id: f.videoId,    // aseguramos que la propiedad se llama 'id'
+        }));
+        setFavoritos(favoritosMapeados);
       } catch (err) {
         console.error("Error cargando favoritos:", err);
       }
@@ -34,9 +39,10 @@ export const DashboardPage: React.FC = () => {
     loadUserAndFavorites();
   }, []);
 
-  // Toggle favorito
+  // Toggle favorito con backend
   const toggleFavorito = async (video: any) => {
     if (!userId) return;
+
     const existe = favoritos.some((f) => f.id === video.id);
 
     try {
@@ -86,9 +92,7 @@ export const DashboardPage: React.FC = () => {
     setLoading(true);
     try {
       const res = await fetch(
-        `${API_URL}/videos/search?query=${encodeURIComponent(
-          termino
-        )}&per_page=10`
+        `${API_URL}/videos/search?query=${encodeURIComponent(termino)}&per_page=10`
       );
       const data = await res.json();
       setVideos({ Resultado: data.videos || [] });
@@ -115,9 +119,7 @@ export const DashboardPage: React.FC = () => {
 
             return (
               <section key={categoria} className="mb-10">
-                <h2 className="text-xl font-semibold mb-4 text-gray-100">
-                  {categoria}
-                </h2>
+                <h2 className="text-xl font-semibold mb-4 text-gray-100">{categoria}</h2>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                   {lista.map((video) => {
@@ -157,7 +159,7 @@ export const DashboardPage: React.FC = () => {
                             }`}
                           >
                             {esFavorito ? (
-                              <Heart className="w-5 h-5 text-red-500" fill="currentColor" />
+                              <Heart className="w-5 h-5 text-red-400 fill-red-400" />
                             ) : (
                               <Heart className="w-5 h-5 text-gray-100" fill="none" />
                             )}
