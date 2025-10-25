@@ -137,14 +137,16 @@ export const DashboardPage: React.FC = () => {
                     return (
                       <div
                         key={video.id}
-                        className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-md cursor-pointer group min-h-[24rem] sm:min-h-[28rem]"
+                        className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-md cursor-pointer group"
                       >
-                        <img
-                          src={thumbnail}
-                          alt={video.alt || "Miniatura del video"}
-                          className="w-full h-64 sm:h-72 md:h-80 lg:h-88 object-cover transition-transform duration-300 group-hover:opacity-80 group-hover:scale-105"
-                          onClick={() => handleClickVideo(video)}
-                        />
+                        <div className="w-full aspect-video">
+                          <img
+                            src={thumbnail}
+                            alt={video.alt || "Miniatura del video"}
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:opacity-80 group-hover:scale-105"
+                            onClick={() => handleClickVideo(video)}
+                          />
+                        </div>
 
                         {/* Botón de favorito */}
                         <div
