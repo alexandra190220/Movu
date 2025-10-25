@@ -7,35 +7,39 @@ import { FavoriteService } from "../Services/FavoriteService";
 /**
  * DashboardPage Component
  * 
- * Displays categorized videos retrieved from the Pexels API,
- * allows users to mark/unmark videos as favorites,
- * and navigate to the detailed video view.
+ * Displays categorized videos retrieved from the Pexels API.
+ * Users can view videos by category, mark or unmark them as favorites,
+ * and navigate to the detailed video page.
+ * 
+ * Accessibility improvements:
+ * - Each interactive element now includes an accessible name (aria-label).
+ * - Buttons are focusable and follow best practices for screen readers.
+ * - Improved touch target sizes for better mobile usability.
  */
 export const DashboardPage: React.FC = () => {
   /** Stores videos grouped by category */
   const [videos, setVideos] = useState<{ [key: string]: any[] }>({});
   /** Stores the user's favorite videos */
   const [favoritos, setFavoritos] = useState<any[]>([]);
-  /** Loading state indicator */
+  /** Indicates if videos are currently loading */
   const [loading, setLoading] = useState(true);
-  /** Handles the favorite button animation */
+  /** Controls the favorite button animation */
   const [animando, setAnimando] = useState<string | null>(null);
-  /** Tracks which video is currently hovered */
+  /** Tracks which video card is hovered */
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  /** Stores the current user's ID */
+  /** Stores the logged-in user's ID */
   const [userId, setUserId] = useState<string | null>(null);
 
   const navigate = useNavigate();
   const API_URL = "https://movu-back-4mcj.onrender.com/api/v1/pexels";
 
   /**
-   * Load user ID and favorites from backend
+   * Load user data and their favorite videos from backend
    */
   useEffect(() => {
     const loadUserAndFavorites = async () => {
       const storedUserId = localStorage.getItem("userId");
       if (!storedUserId) return;
-
       setUserId(storedUserId);
 
       try {
@@ -54,7 +58,8 @@ export const DashboardPage: React.FC = () => {
   }, []);
 
   /**
-   * Add or remove a video from favorites
+   * Adds or removes a video from the user's favorites
+   * @param video Video object to toggle favorite status
    */
   const toggleFavorito = async (video: any) => {
     if (!userId) return;
@@ -77,7 +82,7 @@ export const DashboardPage: React.FC = () => {
   };
 
   /**
-   * Load videos by predefined categories
+   * Loads a predefined set of video categories
    */
   const loadVideosByCategory = async () => {
     const categorias = ["Terror", "Naturaleza", "Animales", "Acción"];
@@ -105,7 +110,8 @@ export const DashboardPage: React.FC = () => {
   }, []);
 
   /**
-   * Search videos by term
+   * Searches for videos by a given term
+   * @param termino Search term
    */
   const buscarVideos = async (termino: string) => {
     if (!termino.trim()) return;
@@ -125,7 +131,8 @@ export const DashboardPage: React.FC = () => {
   };
 
   /**
-   * Navigate to the selected video detail page
+   * Navigates to the selected video details page
+   * @param video Video object to view
    */
   const handleClickVideo = (video: any) => {
     navigate("/video", { state: { video } });
@@ -139,18 +146,31 @@ export const DashboardPage: React.FC = () => {
       {/* Main content */}
       <main className="flex-grow px-6 pt-14 pb-10">
         {loading ? (
-          <p className="text-center text-gray-300 mt-10">Cargando videos...</p>
+          <p
+            className="text-center text-gray-300 mt-10"
+            role="status"
+            aria-live="polite"
+          >
+            Cargando videos...
+          </p>
         ) : (
           Object.entries(videos).map(([categoria, lista]) => {
             if (!lista || lista.length === 0) return null;
 
             return (
               <section key={categoria} className="mb-10">
-                <h2 className="text-xl font-semibold mb-4 text-gray-100">
+                <h2
+                  className="text-xl font-semibold mb-4 text-gray-100"
+                  id={`categoria-${categoria}`}
+                >
                   {categoria}
                 </h2>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div
+                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+                  role="list"
+                  aria-labelledby={`categoria-${categoria}`}
+                >
                   {lista.map((video) => {
                     const esFavorito = favoritos.some((f) => f.id === video.id);
                     const latido = animando === video.id;
@@ -163,14 +183,19 @@ export const DashboardPage: React.FC = () => {
                     return (
                       <div
                         key={video.id}
+                        role="listitem"
                         className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-md cursor-pointer group"
                       >
+                        {/* Thumbnail */}
                         <div className="w-full aspect-video">
                           <img
                             src={thumbnail}
                             alt={video.alt || "Miniatura del video"}
                             className="w-full h-full object-cover transition-transform duration-300 group-hover:opacity-80 group-hover:scale-105"
                             onClick={() => handleClickVideo(video)}
+                            role="button"
+                            aria-label={`Ver detalles del video: ${video.title || "sin título"}`}
+                            tabIndex={0}
                           />
                         </div>
 
@@ -186,9 +211,11 @@ export const DashboardPage: React.FC = () => {
                               toggleFavorito(video);
                             }}
                             aria-label={tooltipText}
-                            className={`p-2 rounded-full bg-black/50 hover:bg-[#2f3338] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 relative ${
+                            title={tooltipText}
+                            className={`p-3 rounded-full bg-black/50 hover:bg-[#2f3338] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 relative ${
                               latido ? "animate-pulse scale-125" : ""
                             }`}
+                            style={{ minWidth: "44px", minHeight: "44px" }}
                           >
                             {esFavorito ? (
                               <Heart className="w-6 h-6 text-red-400 fill-red-400" />
@@ -200,6 +227,7 @@ export const DashboardPage: React.FC = () => {
                             )}
                           </button>
 
+                          {/* Tooltip */}
                           {hoveredId === video.id && (
                             <span
                               role="tooltip"

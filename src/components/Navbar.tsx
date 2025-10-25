@@ -15,9 +15,10 @@ interface NavbarProps {
  * Navbar component that provides navigation, search functionality,
  * and responsive menu options for the Movu app.
  *
- * @component
- * @param {NavbarProps} props - The properties passed to the component.
- * @returns {JSX.Element} The rendered Navbar component.
+ * Accessibility features:
+ * - All buttons and links have accessible names (aria-labels).
+ * - Touch targets follow WCAG minimum size (44x44 px).
+ * - The mobile menu uses aria-expanded and aria-controls attributes.
  */
 export const Navbar: React.FC<NavbarProps> = ({ searchVideos }) => {
   /** Controls the visibility state of the mobile side menu */
@@ -26,19 +27,13 @@ export const Navbar: React.FC<NavbarProps> = ({ searchVideos }) => {
   /** Stores the current search term entered by the user */
   const [searchTerm, setSearchTerm] = useState("");
 
-  /** React Router hook to get the current location */
   const location = useLocation();
-
-  /** React Router hook to navigate between pages */
   const navigate = useNavigate();
 
-  /**
-   * Toggles the side menu visibility.
-   * @function
-   */
+  /** Toggles the side menu visibility */
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  /** List of routes where the menu should be displayed */
+  /** Routes where the menu is visible */
   const routesWithMenu = [
     "/dashboard",
     "/AboutPage",
@@ -47,52 +42,42 @@ export const Navbar: React.FC<NavbarProps> = ({ searchVideos }) => {
     "/video",
   ];
 
-  /** Determines if menu options should be shown based on the current route */
   const showOptions = routesWithMenu.includes(location.pathname);
-
-  /** Determines if the "Iniciar sesión" button should be shown */
   const showLoginButton = location.pathname === "/";
 
-  /**
-   * Executes the search function when the user submits a search term.
-   * Calls `searchVideos` if provided.
-   * @function
-   */
+  /** Executes search */
   const handleSearch = () => {
-    if (searchVideos && searchTerm.trim()) {
-      searchVideos(searchTerm);
-    }
+    if (searchVideos && searchTerm.trim()) searchVideos(searchTerm);
   };
 
-  /**
-   * Handles the Enter key press on the search input field.
-   * Triggers the search if Enter is pressed.
-   * @function
-   * @param {React.KeyboardEvent<HTMLInputElement>} e - Keyboard event.
-   */
+  /** Handles Enter key for search */
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") handleSearch();
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-[#2b2f33] flex items-center justify-between px-4 sm:px-6 py-2 sm:py-3 shadow-md z-50">
-      
+    <nav
+      className="fixed top-0 left-0 w-full bg-[#2b2f33] flex items-center justify-between px-4 sm:px-6 py-2 sm:py-3 shadow-md z-50"
+      role="navigation"
+      aria-label="Barra de navegación principal"
+    >
       {/* Back arrow for mobile */}
       {location.pathname !== "/" && location.pathname !== "/dashboard" && (
         <button
           onClick={() => navigate(-1)}
           className="sm:hidden mr-2 text-white hover:text-red-500 transition"
-          aria-label="Volver"
+          aria-label="Volver a la página anterior"
+          style={{ minWidth: "44px", minHeight: "44px" }}
         >
           <ArrowLeft className="w-6 h-6" />
         </button>
       )}
 
       {/* Logo */}
-      <Link to="/" className="flex items-center">
+      <Link to="/" aria-label="Ir a la página principal de Movu">
         <img
           src="/logo.png"
-          alt="Movu Logo"
+          alt="Logo de Movu"
           className="h-12 sm:h-16 md:h-20 w-auto object-contain drop-shadow-lg transition-all duration-300"
         />
       </Link>
@@ -102,6 +87,7 @@ export const Navbar: React.FC<NavbarProps> = ({ searchVideos }) => {
         <Link
           to="/loginPage"
           className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 sm:px-5 sm:py-2 rounded text-xs sm:text-sm md:text-base transition"
+          aria-label="Ir a la página de inicio de sesión"
         >
           Iniciar sesión
         </Link>
@@ -114,6 +100,7 @@ export const Navbar: React.FC<NavbarProps> = ({ searchVideos }) => {
           <Link
             to="/dashboard"
             className="flex items-center gap-1 sm:gap-2 text-white font-medium hover:text-blue-400 transition"
+            aria-label="Ir al catálogo de videos"
           >
             <Film className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
             <span className="hidden sm:inline">Catálogo</span>
@@ -123,6 +110,7 @@ export const Navbar: React.FC<NavbarProps> = ({ searchVideos }) => {
           <Link
             to="/FavoritosPage"
             className="flex items-center gap-1 sm:gap-2 text-white font-medium hover:text-red-400 transition"
+            aria-label="Ver lista de favoritos"
           >
             <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-red-400" />
             <span className="hidden sm:inline">Favoritos</span>
@@ -130,11 +118,19 @@ export const Navbar: React.FC<NavbarProps> = ({ searchVideos }) => {
 
           {/* Search bar (only in Dashboard) */}
           {location.pathname === "/dashboard" && (
-            <div className="absolute left-1/2 transform -translate-x-1/2 w-32 sm:w-64">
+            <div
+              className="absolute left-1/2 transform -translate-x-1/2 w-32 sm:w-64"
+              role="search"
+            >
               <div className="relative">
+                <label htmlFor="search-input" className="sr-only">
+                  Buscar videos
+                </label>
                 <input
+                  id="search-input"
                   type="text"
                   placeholder="Buscar..."
+                  aria-label="Buscar videos"
                   className="px-3 py-1 sm:px-4 sm:py-2 rounded-full w-full text-black bg-white/70 border border-white/30 focus:outline-none focus:ring-2 focus:ring-red-400 text-xs sm:text-sm"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -143,6 +139,8 @@ export const Navbar: React.FC<NavbarProps> = ({ searchVideos }) => {
                 <button
                   onClick={handleSearch}
                   className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 text-red-500 hover:text-red-600"
+                  aria-label="Buscar"
+                  style={{ minWidth: "44px", minHeight: "44px" }}
                 >
                   <Search className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
@@ -154,7 +152,10 @@ export const Navbar: React.FC<NavbarProps> = ({ searchVideos }) => {
           <button
             onClick={toggleMenu}
             aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={isMenuOpen}
+            aria-controls="menu-lateral"
             className="text-white hover:text-red-500 transition focus:outline-none"
+            style={{ minWidth: "44px", minHeight: "44px" }}
           >
             {isMenuOpen ? (
               <svg
@@ -196,20 +197,26 @@ export const Navbar: React.FC<NavbarProps> = ({ searchVideos }) => {
         <div
           className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
           onClick={toggleMenu}
+          aria-hidden="true"
         />
       )}
 
       {/* Side menu */}
       <div
+        id="menu-lateral"
         className={`fixed top-0 right-0 h-full w-64 bg-[#3a3f45] shadow-lg z-50 transform transition-transform duration-300 ease-in-out ${
           isMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
+        role="menu"
+        aria-label="Menú lateral de navegación"
       >
         <div className="flex justify-between items-center p-4 border-b border-gray-700">
           <h2 className="text-lg font-semibold text-white">Menú</h2>
           <button
             onClick={toggleMenu}
             className="text-gray-300 hover:text-red-500 transition"
+            aria-label="Cerrar menú lateral"
+            style={{ minWidth: "44px", minHeight: "44px" }}
           >
             ✖
           </button>
@@ -219,6 +226,8 @@ export const Navbar: React.FC<NavbarProps> = ({ searchVideos }) => {
             to="/ProfilePage"
             className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
             onClick={toggleMenu}
+            role="menuitem"
+            aria-label="Ir al perfil del usuario"
           >
             👤 Perfil
           </Link>
@@ -226,6 +235,8 @@ export const Navbar: React.FC<NavbarProps> = ({ searchVideos }) => {
             to="/AboutPage"
             className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
             onClick={toggleMenu}
+            role="menuitem"
+            aria-label="Ver información sobre nosotros"
           >
             ℹ️ Sobre nosotros
           </Link>
@@ -233,6 +244,8 @@ export const Navbar: React.FC<NavbarProps> = ({ searchVideos }) => {
             to="/"
             className="text-white hover:bg-[#4a4f55] rounded-lg px-3 py-2 transition"
             onClick={toggleMenu}
+            role="menuitem"
+            aria-label="Cerrar sesión e ir al inicio"
           >
             🚪 Cerrar sesión
           </Link>
