@@ -18,31 +18,36 @@ export const VideoPage: React.FC = () => {
   const { video } = location.state as VideoState;
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
 
-  const handlePlay = () => videoRef.current?.play();
-  const handlePause = () => videoRef.current?.pause();
+  const togglePlay = () => {
+    const videoEl = videoRef.current;
+    if (videoEl) {
+      if (isPlaying) {
+        videoEl.pause();
+      } else {
+        videoEl.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
 
   const handleStop = () => {
     if (videoRef.current) {
       videoRef.current.pause();
       videoRef.current.currentTime = 0;
+      setIsPlaying(false);
     }
   };
 
   const handleFullscreen = () => {
     const videoEl = videoRef.current;
     if (videoEl) {
-      if (videoEl.requestFullscreen) {
-        videoEl.requestFullscreen();
-      } else if ((videoEl as any).webkitRequestFullscreen) {
+      if (videoEl.requestFullscreen) videoEl.requestFullscreen();
+      else if ((videoEl as any).webkitRequestFullscreen)
         (videoEl as any).webkitRequestFullscreen();
-      } else if ((videoEl as any).mozRequestFullScreen) {
-        (videoEl as any).mozRequestFullScreen();
-      } else if ((videoEl as any).msRequestFullscreen) {
-        (videoEl as any).msRequestFullscreen();
-      }
     }
   };
 
@@ -64,76 +69,67 @@ export const VideoPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#1f2226] text-white flex flex-col items-center p-6">
-      {/* Título del video */}
-      <h1 className="text-3xl font-bold mb-2 text-center">
-        {video?.user?.name || "Autor desconocido"}
-      </h1>
-      <p className="text-gray-300 mb-6 text-center text-lg italic">
-        {video?.video_files?.[0]?.name ||
-          video?.alt ||
-          "Título del video no disponible"}
-      </p>
-
-      {/* Video */}
-      <div className="relative w-full max-w-3xl">
+    <div className="min-h-screen bg-gradient-to-b from-black via-[#141414] to-[#1f1f1f] text-white flex flex-col items-center justify-center p-4">
+      <div className="relative w-full max-w-3xl aspect-video rounded-lg overflow-hidden shadow-2xl group">
+        {/* Video */}
         <video
           ref={videoRef}
           src={video.video_files?.[0]?.link}
-          controls={false}
-          className="w-full h-[60vh] object-contain rounded-lg shadow-lg mb-4"
+          className="w-full h-full object-contain"
+          onClick={togglePlay}
         />
+
+        {/* Overlay con título */}
+        <div className="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/80 to-transparent">
+          <h1 className="text-xl font-semibold tracking-wide">
+            {video?.video_files?.[0]?.name || video?.alt || "Video sin título"}
+          </h1>
+          <p className="text-sm text-gray-400">
+            {video?.user?.name ? `Por ${video.user.name}` : ""}
+          </p>
+        </div>
       </div>
 
-      {/* Controles personalizados */}
-      <div className="flex flex-wrap gap-4 items-center justify-center bg-[#2b2f33] p-4 rounded-xl shadow-lg mt-2 w-full max-w-3xl">
+      {/* Controles */}
+      <div className="flex gap-5 items-center justify-center mt-5 bg-[#222]/70 backdrop-blur-md px-5 py-3 rounded-full shadow-lg">
         <button
-          onClick={handlePlay}
-          className="flex items-center gap-2 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg shadow-md transition-all"
+          onClick={togglePlay}
+          className="hover:text-red-500 transition-all"
         >
-          <Play size={20} /> Reproducir
-        </button>
-
-        <button
-          onClick={handlePause}
-          className="flex items-center gap-2 bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded-lg shadow-md transition-all"
-        >
-          <Pause size={20} /> Pausar
+          {isPlaying ? <Pause size={24} /> : <Play size={24} />}
         </button>
 
         <button
           onClick={handleStop}
-          className="flex items-center gap-2 bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg shadow-md transition-all"
+          className="hover:text-gray-400 transition-all"
         >
-          <Square size={20} /> Parar
+          <Square size={22} />
         </button>
 
         <button
           onClick={handleFullscreen}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg shadow-md transition-all"
+          className="hover:text-blue-400 transition-all"
         >
-          <Maximize2 size={20} /> Pantalla completa
+          <Maximize2 size={22} />
         </button>
 
-        {/* Control de volumen */}
-        <div className="flex items-center gap-3 bg-[#3a3f45] px-4 py-2 rounded-lg">
-          <button onClick={toggleMute}>
-            {isMuted || volume === 0 ? (
-              <VolumeX size={22} className="text-gray-300" />
-            ) : (
-              <Volume2 size={22} className="text-gray-300" />
-            )}
-          </button>
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.05"
-            value={isMuted ? 0 : volume}
-            onChange={handleVolumeChange}
-            className="w-24 accent-red-600 cursor-pointer"
-          />
-        </div>
+        <button onClick={toggleMute} className="hover:text-yellow-400 transition-all">
+          {isMuted || volume === 0 ? (
+            <VolumeX size={22} />
+          ) : (
+            <Volume2 size={22} />
+          )}
+        </button>
+
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.05"
+          value={isMuted ? 0 : volume}
+          onChange={handleVolumeChange}
+          className="w-20 accent-red-600 cursor-pointer"
+        />
       </div>
     </div>
   );
