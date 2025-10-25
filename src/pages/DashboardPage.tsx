@@ -61,7 +61,7 @@ export const DashboardPage: React.FC = () => {
 
   // Cargar videos por categoría
   const loadVideosByCategory = async () => {
-    const categorias = ["Terror", "Naturaleza", "Animales","Acción"];
+    const categorias = ["Terror", "Naturaleza", "Animales", "Acción"];
     const resultado: any = {};
     setLoading(true);
 
@@ -120,7 +120,9 @@ export const DashboardPage: React.FC = () => {
 
             return (
               <section key={categoria} className="mb-10">
-                <h2 className="text-xl font-semibold mb-4 text-gray-100">{categoria}</h2>
+                <h2 className="text-xl font-semibold mb-4 text-gray-100">
+                  {categoria}
+                </h2>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                   {lista.map((video) => {
@@ -135,7 +137,7 @@ export const DashboardPage: React.FC = () => {
                     return (
                       <div
                         key={video.id}
-                        className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-md cursor-pointer group"
+                        className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-110 transition-transform shadow-md cursor-pointer group"
                       >
                         <img
                           src={thumbnail}
@@ -162,7 +164,10 @@ export const DashboardPage: React.FC = () => {
                             {esFavorito ? (
                               <Heart className="w-5 h-5 text-red-400 fill-red-400" />
                             ) : (
-                              <Heart className="w-5 h-5 text-gray-100" fill="none" />
+                              <Heart
+                                className="w-5 h-5 text-gray-100"
+                                fill="none"
+                              />
                             )}
                           </button>
 
