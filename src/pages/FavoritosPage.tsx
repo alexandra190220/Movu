@@ -4,8 +4,6 @@ import { Heart } from "lucide-react";
 import { Navbar } from "../components/Navbar";
 import { FavoriteService } from "../Services/FavoriteService";
 
-const API_URL = "https://movu-back-4mcj.onrender.com/api/v1/pexels"; // Pexels API base
-
 export const FavoritosPage: React.FC = () => {
   const [favoritos, setFavoritos] = useState<any[]>([]);
   const [animando, setAnimando] = useState<string | null>(null);
@@ -17,28 +15,12 @@ export const FavoritosPage: React.FC = () => {
     const fetchFavorites = async () => {
       const storedUserId = localStorage.getItem("userId");
       if (!storedUserId) return;
+
       setUserId(storedUserId);
 
       try {
         const favs = await FavoriteService.getFavorites(storedUserId);
-
-        // Mapear a objetos de video completo
-        const videosCompletos = await Promise.all(
-          favs.map(async (f: any) => {
-            try {
-              const res = await fetch(
-                `${API_URL}/videos/${f.videoId}`
-              );
-              const data = await res.json();
-              return { ...data, _favoriteId: f._id }; // guardamos el _id del favorito para eliminar
-            } catch (err) {
-              console.error("Error cargando video favorito:", err);
-              return null;
-            }
-          })
-        );
-
-        setFavoritos(videosCompletos.filter(Boolean));
+        setFavoritos(favs);
       } catch (error) {
         console.error("Error cargando favoritos:", error);
       }
@@ -51,8 +33,7 @@ export const FavoritosPage: React.FC = () => {
     if (!userId) return;
 
     try {
-      // Usar _favoriteId para eliminar
-      await FavoriteService.removeFavorite(userId, video.id); 
+      await FavoriteService.removeFavorite(userId, video.id);
       setFavoritos(favoritos.filter((f) => f.id !== video.id));
       setAnimando(video.id);
       setTimeout(() => setAnimando(null), 200);
@@ -84,7 +65,8 @@ export const FavoritosPage: React.FC = () => {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {favoritos.map((video) => {
             const latido = animando === video.id;
-            const thumbnail = video.image || video.video_pictures?.[0]?.picture || "";
+            const thumbnail =
+              video.image || video.video_pictures?.[0]?.picture || "";
             const tooltipText = "Quitar de favoritos";
 
             return (
