@@ -20,10 +20,9 @@ export const FavoritosPage: React.FC = () => {
       try {
         const favs = await FavoriteService.getFavorites(storedUserId);
 
-        // Cada favorito ya tiene videoData completo
         const favoritosMapeados = favs.map((f: any) => ({
           ...f.videoData,
-          id: f.videoId, // aseguramos que tenga id
+          id: f.videoId,
         }));
 
         setFavoritos(favoritosMapeados);
@@ -80,14 +79,12 @@ export const FavoritosPage: React.FC = () => {
                 key={video.id}
                 className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-md cursor-pointer group min-h-[24rem] sm:min-h-[28rem]"
               >
-                <div className="w-full aspect-video transition-transform duration-300 group-hover:scale-105">
-                  <img
-                    src={thumbnail}
-                    alt={video.alt || "Miniatura del video"}
-                    className="w-full h-full object-cover"
-                    onClick={() => verVideo(video)}
-                  />
-                </div>
+                <img
+                  src={thumbnail}
+                  alt={video.alt || "Miniatura del video"}
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:opacity-80 group-hover:scale-105"
+                  onClick={() => verVideo(video)}
+                />
 
                 {/* Botón de favorito */}
                 <div
