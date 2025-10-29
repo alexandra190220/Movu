@@ -3,39 +3,20 @@ import { Heart } from "lucide-react";
 import { Navbar } from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import { FavoriteService } from "../Services/FavoriteService";
+import { API_URL } from "../Services/AuthService";
 
-/**
- * DashboardPage Component
- * 
- * Displays categorized videos retrieved from the Pexels API.
- * Users can view videos by category, mark or unmark them as favorites,
- * and navigate to the detailed video page.
- * 
- * Accessibility improvements:
- * - Each interactive element now includes an accessible name (aria-label).
- * - Buttons are focusable and follow best practices for screen readers.
- * - Improved touch target sizes for better mobile usability.
- */
 export const DashboardPage: React.FC = () => {
-  /** Stores videos grouped by category */
   const [videos, setVideos] = useState<{ [key: string]: any[] }>({});
-  /** Stores the user's favorite videos */
+  const [videosConSubtitulos, setVideosConSubtitulos] = useState<string[]>([]);
   const [favoritos, setFavoritos] = useState<any[]>([]);
-  /** Indicates if videos are currently loading */
   const [loading, setLoading] = useState(true);
-  /** Controls the favorite button animation */
   const [animando, setAnimando] = useState<string | null>(null);
-  /** Tracks which video card is hovered */
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  /** Stores the logged-in user's ID */
   const [userId, setUserId] = useState<string | null>(null);
 
   const navigate = useNavigate();
-  const API_URL = "https://movu-back-4mcj.onrender.com/api/v1/pexels";
+  const PEXELS_API_URL = "https://movu-back-4mcj.onrender.com/api/v1/pexels";
 
-  /**
-   * Load user data and their favorite videos from backend
-   */
   useEffect(() => {
     const loadUserAndFavorites = async () => {
       const storedUserId = localStorage.getItem("userId");
@@ -57,10 +38,21 @@ export const DashboardPage: React.FC = () => {
     loadUserAndFavorites();
   }, []);
 
-  /**
-   * Adds or removes a video from the user's favorites
-   * @param video Video object to toggle favorite status
-   */
+  // 🔹 CARGAR LISTA DE VIDEOS QUE TIENEN SUBTÍTULOS EN NUESTRA BD
+  const loadVideosConSubtitulos = async () => {
+    try {
+      const response = await fetch(`${API_URL}/videos`);
+      if (response.ok) {
+        const videosBD = await response.json();
+        const idsConSubtitulos = videosBD.map((video: any) => video.pexelsId);
+        setVideosConSubtitulos(idsConSubtitulos);
+        console.log("🎯 Videos con subtítulos:", idsConSubtitulos);
+      }
+    } catch (error) {
+      console.error("Error cargando videos con subtítulos:", error);
+    }
+  };
+
   const toggleFavorito = async (video: any) => {
     if (!userId) return;
 
@@ -81,23 +73,41 @@ export const DashboardPage: React.FC = () => {
     }
   };
 
-  /**
-   * Loads a predefined set of video categories
-   */
   const loadVideosByCategory = async () => {
     const categorias = ["Terror", "Naturaleza", "Animales", "Acción"];
     const result: any = {};
     setLoading(true);
 
+    // 🔹 PRIMERO CARGAR QUÉ VIDEOS TIENEN SUBTÍTULOS
+    await loadVideosConSubtitulos();
+
+    // 🔹 LUEGO CARGAR VIDEOS DE PEXELS NORMALMENTE
     for (const cat of categorias) {
       try {
         const res = await fetch(
-          `${API_URL}/videos/search?query=${encodeURIComponent(cat)}&per_page=4`
+          `${PEXELS_API_URL}/videos/search?query=${encodeURIComponent(cat)}&per_page=4`
         );
         const data = await res.json();
-        result[cat] = data.videos || [];
+        
+        // 🔹 AGREGAR INFORMACIÓN DE SUBTÍTULOS A LOS VIDEOS DE PEXELS
+        const videosEnriquecidos = data.videos?.map((video: any) => {
+          // Si este video está en nuestra lista de videos con subtítulos
+          if (videosConSubtitulos.includes(video.id.toString())) {
+            console.log(`✅ Video ${video.id} tiene subtítulos`);
+            // Obtener la información de subtítulos de nuestra BD
+            return {
+              ...video,
+              // Marcar que tiene subtítulos (la URL se obtendrá en VideoPage)
+              tieneSubtitulos: true
+            };
+          }
+          return video;
+        }) || [];
+
+        result[cat] = videosEnriquecidos;
       } catch (err) {
         console.error("Error loading category:", cat, err);
+        result[cat] = [];
       }
     }
 
@@ -109,41 +119,67 @@ export const DashboardPage: React.FC = () => {
     loadVideosByCategory();
   }, []);
 
-  /**
-   * Searches for videos by a given term
-   * @param termino Search term
-   */
   const buscarVideos = async (termino: string) => {
-    if (!termino.trim()) return;
+    if (!termino.trim()) {
+      loadVideosByCategory();
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch(
-        `${API_URL}/videos/search?query=${encodeURIComponent(
+        `${PEXELS_API_URL}/videos/search?query=${encodeURIComponent(
           termino
         )}&per_page=10`
       );
       const data = await res.json();
-      setVideos({ Resultado: data.videos || [] });
+      
+      // 🔹 TAMBIÉN EN BÚSQUEDA: MARCAR VIDEOS CON SUBTÍTULOS
+      const videosEnriquecidos = data.videos?.map((video: any) => {
+        if (videosConSubtitulos.includes(video.id.toString())) {
+          return {
+            ...video,
+            tieneSubtitulos: true
+          };
+        }
+        return video;
+      }) || [];
+
+      setVideos({ Resultado: videosEnriquecidos });
     } catch (err) {
       console.error(err);
+      setVideos({ Resultado: [] });
     }
     setLoading(false);
   };
 
-  /**
-   * Navigates to the selected video details page
-   * @param video Video object to view
-   */
-  const handleClickVideo = (video: any) => {
+  const handleClickVideo = async (video: any) => {
+    // 🔹 SI EL VIDEO TIENE SUBTÍTULOS, OBTENER LA INFO COMPLETA DE NUESTRA BD
+    if (video.tieneSubtitulos) {
+      try {
+        const videoCompletoRes = await fetch(`${API_URL}/videos/${video.id}`);
+        if (videoCompletoRes.ok) {
+          const videoCompleto = await videoCompletoRes.json();
+          // Combinar la info de Pexels con los subtítulos de nuestra BD
+          const videoConSubtitulos = {
+            ...video,
+            subtitles: videoCompleto.subtitles
+          };
+          navigate("/video", { state: { video: videoConSubtitulos } });
+          return;
+        }
+      } catch (error) {
+        console.error("Error obteniendo subtítulos:", error);
+      }
+    }
+    
+    // Si no tiene subtítulos o hay error, navegar normal
     navigate("/video", { state: { video } });
   };
 
   return (
     <div className="min-h-screen bg-[#2b2f33] text-gray-100 flex flex-col relative">
-      {/* Top navigation bar */}
       <Navbar searchVideos={buscarVideos} />
 
-      {/* Main content */}
       <main className="flex-grow px-6 pt-14 pb-10">
         {loading ? (
           <p
@@ -186,7 +222,6 @@ export const DashboardPage: React.FC = () => {
                         role="listitem"
                         className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-md cursor-pointer group"
                       >
-                        {/* Thumbnail */}
                         <div className="w-full aspect-video">
                           <img
                             src={thumbnail}
@@ -199,7 +234,15 @@ export const DashboardPage: React.FC = () => {
                           />
                         </div>
 
-                        {/* Favorite button */}
+                        {/* 🔹 INDICADOR DE SUBTÍTULOS */}
+                        {video.tieneSubtitulos && (
+                          <div className="absolute top-2 left-2 z-10">
+                            <span className="bg-green-600 text-white text-xs px-2 py-1 rounded-md font-medium">
+                              Subtítulos
+                            </span>
+                          </div>
+                        )}
+
                         <div
                           onMouseEnter={() => setHoveredId(video.id)}
                           onMouseLeave={() => setHoveredId(null)}
@@ -227,7 +270,6 @@ export const DashboardPage: React.FC = () => {
                             )}
                           </button>
 
-                          {/* Tooltip */}
                           {hoveredId === video.id && (
                             <span
                               role="tooltip"
@@ -238,7 +280,6 @@ export const DashboardPage: React.FC = () => {
                           )}
                         </div>
 
-                        {/* Video title overlay */}
                         <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent px-2 py-1">
                           <p className="text-sm sm:text-base text-gray-100 font-medium truncate">
                             {video.title || "Video sin título"}

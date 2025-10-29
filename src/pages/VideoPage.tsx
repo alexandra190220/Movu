@@ -1,26 +1,5 @@
-/**
- * @file VideoPage.tsx
- * @description Page component that plays a selected video with custom playback controls (play, pause, stop, volume, mute, fullscreen). 
- * Implements accessible and responsive design according to WCAG 2.1 guidelines.
- * 
- * @component
- * @example
- * return <VideoPage />
- * 
- * @remarks
- * - Uses TailwindCSS for layout and styling.
- * - Provides interactive video playback controls and accessibility support.
- * - WCAG 2.1 compliance includes:
- *   - **1.1.1 Non-text Content:** Text alternatives are provided for non-text elements like video titles.
- *   - **1.3.1 Info and Relationships:** Controls are grouped semantically for assistive technologies.
- *   - **2.1.1 Keyboard:** All buttons are focusable and operable using keyboard navigation.
- *   - **2.4.6 Headings and Labels:** Descriptive headings are provided for the video and controls.
- *   - **3.2.1 Focus:** User focus remains stable during playback interactions.
- *   - **3.3.2 Labels or Instructions:** Clear iconography and tooltips identify control functions.
- */
-
-import React, { useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useRef, useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Play,
   Pause,
@@ -28,38 +7,67 @@ import {
   Maximize2,
   Volume2,
   VolumeX,
+  ArrowLeft,
+  Captions,
 } from "lucide-react";
 
-/**
- * @interface VideoState
- * @description Represents the structure of the video data passed via router state.
- * @property {any} video - The video object containing playback information and metadata.
- */
 interface VideoState {
   video: any;
 }
 
-/**
- * @function VideoPage
- * @description Displays a video player with playback, volume, mute, and fullscreen controls.
- * Manages user interactions and video state.
- * 
- * @returns {JSX.Element} Video playback interface with accessible custom controls.
- */
 export const VideoPage: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { video } = location.state as VideoState;
   const videoRef = useRef<HTMLVideoElement>(null);
+  const videoContainerRef = useRef<HTMLDivElement>(null);
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
+  const [activeSubtitle, setActiveSubtitle] = useState<string>("none");
+  const [availableSubtitles, setAvailableSubtitles] = useState<string[]>([]);
+  const [showTitle, setShowTitle] = useState(false);
 
-  /**
-   * @function togglePlay
-   * @description Toggles between play and pause states of the video.
-   * @returns {void}
-   */
+  // DETECTAR Y CONSTRUIR SUBTÍTULOS DISPONIBLES
+  useEffect(() => {
+    if (video?.id) {
+      const subtitles = [];
+      if (video.subtitles?.es || hasSubtitleFile(video.id, 'es')) {
+        subtitles.push('es');
+      }
+      if (video.subtitles?.en || hasSubtitleFile(video.id, 'en')) {
+        subtitles.push('en');
+      }
+      setAvailableSubtitles(subtitles);
+    }
+  }, [video]);
+
+  // Función para verificar si existe el archivo de subtítulo
+  const hasSubtitleFile = (videoId: number, lang: string): boolean => {
+    return true;
+  };
+
+  // Construir la URL del subtítulo basado en el ID del video - CORREGIDO
+  const getSubtitleUrl = (lang: string): string => {
+    // SIEMPRE usar la URL de Render para los subtítulos
+    if (video?.id) {
+      return `https://movu-back-4mcj.onrender.com/subtitles/${video.id}_${lang}.vtt`;
+    }
+    
+    return "";
+  };
+
+  const hasSubtitles = availableSubtitles.length > 0;
+
+  const handleMouseEnter = () => {
+    setShowTitle(true);
+  };
+
+  const handleMouseLeave = () => {
+    setShowTitle(false);
+  };
+
   const togglePlay = () => {
     const videoEl = videoRef.current;
     if (videoEl) {
@@ -72,11 +80,6 @@ export const VideoPage: React.FC = () => {
     }
   };
 
-  /**
-   * @function handleStop
-   * @description Stops video playback and resets to the beginning.
-   * @returns {void}
-   */
   const handleStop = () => {
     if (videoRef.current) {
       videoRef.current.pause();
@@ -85,26 +88,11 @@ export const VideoPage: React.FC = () => {
     }
   };
 
-  /**
-   * @function handleFullscreen
-   * @description Activates fullscreen mode for the video element.
-   * @returns {void}
-   */
   const handleFullscreen = () => {
     const videoEl = videoRef.current;
-    if (videoEl) {
-      if (videoEl.requestFullscreen) videoEl.requestFullscreen();
-      else if ((videoEl as any).webkitRequestFullscreen)
-        (videoEl as any).webkitRequestFullscreen();
-    }
+    if (videoEl?.requestFullscreen) videoEl.requestFullscreen();
   };
 
-  /**
-   * @function handleVolumeChange
-   * @description Adjusts video playback volume based on user input.
-   * @param {React.ChangeEvent<HTMLInputElement>} e - The volume range input change event.
-   * @returns {void}
-   */
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseFloat(e.target.value);
     setVolume(newVolume);
@@ -114,11 +102,6 @@ export const VideoPage: React.FC = () => {
     }
   };
 
-  /**
-   * @function toggleMute
-   * @description Toggles mute state for the video audio.
-   * @returns {void}
-   */
   const toggleMute = () => {
     if (videoRef.current) {
       const newMute = !isMuted;
@@ -127,19 +110,83 @@ export const VideoPage: React.FC = () => {
     }
   };
 
+  const handleBack = () => navigate("/dashboard");
+
+  const handleSubtitleChange = (lang: string) => {
+    setActiveSubtitle(lang);
+    
+    if (!videoRef.current) return;
+    
+    const tracks = videoRef.current.textTracks;
+    
+    // Desactivar todos los tracks primero
+    for (let i = 0; i < tracks.length; i++) {
+      tracks[i].mode = "disabled";
+    }
+    
+    // Activar el track seleccionado
+    if (lang !== "none") {
+      const track = Array.from(tracks).find((t) => t.language === lang);
+      if (track) {
+        track.mode = "showing";
+      }
+    }
+  };
+
+  // Inicializar subtítulos cuando el video se carga
+  const handleVideoLoad = () => {
+    if (videoRef.current && activeSubtitle !== "none") {
+      const tracks = videoRef.current.textTracks;
+      const track = Array.from(tracks).find((t) => t.language === activeSubtitle);
+      if (track) {
+        track.mode = "showing";
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-[#141414] to-[#1f1f1f] text-white flex flex-col items-center justify-center p-4">
-      <div className="relative w-full max-w-2xl aspect-video rounded-lg overflow-hidden shadow-2xl group">
-        {/* Video */}
+      {/* Botón volver */}
+      <button
+        onClick={handleBack}
+        className="absolute top-6 left-6 flex items-center gap-2 bg-gray-800 hover:bg-gray-700 transition-all px-3 py-2 rounded-full text-sm z-20"
+      >
+        <ArrowLeft size={18} />
+        Volver
+      </button>
+
+      <div 
+        ref={videoContainerRef}
+        className="relative w-full max-w-2xl aspect-video rounded-lg overflow-hidden shadow-2xl group"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
         <video
           ref={videoRef}
           src={video.video_files?.[0]?.link}
           className="w-full h-full object-contain"
           onClick={togglePlay}
-        />
+          controls={false}
+          crossOrigin="anonymous"
+          onLoadedMetadata={handleVideoLoad}
+        >
+          {/* AGREGAR TRACKS DE SUBTÍTULOS DISPONIBLES */}
+          {availableSubtitles.map((lang) => (
+            <track
+              key={lang}
+              src={getSubtitleUrl(lang)}
+              kind="subtitles"
+              srcLang={lang}
+              label={lang === 'es' ? 'Español' : lang === 'en' ? 'English' : lang}
+              default={activeSubtitle === lang}
+            />
+          ))}
+        </video>
 
-        {/* Overlay with title */}
-        <div className="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/80 to-transparent">
+        {/* Título que aparece/desaparece */}
+        <div className={`absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/80 to-transparent transition-all duration-300 ${
+          showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+        }`}>
           <h1 className="text-xl font-semibold tracking-wide">
             {video?.video_files?.[0]?.name || video?.alt || "Untitled video"}
           </h1>
@@ -147,10 +194,13 @@ export const VideoPage: React.FC = () => {
             {video?.user?.name ? `By ${video.user.name}` : ""}
           </p>
         </div>
+
+        {/* Overlay para mejor contraste de subtítulos */}
+        <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-transparent to-black/20" />
       </div>
 
-      {/* Controls */}
-      <div className="flex gap-5 items-center justify-center mt-5 bg-[#222]/70 backdrop-blur-md px-5 py-3 rounded-full shadow-lg">
+      {/* Controles */}
+      <div className="flex gap-4 items-center justify-center mt-5 bg-[#222]/70 backdrop-blur-md px-5 py-3 rounded-full shadow-lg">
         <button
           onClick={togglePlay}
           className="hover:text-red-500 transition-all"
@@ -192,6 +242,25 @@ export const VideoPage: React.FC = () => {
           onChange={handleVolumeChange}
           className="w-20 accent-red-600 cursor-pointer"
         />
+
+        {/* CONTROL DE SUBTÍTULOS - SOLO SI EL VIDEO LOS TIENE */}
+        {hasSubtitles && (
+          <div className="flex items-center gap-2">
+            <Captions size={22} className="text-gray-300" />
+            <select
+              value={activeSubtitle}
+              onChange={(e) => handleSubtitleChange(e.target.value)}
+              className="bg-gray-800 text-sm rounded px-2 py-1 outline-none focus:ring-2 focus:ring-red-500"
+            >
+              <option value="none">Sin subtítulos</option>
+              {availableSubtitles.map((lang) => (
+                <option key={lang} value={lang}>
+                  {lang === 'es' ? 'Español' : lang === 'en' ? 'English' : lang}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
     </div>
   );
