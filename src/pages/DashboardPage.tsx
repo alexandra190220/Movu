@@ -165,14 +165,16 @@ export const DashboardPage: React.FC = () => {
 
       <main className="flex-grow px-2 sm:px-4 pt-8 pb-6">
         {loading ? (
-          <p className="text-center text-gray-300 mt-8 text-sm">Cargando videos...</p>
+          <p className="text-center text-gray-300 mt-8 text-sm">
+            Cargando videos...
+          </p>
         ) : (
           Object.entries(videos).map(([categoria, lista]) => {
             if (!lista || lista.length === 0) return null;
 
             return (
-              <section key={categoria} className="mb-5">
-                <h2 className="text-base sm:text-lg font-semibold mb-2 text-gray-100">
+              <section key={categoria} className="mb-6">
+                <h2 className="text-base sm:text-lg font-semibold mb-3 text-gray-100">
                   {categoria}
                 </h2>
 
@@ -183,7 +185,7 @@ export const DashboardPage: React.FC = () => {
                     sm:grid-cols-3 
                     md:grid-cols-4 
                     lg:grid-cols-5 
-                    gap-2
+                    gap-3
                   "
                 >
                   {lista.map((video) => {
@@ -201,20 +203,20 @@ export const DashboardPage: React.FC = () => {
                         className="
                           relative 
                           bg-[#1f1f1f] 
-                          rounded-lg 
+                          rounded-xl 
                           overflow-hidden 
-                          hover:scale-[1.02] 
+                          hover:scale-[1.03] 
                           transition-transform 
-                          shadow-sm 
+                          shadow-md 
                           cursor-pointer 
                           group
                         "
                       >
-                        <div className="w-full aspect-[16/10]">
+                        <div className="w-full aspect-[16/9] max-h-[130px] sm:max-h-[160px] md:max-h-[180px] overflow-hidden">
                           <img
                             src={thumbnail}
-                            alt={video.alt || "Miniatura del video"}
-                            className="w-full h-full object-cover transition-transform duration-300 group-hover:opacity-80 group-hover:scale-105"
+                            alt={video.alt || 'Miniatura del video'}
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:opacity-85 group-hover:scale-105"
                             onClick={() => handleClickVideo(video)}
                           />
                         </div>
@@ -245,12 +247,15 @@ export const DashboardPage: React.FC = () => {
                             {esFavorito ? (
                               <Heart className="w-4 h-4 text-red-400 fill-red-400" />
                             ) : (
-                              <Heart className="w-4 h-4 text-gray-100" fill="none" />
+                              <Heart
+                                className="w-4 h-4 text-gray-100"
+                                fill="none"
+                              />
                             )}
                           </button>
                         </div>
 
-                        <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent px-1 py-0.5">
+                        <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent px-1 py-1">
                           <p className="text-[11px] text-gray-100 font-medium truncate">
                             {video.title || "Video sin título"}
                           </p>
