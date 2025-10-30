@@ -45,6 +45,7 @@ export const DashboardPage: React.FC = () => {
         const videosBD = await response.json();
         const idsConSubtitulos = videosBD.map((video: any) => video.pexelsId);
         setVideosConSubtitulos(idsConSubtitulos);
+        console.log("🎯 Videos con subtítulos:", idsConSubtitulos);
       }
     } catch (error) {
       console.error("Error cargando videos con subtítulos:", error);
@@ -53,7 +54,6 @@ export const DashboardPage: React.FC = () => {
 
   const toggleFavorito = async (video: any) => {
     if (!userId) return;
-
     const exists = favoritos.some((f) => f.id === video.id);
 
     try {
@@ -116,9 +116,7 @@ export const DashboardPage: React.FC = () => {
     setLoading(true);
     try {
       const res = await fetch(
-        `${PEXELS_API_URL}/videos/search?query=${encodeURIComponent(
-          termino
-        )}&per_page=10`
+        `${PEXELS_API_URL}/videos/search?query=${encodeURIComponent(termino)}&per_page=10`
       );
       const data = await res.json();
 
@@ -155,17 +153,20 @@ export const DashboardPage: React.FC = () => {
         console.error("Error obteniendo subtítulos:", error);
       }
     }
-
     navigate("/video", { state: { video } });
   };
 
   return (
-    <div className="min-h-screen bg-[#2b2f33] text-gray-100 flex flex-col relative text-[13px]">
+    <div className="min-h-screen bg-[#2b2f33] text-gray-100 flex flex-col relative">
       <Navbar searchVideos={buscarVideos} />
 
-      <main className="flex-grow px-2 sm:px-4 pt-8 pb-6">
+      <main className="flex-grow px-6 pt-14 pb-10">
         {loading ? (
-          <p className="text-center text-gray-300 mt-8 text-sm">
+          <p
+            className="text-center text-gray-300 mt-10"
+            role="status"
+            aria-live="polite"
+          >
             Cargando videos...
           </p>
         ) : (
@@ -173,20 +174,18 @@ export const DashboardPage: React.FC = () => {
             if (!lista || lista.length === 0) return null;
 
             return (
-              <section key={categoria} className="mb-6">
-                <h2 className="text-base sm:text-lg font-semibold mb-3 text-gray-100">
+              <section key={categoria} className="mb-10">
+                <h2
+                  className="text-xl font-semibold mb-4 text-gray-100"
+                  id={`categoria-${categoria}`}
+                >
                   {categoria}
                 </h2>
 
                 <div
-                  className="
-                    grid 
-                    grid-cols-2 
-                    sm:grid-cols-3 
-                    md:grid-cols-4 
-                    lg:grid-cols-5 
-                    gap-3
-                  "
+                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+                  role="list"
+                  aria-labelledby={`categoria-${categoria}`}
                 >
                   {lista.map((video) => {
                     const esFavorito = favoritos.some((f) => f.id === video.id);
@@ -200,63 +199,66 @@ export const DashboardPage: React.FC = () => {
                     return (
                       <div
                         key={video.id}
-                        className="
-                          relative 
-                          bg-[#1f1f1f] 
-                          rounded-xl 
-                          overflow-hidden 
-                          hover:scale-[1.03] 
-                          transition-transform 
-                          shadow-md 
-                          cursor-pointer 
-                          group
-                        "
+                        role="listitem"
+                        className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-md cursor-pointer group"
                       >
+                        {/* 🔹 MINIATURA AJUSTADA */}
                         <div className="w-full aspect-[16/9] max-h-[130px] sm:max-h-[160px] md:max-h-[180px] overflow-hidden">
                           <img
                             src={thumbnail}
-                            alt={video.alt || 'Miniatura del video'}
+                            alt={video.alt || "Miniatura del video"}
                             className="w-full h-full object-cover transition-transform duration-300 group-hover:opacity-85 group-hover:scale-105"
                             onClick={() => handleClickVideo(video)}
                           />
                         </div>
 
+                        {/* 🔹 INDICADOR DE SUBTÍTULOS */}
                         {video.tieneSubtitulos && (
-                          <div className="absolute top-1 left-1 z-10">
-                            <span className="bg-green-600 text-white text-[9px] px-1.5 py-[1px] rounded font-medium">
+                          <div className="absolute top-2 left-2 z-10">
+                            <span className="bg-green-600 text-white text-xs px-2 py-1 rounded-md font-medium">
                               Subtítulos
                             </span>
                           </div>
                         )}
 
+                        {/* 🔹 BOTÓN FAVORITO */}
                         <div
                           onMouseEnter={() => setHoveredId(video.id)}
                           onMouseLeave={() => setHoveredId(null)}
-                          className="absolute top-1 right-1 z-20"
+                          className="absolute top-2 right-2 z-20"
                         >
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               toggleFavorito(video);
                             }}
+                            aria-label={tooltipText}
                             title={tooltipText}
-                            className={`p-1.5 rounded-full bg-black/50 hover:bg-[#2f3338] transition-all duration-200 ${
-                              latido ? "animate-pulse scale-105" : ""
+                            className={`p-3 rounded-full bg-black/50 hover:bg-[#2f3338] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 relative ${
+                              latido ? "animate-pulse scale-125" : ""
                             }`}
+                            style={{ minWidth: "44px", minHeight: "44px" }}
                           >
                             {esFavorito ? (
-                              <Heart className="w-4 h-4 text-red-400 fill-red-400" />
+                              <Heart className="w-6 h-6 text-red-400 fill-red-400" />
                             ) : (
-                              <Heart
-                                className="w-4 h-4 text-gray-100"
-                                fill="none"
-                              />
+                              <Heart className="w-6 h-6 text-gray-100" fill="none" />
                             )}
                           </button>
+
+                          {hoveredId === video.id && (
+                            <span
+                              role="tooltip"
+                              className="absolute right-10 top-1/2 -translate-y-1/2 bg-[#2f3338] text-gray-100 text-xs font-medium px-2 py-1 rounded-md shadow-md whitespace-nowrap"
+                            >
+                              {tooltipText}
+                            </span>
+                          )}
                         </div>
 
-                        <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent px-1 py-1">
-                          <p className="text-[11px] text-gray-100 font-medium truncate">
+                        {/* 🔹 TITULO */}
+                        <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent px-2 py-1">
+                          <p className="text-sm sm:text-base text-gray-100 font-medium truncate">
                             {video.title || "Video sin título"}
                           </p>
                         </div>
