@@ -38,7 +38,7 @@ export const DashboardPage: React.FC = () => {
     loadUserAndFavorites();
   }, []);
 
-  // 🔹 CARGAR LISTA DE VIDEOS QUE TIENEN SUBTÍTULOS EN NUESTRA BD
+  // Cargar lista de videos con subtítulos en BD
   const loadVideosConSubtitulos = async () => {
     try {
       const response = await fetch(`${API_URL}/videos`);
@@ -46,7 +46,6 @@ export const DashboardPage: React.FC = () => {
         const videosBD = await response.json();
         const idsConSubtitulos = videosBD.map((video: any) => video.pexelsId);
         setVideosConSubtitulos(idsConSubtitulos);
-        console.log("🎯 Videos con subtítulos:", idsConSubtitulos);
       }
     } catch (error) {
       console.error("Error cargando videos con subtítulos:", error);
@@ -78,31 +77,22 @@ export const DashboardPage: React.FC = () => {
     const result: any = {};
     setLoading(true);
 
-    // 🔹 PRIMERO CARGAR QUÉ VIDEOS TIENEN SUBTÍTULOS
     await loadVideosConSubtitulos();
 
-    // 🔹 LUEGO CARGAR VIDEOS DE PEXELS NORMALMENTE
     for (const cat of categorias) {
       try {
         const res = await fetch(
           `${PEXELS_API_URL}/videos/search?query=${encodeURIComponent(cat)}&per_page=4`
         );
         const data = await res.json();
-        
-        // 🔹 AGREGAR INFORMACIÓN DE SUBTÍTULOS A LOS VIDEOS DE PEXELS
-        const videosEnriquecidos = data.videos?.map((video: any) => {
-          // Si este video está en nuestra lista de videos con subtítulos
-          if (videosConSubtitulos.includes(video.id.toString())) {
-            console.log(`✅ Video ${video.id} tiene subtítulos`);
-            // Obtener la información de subtítulos de nuestra BD
-            return {
-              ...video,
-              // Marcar que tiene subtítulos (la URL se obtendrá en VideoPage)
-              tieneSubtitulos: true
-            };
-          }
-          return video;
-        }) || [];
+
+        const videosEnriquecidos =
+          data.videos?.map((video: any) => {
+            if (videosConSubtitulos.includes(video.id.toString())) {
+              return { ...video, tieneSubtitulos: true };
+            }
+            return video;
+          }) || [];
 
         result[cat] = videosEnriquecidos;
       } catch (err) {
@@ -132,17 +122,14 @@ export const DashboardPage: React.FC = () => {
         )}&per_page=10`
       );
       const data = await res.json();
-      
-      // 🔹 TAMBIÉN EN BÚSQUEDA: MARCAR VIDEOS CON SUBTÍTULOS
-      const videosEnriquecidos = data.videos?.map((video: any) => {
-        if (videosConSubtitulos.includes(video.id.toString())) {
-          return {
-            ...video,
-            tieneSubtitulos: true
-          };
-        }
-        return video;
-      }) || [];
+
+      const videosEnriquecidos =
+        data.videos?.map((video: any) => {
+          if (videosConSubtitulos.includes(video.id.toString())) {
+            return { ...video, tieneSubtitulos: true };
+          }
+          return video;
+        }) || [];
 
       setVideos({ Resultado: videosEnriquecidos });
     } catch (err) {
@@ -153,16 +140,14 @@ export const DashboardPage: React.FC = () => {
   };
 
   const handleClickVideo = async (video: any) => {
-    // 🔹 SI EL VIDEO TIENE SUBTÍTULOS, OBTENER LA INFO COMPLETA DE NUESTRA BD
     if (video.tieneSubtitulos) {
       try {
         const videoCompletoRes = await fetch(`${API_URL}/videos/${video.id}`);
         if (videoCompletoRes.ok) {
           const videoCompleto = await videoCompletoRes.json();
-          // Combinar la info de Pexels con los subtítulos de nuestra BD
           const videoConSubtitulos = {
             ...video,
-            subtitles: videoCompleto.subtitles
+            subtitles: videoCompleto.subtitles,
           };
           navigate("/video", { state: { video: videoConSubtitulos } });
           return;
@@ -171,8 +156,7 @@ export const DashboardPage: React.FC = () => {
         console.error("Error obteniendo subtítulos:", error);
       }
     }
-    
-    // Si no tiene subtítulos o hay error, navegar normal
+
     navigate("/video", { state: { video } });
   };
 
@@ -180,7 +164,7 @@ export const DashboardPage: React.FC = () => {
     <div className="min-h-screen bg-[#2b2f33] text-gray-100 flex flex-col relative">
       <Navbar searchVideos={buscarVideos} />
 
-      <main className="flex-grow px-6 pt-14 pb-10">
+      <main className="flex-grow px-4 sm:px-6 pt-12 pb-8">
         {loading ? (
           <p
             className="text-center text-gray-300 mt-10"
@@ -194,16 +178,24 @@ export const DashboardPage: React.FC = () => {
             if (!lista || lista.length === 0) return null;
 
             return (
-              <section key={categoria} className="mb-10">
+              <section key={categoria} className="mb-8">
                 <h2
-                  className="text-xl font-semibold mb-4 text-gray-100"
+                  className="text-lg sm:text-xl font-semibold mb-3 text-gray-100"
                   id={`categoria-${categoria}`}
                 >
                   {categoria}
                 </h2>
 
                 <div
-                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+                  className="
+                    grid 
+                    grid-cols-1 
+                    sm:grid-cols-2 
+                    md:grid-cols-3 
+                    lg:grid-cols-4 
+                    xl:grid-cols-5 
+                    gap-4
+                  "
                   role="list"
                   aria-labelledby={`categoria-${categoria}`}
                 >
@@ -220,24 +212,42 @@ export const DashboardPage: React.FC = () => {
                       <div
                         key={video.id}
                         role="listitem"
-                        className="relative bg-[#1f1f1f] rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-md cursor-pointer group"
+                        className="
+                          relative 
+                          bg-[#1f1f1f] 
+                          rounded-xl 
+                          overflow-hidden 
+                          hover:scale-[1.02] 
+                          transition-transform 
+                          shadow-md 
+                          cursor-pointer 
+                          group
+                        "
                       >
-                        <div className="w-full aspect-video">
+                        <div className="w-full aspect-[16/10]">
                           <img
                             src={thumbnail}
                             alt={video.alt || "Miniatura del video"}
-                            className="w-full h-full object-cover transition-transform duration-300 group-hover:opacity-80 group-hover:scale-105"
+                            className="
+                              w-full h-full 
+                              object-cover 
+                              transition-transform 
+                              duration-300 
+                              group-hover:opacity-80 
+                              group-hover:scale-105
+                            "
                             onClick={() => handleClickVideo(video)}
                             role="button"
-                            aria-label={`Ver detalles del video: ${video.title || "sin título"}`}
+                            aria-label={`Ver detalles del video: ${
+                              video.title || "sin título"
+                            }`}
                             tabIndex={0}
                           />
                         </div>
 
-                        {/* 🔹 INDICADOR DE SUBTÍTULOS */}
                         {video.tieneSubtitulos && (
                           <div className="absolute top-2 left-2 z-10">
-                            <span className="bg-green-600 text-white text-xs px-2 py-1 rounded-md font-medium">
+                            <span className="bg-green-600 text-white text-[10px] px-2 py-0.5 rounded-md font-medium">
                               Subtítulos
                             </span>
                           </div>
@@ -255,16 +265,26 @@ export const DashboardPage: React.FC = () => {
                             }}
                             aria-label={tooltipText}
                             title={tooltipText}
-                            className={`p-3 rounded-full bg-black/50 hover:bg-[#2f3338] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 relative ${
-                              latido ? "animate-pulse scale-125" : ""
-                            }`}
-                            style={{ minWidth: "44px", minHeight: "44px" }}
+                            className={`
+                              p-2.5 
+                              rounded-full 
+                              bg-black/50 
+                              hover:bg-[#2f3338] 
+                              transition-all 
+                              duration-200 
+                              focus:outline-none 
+                              focus:ring-2 
+                              focus:ring-red-500 
+                              relative 
+                              ${latido ? "animate-pulse scale-110" : ""}
+                            `}
+                            style={{ minWidth: "40px", minHeight: "40px" }}
                           >
                             {esFavorito ? (
-                              <Heart className="w-6 h-6 text-red-400 fill-red-400" />
+                              <Heart className="w-5 h-5 text-red-400 fill-red-400" />
                             ) : (
                               <Heart
-                                className="w-6 h-6 text-gray-100"
+                                className="w-5 h-5 text-gray-100"
                                 fill="none"
                               />
                             )}
@@ -273,7 +293,21 @@ export const DashboardPage: React.FC = () => {
                           {hoveredId === video.id && (
                             <span
                               role="tooltip"
-                              className="absolute right-10 top-1/2 -translate-y-1/2 bg-[#2f3338] text-gray-100 text-xs font-medium px-2 py-1 rounded-md shadow-md whitespace-nowrap"
+                              className="
+                                absolute 
+                                right-10 
+                                top-1/2 
+                                -translate-y-1/2 
+                                bg-[#2f3338] 
+                                text-gray-100 
+                                text-xs 
+                                font-medium 
+                                px-2 
+                                py-1 
+                                rounded-md 
+                                shadow-md 
+                                whitespace-nowrap
+                              "
                             >
                               {tooltipText}
                             </span>
@@ -281,7 +315,7 @@ export const DashboardPage: React.FC = () => {
                         </div>
 
                         <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent px-2 py-1">
-                          <p className="text-sm sm:text-base text-gray-100 font-medium truncate">
+                          <p className="text-xs sm:text-sm text-gray-100 font-medium truncate">
                             {video.title || "Video sin título"}
                           </p>
                         </div>
