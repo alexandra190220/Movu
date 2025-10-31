@@ -484,251 +484,269 @@ export const VideoPage: React.FC = () => {
         Volver
       </button>
 
-      <div className="max-w-6xl mx-auto">
-        <div className="mb-8">
-          <div 
-            ref={videoContainerRef}
-            className="relative w-full aspect-video rounded-lg overflow-hidden shadow-2xl group"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          >
-            <video
-              ref={videoRef}
-              src={video.video_files?.[0]?.link}
-              className="w-full h-full object-contain"
-              onClick={togglePlay}
-              controls={false}
-              crossOrigin="anonymous"
-              onLoadedMetadata={handleVideoLoad}
-            >
-              {availableSubtitles.map((lang) => (
-                <track
-                  key={lang}
-                  src={getSubtitleUrl(lang)}
-                  kind="subtitles"
-                  srcLang={lang}
-                  label={lang === 'es' ? 'Español' : 'English'}
-                  default={activeSubtitle === lang}
-                />
-              ))}
-            </video>
-
-            <div className={`absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/80 to-transparent transition-all duration-300 ${
-              showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-            }`}>
-              <h1 className="text-xl font-semibold tracking-wide">
-                {video?.video_files?.[0]?.name || video?.alt || "Untitled video"}
-              </h1>
-              <p className="text-sm text-gray-400">
-                {video?.user?.name ? `By ${video.user.name}` : ""}
-              </p>
-            </div>
-
-            <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-transparent to-black/20" />
-          </div>
-
-          <div className="flex gap-4 items-center justify-center mt-5 bg-[#222]/70 backdrop-blur-md px-5 py-3 rounded-full shadow-lg">
-            <button onClick={togglePlay} className="hover:text-red-500 transition-all">
-              {isPlaying ? <Pause size={24} /> : <Play size={24} />}
-            </button>
-            <button onClick={handleStop} className="hover:text-gray-400 transition-all">
-              <Square size={22} />
-            </button>
-            <button onClick={handleFullscreen} className="hover:text-blue-400 transition-all">
-              <Maximize2 size={22} />
-            </button>
-            <button onClick={toggleMute} className="hover:text-yellow-400 transition-all">
-              {isMuted || volume === 0 ? <VolumeX size={22} /> : <Volume2 size={22} />}
-            </button>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.05"
-              value={isMuted ? 0 : volume}
-              onChange={handleVolumeChange}
-              className="w-20 accent-red-600 cursor-pointer"
-            />
-            {hasSubtitles && (
-              <div className="flex items-center gap-2">
-                <Captions size={22} className="text-gray-300" />
-                <select
-                  value={activeSubtitle}
-                  onChange={(e) => handleSubtitleChange(e.target.value)}
-                  className="bg-gray-800 text-sm rounded px-2 py-1 outline-none focus:ring-2 focus:ring-red-500"
-                >
-                  <option value="none">Sin subtítulos</option>
-                  {availableSubtitles.map((lang) => (
-                    <option key={lang} value={lang}>
-                      {lang === 'es' ? 'Español' : 'English'}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="mb-8">
-          <div className="bg-gray-900/50 rounded-lg p-4 backdrop-blur-sm">
-            <h2 className="text-lg font-semibold mb-3">Calificar esta película</h2>
-            
-            <div className="mb-4">
-              <div className="flex gap-1 mb-2 justify-center">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    onClick={() => handleRateVideo(star)}
-                    onMouseEnter={() => setHoverRating(star)}
-                    onMouseLeave={() => setHoverRating(0)}
-                    disabled={isRating}
-                    className={`p-1 transition-all transform hover:scale-110 ${
-                      isRating ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
-                    }`}
-                  >
-                    <Star
-                      size={28}
-                      className={`
-                        ${(hoverRating || userRating) >= star 
-                          ? 'fill-yellow-400 text-yellow-400' 
-                          : 'text-gray-400'
-                        }
-                        transition-colors
-                      `}
-                    />
-                  </button>
-                ))}
-              </div>
-              <p className="text-sm text-gray-400 text-center">
-                {userRating ? `Tu calificación: ${userRating} estrellas` : 'Selecciona tu calificación'}
-              </p>
-              {!currentUser && (
-                <p className="text-sm text-red-400 text-center mt-1">
-                  <button 
-                    onClick={() => navigate("/login")}
-                    className="underline"
-                  >
-                    Inicia sesión
-                  </button> para calificar
-                </p>
-              )}
-            </div>
-
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-2">
-                <Star size={20} className="fill-yellow-400 text-yellow-400" />
-                <span className="text-xl font-bold">{averageRating}</span>
-                <span className="text-gray-400">/5</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="mb-8">
-          <div className="bg-gray-900/50 rounded-lg p-6 backdrop-blur-sm">
-            <h2 className="text-xl font-semibold mb-4">
-              Comentarios ({comments.length})
-              {loadingComments && <span className="text-sm text-gray-400 ml-2">(cargando...)</span>}
-            </h2>
-
+      <div className="max-w-5xl mx-auto">
+        {/* CONTENEDOR PRINCIPAL CON LAYOUT MEJORADO */}
+        <div className="flex flex-col gap-8">
+          {/* VIDEO Y CONTROLES */}
+          <div className="w-full">
             <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-3">Escribe tu opinión aquí</h3>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleAddComment()}
-                  placeholder="Comparte tu opinión..."
-                  className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
-                />
-                <button
-                  onClick={handleAddComment}
-                  disabled={!newComment.trim() || !currentUser}
-                  className="bg-red-600 hover:bg-red-700 disabled:bg-gray-600 disabled:cursor-not-allowed transition-all p-2 rounded-lg"
+              {/* CONTENEDOR DEL VIDEO UN POCO MÁS GRANDE */}
+              <div 
+                ref={videoContainerRef}
+                className="relative w-full max-w-4xl mx-auto aspect-video rounded-lg overflow-hidden shadow-2xl group bg-black"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              >
+                <video
+                  ref={videoRef}
+                  src={video.video_files?.[0]?.link}
+                  className="w-full h-full object-contain"
+                  onClick={togglePlay}
+                  controls={false}
+                  crossOrigin="anonymous"
+                  onLoadedMetadata={handleVideoLoad}
                 >
-                  <Send size={20} />
-                </button>
+                  {availableSubtitles.map((lang) => (
+                    <track
+                      key={lang}
+                      src={getSubtitleUrl(lang)}
+                      kind="subtitles"
+                      srcLang={lang}
+                      label={lang === 'es' ? 'Español' : 'English'}
+                      default={activeSubtitle === lang}
+                    />
+                  ))}
+                </video>
+
+                {/* TÍTULO DEL VIDEO */}
+                <div className={`absolute top-0 left-0 w-full p-4 bg-gradient-to-b from-black/80 to-transparent transition-all duration-300 ${
+                  showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
+                }`}>
+                  <h1 className="text-xl font-semibold tracking-wide truncate">
+                    {video?.video_files?.[0]?.name || video?.alt || "Untitled video"}
+                  </h1>
+                  <p className="text-sm text-gray-400">
+                    {video?.user?.name ? `By ${video.user.name}` : ""}
+                  </p>
+                </div>
+
+                <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/20 via-transparent to-black/20" />
               </div>
-              {!currentUser && (
-                <p className="text-sm text-gray-400 mt-2 text-center">
+
+              {/* BARRA DE CONTROLES - SIEMPRE VISIBLE */}
+              <div className="flex flex-wrap gap-4 items-center justify-center mt-4 bg-[#222]/90 backdrop-blur-md px-6 py-4 rounded-xl shadow-lg border border-gray-700">
+                <div className="flex gap-4 items-center">
                   <button 
-                    onClick={() => navigate("/login")}
-                    className="text-red-400 hover:text-red-300 underline"
+                    onClick={togglePlay} 
+                    className="hover:text-red-500 transition-all p-2 rounded-full bg-gray-800 hover:bg-gray-700"
                   >
-                    Inicia sesión
-                  </button> para comentar
-                </p>
-              )}
+                    {isPlaying ? <Pause size={22} /> : <Play size={22} />}
+                  </button>
+                  <button 
+                    onClick={handleStop} 
+                    className="hover:text-gray-400 transition-all p-2 rounded-full bg-gray-800 hover:bg-gray-700"
+                  >
+                    <Square size={20} />
+                  </button>
+                  <button 
+                    onClick={handleFullscreen} 
+                    className="hover:text-blue-400 transition-all p-2 rounded-full bg-gray-800 hover:bg-gray-700"
+                  >
+                    <Maximize2 size={20} />
+                  </button>
+                </div>
+
+                <div className="flex gap-4 items-center">
+                  <button 
+                    onClick={toggleMute} 
+                    className="hover:text-yellow-400 transition-all p-2 rounded-full bg-gray-800 hover:bg-gray-700"
+                  >
+                    {isMuted || volume === 0 ? <VolumeX size={20} /> : <Volume2 size={20} />}
+                  </button>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.05"
+                    value={isMuted ? 0 : volume}
+                    onChange={handleVolumeChange}
+                    className="w-24 accent-red-600 cursor-pointer"
+                  />
+                </div>
+
+                {hasSubtitles && (
+                  <div className="flex items-center gap-2">
+                    <Captions size={20} className="text-gray-300" />
+                    <select
+                      value={activeSubtitle}
+                      onChange={(e) => handleSubtitleChange(e.target.value)}
+                      className="bg-gray-800 text-sm rounded px-3 py-1 outline-none focus:ring-2 focus:ring-red-500 border border-gray-600"
+                    >
+                      <option value="none">Sin subtítulos</option>
+                      {availableSubtitles.map((lang) => (
+                        <option key={lang} value={lang}>
+                          {lang === 'es' ? 'Español' : 'English'}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </div>
             </div>
 
-            <div className="space-y-4 max-h-[600px] overflow-y-auto">
-              {loadingComments ? (
-                <p className="text-gray-400 text-center py-8">Cargando comentarios...</p>
-              ) : comments.length === 0 ? (
-                <p className="text-gray-400 text-center py-8">No hay comentarios aún. ¡Sé el primero en comentar!</p>
-              ) : (
-                comments.map((comment) => (
-                  <div key={comment._id} className="bg-gray-800/50 rounded-lg p-4">
-                    {editingComment === comment._id ? (
-                      <div className="space-y-2">
-                        <textarea
-                          value={editText}
-                          onChange={(e) => setEditText(e.target.value)}
-                          className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white resize-none"
-                          rows={3}
-                        />
-                        <div className="flex gap-2 justify-end">
-                          <button
-                            onClick={() => setEditingComment(null)}
-                            className="px-3 py-1 text-sm bg-gray-600 hover:bg-gray-500 rounded transition-all"
-                          >
-                            Cancelar
-                          </button>
-                          <button
-                            onClick={() => handleUpdateComment(comment._id)}
-                            disabled={!editText.trim()}
-                            className="px-3 py-1 text-sm bg-green-600 hover:bg-green-500 disabled:bg-gray-600 rounded transition-all"
-                          >
-                            Guardar
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="flex justify-between items-start mb-2">
-                          <div>
-                            <span className="font-semibold text-red-400">
-                              {getUserDisplayName(comment)}
-                            </span>
-                            <span className="text-gray-400 text-sm ml-2">
-                              {formatDate(comment.createdAt)}
-                              {comment.updatedAt !== comment.createdAt && " (editado)"}
-                            </span>
+            {/* SECCIÓN DE CALIFICACIÓN */}
+            <div className="bg-gray-900/50 rounded-lg p-6 backdrop-blur-sm mb-6">
+              <h2 className="text-xl font-semibold mb-4">Calificar esta película</h2>
+              
+              <div className="mb-4">
+                <div className="flex gap-1 mb-2 justify-center">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      onClick={() => handleRateVideo(star)}
+                      onMouseEnter={() => setHoverRating(star)}
+                      onMouseLeave={() => setHoverRating(0)}
+                      disabled={isRating}
+                      className={`p-1 transition-all transform hover:scale-110 ${
+                        isRating ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+                      }`}
+                    >
+                      <Star
+                        size={32}
+                        className={`
+                          ${(hoverRating || userRating) >= star 
+                            ? 'fill-yellow-400 text-yellow-400' 
+                            : 'text-gray-400'
+                          }
+                          transition-colors
+                        `}
+                      />
+                    </button>
+                  ))}
+                </div>
+                <p className="text-sm text-gray-400 text-center">
+                  {userRating ? `Tu calificación: ${userRating} estrellas` : 'Selecciona tu calificación'}
+                </p>
+              </div>
+
+              <div className="text-center">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <Star size={24} className="fill-yellow-400 text-yellow-400" />
+                  <span className="text-2xl font-bold">{averageRating}</span>
+                  <span className="text-gray-400">/5</span>
+                </div>
+                <p className="text-sm text-gray-400">Calificación promedio</p>
+              </div>
+            </div>
+          </div>
+
+          {/* COMENTARIOS */}
+          <div className="w-full">
+            <div className="bg-gray-900/50 rounded-lg p-6 backdrop-blur-sm">
+              <h2 className="text-xl font-semibold mb-4">
+                Comentarios ({comments.length})
+                {loadingComments && <span className="text-sm text-gray-400 ml-2">(cargando...)</span>}
+              </h2>
+
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold mb-3">Escribe tu opinión</h3>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleAddComment()}
+                    placeholder="Comparte tu opinión..."
+                    className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
+                  />
+                  <button
+                    onClick={handleAddComment}
+                    disabled={!newComment.trim() || !currentUser}
+                    className="bg-red-600 hover:bg-red-700 disabled:bg-gray-600 disabled:cursor-not-allowed transition-all p-2 rounded-lg"
+                  >
+                    <Send size={20} />
+                  </button>
+                </div>
+                {!currentUser && (
+                  <p className="text-sm text-gray-400 mt-2 text-center">
+                    <button 
+                      onClick={() => navigate("/login")}
+                      className="text-red-400 hover:text-red-300 underline"
+                    >
+                      Inicia sesión
+                    </button> para comentar
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                {loadingComments ? (
+                  <p className="text-gray-400 text-center py-8">Cargando comentarios...</p>
+                ) : comments.length === 0 ? (
+                  <p className="text-gray-400 text-center py-8">No hay comentarios aún. ¡Sé el primero en comentar!</p>
+                ) : (
+                  comments.map((comment) => (
+                    <div key={comment._id} className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+                      {editingComment === comment._id ? (
+                        <div className="space-y-2">
+                          <textarea
+                            value={editText}
+                            onChange={(e) => setEditText(e.target.value)}
+                            className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white resize-none"
+                            rows={3}
+                          />
+                          <div className="flex gap-2 justify-end">
+                            <button
+                              onClick={() => setEditingComment(null)}
+                              className="px-3 py-1 text-sm bg-gray-600 hover:bg-gray-500 rounded transition-all"
+                            >
+                              Cancelar
+                            </button>
+                            <button
+                              onClick={() => handleUpdateComment(comment._id)}
+                              disabled={!editText.trim()}
+                              className="px-3 py-1 text-sm bg-red-600 hover:bg-red-500 disabled:bg-gray-600 rounded transition-all"
+                            >
+                              Guardar
+                            </button>
                           </div>
-                          {isCommentOwner(comment) && (
-                            <div className="flex gap-1">
-                              <button
-                                onClick={() => handleEditComment(comment)}
-                                className="p-1 hover:bg-gray-700 rounded transition-all"
-                              >
-                                <Edit3 size={14} />
-                              </button>
-                              <button
-                                onClick={() => handleDeleteComment(comment._id)}
-                                className="p-1 hover:bg-gray-700 rounded transition-all"
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                            </div>
-                          )}
                         </div>
-                        <p className="text-gray-200 whitespace-pre-wrap">{comment.text}</p>
-                      </>
-                    )}
-                  </div>
-                ))
-              )}
+                      ) : (
+                        <>
+                          <div className="flex justify-between items-start mb-2">
+                            <div>
+                              <span className="font-semibold text-red-400">
+                                {getUserDisplayName(comment)}
+                              </span>
+                              <span className="text-gray-400 text-sm ml-2">
+                                {formatDate(comment.createdAt)}
+                                {comment.updatedAt !== comment.createdAt && " (editado)"}
+                              </span>
+                            </div>
+                            {isCommentOwner(comment) && (
+                              <div className="flex gap-1">
+                                <button
+                                  onClick={() => handleEditComment(comment)}
+                                  className="p-1 hover:bg-gray-700 rounded transition-all"
+                                >
+                                  <Edit3 size={14} />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteComment(comment._id)}
+                                  className="p-1 hover:bg-gray-700 rounded transition-all"
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                          <p className="text-gray-200 whitespace-pre-wrap">{comment.text}</p>
+                        </>
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
           </div>
         </div>
