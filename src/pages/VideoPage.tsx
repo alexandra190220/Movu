@@ -49,11 +49,6 @@ interface Rating {
   updatedAt: string;
 }
 
-/**
- * VideoPage component for displaying and playing videos with rating and comment functionality
- * @component
- * @returns {JSX.Element} The video player page with rating and comment features
- */
 export const VideoPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -81,11 +76,6 @@ export const VideoPage: React.FC = () => {
   const [isRating, setIsRating] = useState<boolean>(false);
   const [hoverRating, setHoverRating] = useState<number>(0);
 
-  /**
-   * Fetches user data from API
-   * @param {string} userId - The user ID to fetch data for
-   * @returns {Promise<User|null>} User data or null if error
-   */
   const getUserData = async (userId: string): Promise<User | null> => {
     try {
       const response = await fetch(`https://movu-back-4mcj.onrender.com/api/v1/users/${userId}`, {
@@ -105,11 +95,6 @@ export const VideoPage: React.FC = () => {
     }
   };
 
-  /**
-   * Enhances comments with user data
-   * @param {Comment[]} comments - Array of comments to enhance
-   * @returns {Promise<Comment[]>} Comments with user data
-   */
   const fetchUserDataForComments = async (comments: Comment[]): Promise<Comment[]> => {
     const commentsWithUsers = await Promise.all(
       comments.map(async (comment) => {
@@ -137,9 +122,6 @@ export const VideoPage: React.FC = () => {
     return commentsWithUsers;
   };
 
-  /**
-   * Loads comments for the current video
-   */
   const loadComments = async () => {
     setLoadingComments(true);
     try {
@@ -158,9 +140,6 @@ export const VideoPage: React.FC = () => {
     }
   };
 
-  /**
-   * Loads ratings for the current video
-   */
   const loadRatings = async () => {
     try {
       const averageResponse = await fetch(`https://movu-back-4mcj.onrender.com/api/v1/ratings/average/${video.id}`);
@@ -185,10 +164,6 @@ export const VideoPage: React.FC = () => {
     }
   };
 
-  /**
-   * Handles video rating submission
-   * @param {number} rating - The rating value (1-5)
-   */
   const handleRateVideo = async (rating: number) => {
     if (!currentUser) {
       navigate("/login");
@@ -221,9 +196,6 @@ export const VideoPage: React.FC = () => {
     }
   };
 
-  /**
-   * Handles comment submission
-   */
   const handleAddComment = async () => {
     if (!newComment.trim() || !currentUser) return;
 
@@ -256,19 +228,11 @@ export const VideoPage: React.FC = () => {
     }
   };
 
-  /**
-   * Handles comment editing
-   * @param {Comment} comment - The comment to edit
-   */
   const handleEditComment = (comment: Comment) => {
     setEditingComment(comment._id);
     setEditText(comment.text);
   };
 
-  /**
-   * Handles comment update
-   * @param {string} commentId - The ID of the comment to update
-   */
   const handleUpdateComment = async (commentId: string) => {
     if (!editText.trim()) return;
     try {
@@ -292,10 +256,6 @@ export const VideoPage: React.FC = () => {
     }
   };
 
-  /**
-   * Handles comment deletion
-   * @param {string} commentId - The ID of the comment to delete
-   */
   const handleDeleteComment = async (commentId: string) => {
     if (!window.confirm("¿Estás seguro de que quieres eliminar este comentario?")) return;
     try {
@@ -313,11 +273,6 @@ export const VideoPage: React.FC = () => {
     }
   };
 
-  /**
-   * Formats date to relative time string
-   * @param {string} dateString - ISO date string
-   * @returns {string} Formatted relative time
-   */
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -333,20 +288,10 @@ export const VideoPage: React.FC = () => {
     return date.toLocaleDateString('es-ES');
   };
 
-  /**
-   * Checks if current user owns the comment
-   * @param {Comment} comment - The comment to check
-   * @returns {boolean} True if user owns the comment
-   */
   const isCommentOwner = (comment: Comment) => {
     return currentUser && comment.userId === currentUser._id;
   };
 
-  /**
-   * Gets display name for comment author
-   * @param {Comment} comment - The comment
-   * @returns {string} Display name
-   */
   const getUserDisplayName = (comment: Comment) => {
     if (isCommentOwner(comment)) return "Tú";
     if (comment.user) return `${comment.user.firstName} ${comment.user.lastName}`;
@@ -484,122 +429,98 @@ export const VideoPage: React.FC = () => {
         Volver
       </button>
 
-      <div className="max-w-5xl mx-auto">
-        {/* CONTENEDOR PRINCIPAL CON LAYOUT MEJORADO */}
-        <div className="flex flex-col gap-8">
-          {/* VIDEO Y CONTROLES */}
-          <div className="w-full">
-            <div className="mb-6">
-              {/* CONTENEDOR DEL VIDEO UN POCO MÁS GRANDE */}
-              <div 
-                ref={videoContainerRef}
-                className="relative w-full max-w-4xl mx-auto aspect-video rounded-lg overflow-hidden shadow-2xl group bg-black"
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-              >
-                <video
-                  ref={videoRef}
-                  src={video.video_files?.[0]?.link}
-                  className="w-full h-full object-contain"
-                  onClick={togglePlay}
-                  controls={false}
-                  crossOrigin="anonymous"
-                  onLoadedMetadata={handleVideoLoad}
-                >
-                  {availableSubtitles.map((lang) => (
-                    <track
-                      key={lang}
-                      src={getSubtitleUrl(lang)}
-                      kind="subtitles"
-                      srcLang={lang}
-                      label={lang === 'es' ? 'Español' : 'English'}
-                      default={activeSubtitle === lang}
-                    />
-                  ))}
-                </video>
+      <div className="max-w-6xl mx-auto">
+        <div className="mb-6">
+          <div 
+            ref={videoContainerRef}
+            className="relative w-full max-w-4xl mx-auto aspect-video rounded-lg overflow-hidden shadow-2xl group"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
+            <video
+              ref={videoRef}
+              src={video.video_files?.[0]?.link}
+              className="w-full h-full object-contain"
+              onClick={togglePlay}
+              controls={false}
+              crossOrigin="anonymous"
+              onLoadedMetadata={handleVideoLoad}
+            >
+              {availableSubtitles.map((lang) => (
+                <track
+                  key={lang}
+                  src={getSubtitleUrl(lang)}
+                  kind="subtitles"
+                  srcLang={lang}
+                  label={lang === 'es' ? 'Español' : 'English'}
+                  default={activeSubtitle === lang}
+                />
+              ))}
+            </video>
 
-                {/* TÍTULO DEL VIDEO */}
-                <div className={`absolute top-0 left-0 w-full p-4 bg-gradient-to-b from-black/80 to-transparent transition-all duration-300 ${
-                  showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
-                }`}>
-                  <h1 className="text-xl font-semibold tracking-wide truncate">
-                    {video?.video_files?.[0]?.name || video?.alt || "Untitled video"}
-                  </h1>
-                  <p className="text-sm text-gray-400">
-                    {video?.user?.name ? `By ${video.user.name}` : ""}
-                  </p>
-                </div>
-
-                <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/20 via-transparent to-black/20" />
-              </div>
-
-              {/* BARRA DE CONTROLES - SIEMPRE VISIBLE */}
-              <div className="flex flex-wrap gap-4 items-center justify-center mt-4 bg-[#222]/90 backdrop-blur-md px-6 py-4 rounded-xl shadow-lg border border-gray-700">
-                <div className="flex gap-4 items-center">
-                  <button 
-                    onClick={togglePlay} 
-                    className="hover:text-red-500 transition-all p-2 rounded-full bg-gray-800 hover:bg-gray-700"
-                  >
-                    {isPlaying ? <Pause size={22} /> : <Play size={22} />}
-                  </button>
-                  <button 
-                    onClick={handleStop} 
-                    className="hover:text-gray-400 transition-all p-2 rounded-full bg-gray-800 hover:bg-gray-700"
-                  >
-                    <Square size={20} />
-                  </button>
-                  <button 
-                    onClick={handleFullscreen} 
-                    className="hover:text-blue-400 transition-all p-2 rounded-full bg-gray-800 hover:bg-gray-700"
-                  >
-                    <Maximize2 size={20} />
-                  </button>
-                </div>
-
-                <div className="flex gap-4 items-center">
-                  <button 
-                    onClick={toggleMute} 
-                    className="hover:text-yellow-400 transition-all p-2 rounded-full bg-gray-800 hover:bg-gray-700"
-                  >
-                    {isMuted || volume === 0 ? <VolumeX size={20} /> : <Volume2 size={20} />}
-                  </button>
-                  <input
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.05"
-                    value={isMuted ? 0 : volume}
-                    onChange={handleVolumeChange}
-                    className="w-24 accent-red-600 cursor-pointer"
-                  />
-                </div>
-
-                {hasSubtitles && (
-                  <div className="flex items-center gap-2">
-                    <Captions size={20} className="text-gray-300" />
-                    <select
-                      value={activeSubtitle}
-                      onChange={(e) => handleSubtitleChange(e.target.value)}
-                      className="bg-gray-800 text-sm rounded px-3 py-1 outline-none focus:ring-2 focus:ring-red-500 border border-gray-600"
-                    >
-                      <option value="none">Sin subtítulos</option>
-                      {availableSubtitles.map((lang) => (
-                        <option key={lang} value={lang}>
-                          {lang === 'es' ? 'Español' : 'English'}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-              </div>
+            <div className={`absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/80 to-transparent transition-all duration-300 ${
+              showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+            }`}>
+              <h1 className="text-xl font-semibold tracking-wide">
+                {video?.video_files?.[0]?.name || video?.alt || "Untitled video"}
+              </h1>
+              <p className="text-sm text-gray-400">
+                {video?.user?.name ? `By ${video.user.name}` : ""}
+              </p>
             </div>
 
-            {/* SECCIÓN DE CALIFICACIÓN */}
-            <div className="bg-gray-900/50 rounded-lg p-6 backdrop-blur-sm mb-6">
+            <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-transparent to-black/20" />
+          </div>
+
+          <div className="flex gap-4 items-center justify-center mt-4 bg-[#222]/70 backdrop-blur-md px-5 py-3 rounded-full shadow-lg">
+            <button onClick={togglePlay} className="hover:text-red-500 transition-all">
+              {isPlaying ? <Pause size={24} /> : <Play size={24} />}
+            </button>
+            <button onClick={handleStop} className="hover:text-gray-400 transition-all">
+              <Square size={22} />
+            </button>
+            <button onClick={handleFullscreen} className="hover:text-blue-400 transition-all">
+              <Maximize2 size={22} />
+            </button>
+            <button onClick={toggleMute} className="hover:text-yellow-400 transition-all">
+              {isMuted || volume === 0 ? <VolumeX size={22} /> : <Volume2 size={22} />}
+            </button>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.05"
+              value={isMuted ? 0 : volume}
+              onChange={handleVolumeChange}
+              className="w-20 accent-red-600 cursor-pointer"
+            />
+            {hasSubtitles && (
+              <div className="flex items-center gap-2">
+                <Captions size={22} className="text-gray-300" />
+                <select
+                  value={activeSubtitle}
+                  onChange={(e) => handleSubtitleChange(e.target.value)}
+                  className="bg-gray-800 text-sm rounded px-2 py-1 outline-none focus:ring-2 focus:ring-red-500"
+                >
+                  <option value="none">Sin subtítulos</option>
+                  {availableSubtitles.map((lang) => (
+                    <option key={lang} value={lang}>
+                      {lang === 'es' ? 'Español' : 'English'}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="lg:col-span-1">
+            <div className="bg-gray-900/50 rounded-lg p-6 backdrop-blur-sm">
               <h2 className="text-xl font-semibold mb-4">Calificar esta película</h2>
               
               <div className="mb-4">
-                <div className="flex gap-1 mb-2 justify-center">
+                <div className="flex gap-1 mb-2">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       key={star}
@@ -629,19 +550,17 @@ export const VideoPage: React.FC = () => {
                 </p>
               </div>
 
-              <div className="text-center">
+              <div className="text-center mb-4">
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <Star size={24} className="fill-yellow-400 text-yellow-400" />
                   <span className="text-2xl font-bold">{averageRating}</span>
                   <span className="text-gray-400">/5</span>
                 </div>
-                <p className="text-sm text-gray-400">Calificación promedio</p>
               </div>
             </div>
           </div>
 
-          {/* COMENTARIOS */}
-          <div className="w-full">
+          <div className="lg:col-span-1">
             <div className="bg-gray-900/50 rounded-lg p-6 backdrop-blur-sm">
               <h2 className="text-xl font-semibold mb-4">
                 Comentarios ({comments.length})
@@ -649,7 +568,7 @@ export const VideoPage: React.FC = () => {
               </h2>
 
               <div className="mb-6">
-                <h3 className="text-lg font-semibold mb-3">Escribe tu opinión</h3>
+                <h3 className="text-lg font-semibold mb-3">Escribe tu opinión aquí</h3>
                 <div className="flex gap-2">
                   <input
                     type="text"
@@ -679,14 +598,14 @@ export const VideoPage: React.FC = () => {
                 )}
               </div>
 
-              <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+              <div className="space-y-4 max-h-[500px] overflow-y-auto">
                 {loadingComments ? (
                   <p className="text-gray-400 text-center py-8">Cargando comentarios...</p>
                 ) : comments.length === 0 ? (
                   <p className="text-gray-400 text-center py-8">No hay comentarios aún. ¡Sé el primero en comentar!</p>
                 ) : (
                   comments.map((comment) => (
-                    <div key={comment._id} className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+                    <div key={comment._id} className="bg-gray-800/50 rounded-lg p-4">
                       {editingComment === comment._id ? (
                         <div className="space-y-2">
                           <textarea
