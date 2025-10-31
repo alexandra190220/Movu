@@ -49,11 +49,6 @@ interface Rating {
   updatedAt: string;
 }
 
-/**
- * VideoPage component for displaying and playing videos with rating and comment functionality
- * @component
- * @returns {JSX.Element} The video player page with rating and comment features
- */
 export const VideoPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -81,11 +76,6 @@ export const VideoPage: React.FC = () => {
   const [isRating, setIsRating] = useState<boolean>(false);
   const [hoverRating, setHoverRating] = useState<number>(0);
 
-  /**
-   * Fetches user data from API
-   * @param {string} userId - The user ID to fetch data for
-   * @returns {Promise<User|null>} User data or null if error
-   */
   const getUserData = async (userId: string): Promise<User | null> => {
     try {
       const response = await fetch(`https://movu-back-4mcj.onrender.com/api/v1/users/${userId}`, {
@@ -105,11 +95,6 @@ export const VideoPage: React.FC = () => {
     }
   };
 
-  /**
-   * Enhances comments with user data
-   * @param {Comment[]} comments - Array of comments to enhance
-   * @returns {Promise<Comment[]>} Comments with user data
-   */
   const fetchUserDataForComments = async (comments: Comment[]): Promise<Comment[]> => {
     const commentsWithUsers = await Promise.all(
       comments.map(async (comment) => {
@@ -137,9 +122,6 @@ export const VideoPage: React.FC = () => {
     return commentsWithUsers;
   };
 
-  /**
-   * Loads comments for the current video
-   */
   const loadComments = async () => {
     setLoadingComments(true);
     try {
@@ -158,9 +140,6 @@ export const VideoPage: React.FC = () => {
     }
   };
 
-  /**
-   * Loads ratings for the current video
-   */
   const loadRatings = async () => {
     try {
       const averageResponse = await fetch(`https://movu-back-4mcj.onrender.com/api/v1/ratings/average/${video.id}`);
@@ -185,10 +164,6 @@ export const VideoPage: React.FC = () => {
     }
   };
 
-  /**
-   * Handles video rating submission
-   * @param {number} rating - The rating value (1-5)
-   */
   const handleRateVideo = async (rating: number) => {
     if (!currentUser) {
       navigate("/login");
@@ -221,9 +196,6 @@ export const VideoPage: React.FC = () => {
     }
   };
 
-  /**
-   * Handles comment submission
-   */
   const handleAddComment = async () => {
     if (!newComment.trim() || !currentUser) return;
 
@@ -256,19 +228,11 @@ export const VideoPage: React.FC = () => {
     }
   };
 
-  /**
-   * Handles comment editing
-   * @param {Comment} comment - The comment to edit
-   */
   const handleEditComment = (comment: Comment) => {
     setEditingComment(comment._id);
     setEditText(comment.text);
   };
 
-  /**
-   * Handles comment update
-   * @param {string} commentId - The ID of the comment to update
-   */
   const handleUpdateComment = async (commentId: string) => {
     if (!editText.trim()) return;
     try {
@@ -292,10 +256,6 @@ export const VideoPage: React.FC = () => {
     }
   };
 
-  /**
-   * Handles comment deletion
-   * @param {string} commentId - The ID of the comment to delete
-   */
   const handleDeleteComment = async (commentId: string) => {
     if (!window.confirm("¿Estás seguro de que quieres eliminar este comentario?")) return;
     try {
@@ -313,11 +273,6 @@ export const VideoPage: React.FC = () => {
     }
   };
 
-  /**
-   * Formats date to relative time string
-   * @param {string} dateString - ISO date string
-   * @returns {string} Formatted relative time
-   */
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -333,20 +288,10 @@ export const VideoPage: React.FC = () => {
     return date.toLocaleDateString('es-ES');
   };
 
-  /**
-   * Checks if current user owns the comment
-   * @param {Comment} comment - The comment to check
-   * @returns {boolean} True if user owns the comment
-   */
   const isCommentOwner = (comment: Comment) => {
     return currentUser && comment.userId === currentUser._id;
   };
 
-  /**
-   * Gets display name for comment author
-   * @param {Comment} comment - The comment
-   * @returns {string} Display name
-   */
   const getUserDisplayName = (comment: Comment) => {
     if (isCommentOwner(comment)) return "Tú";
     if (comment.user) return `${comment.user.firstName} ${comment.user.lastName}`;
@@ -485,10 +430,10 @@ export const VideoPage: React.FC = () => {
       </button>
 
       <div className="max-w-6xl mx-auto">
-        <div className="mb-8">
+        <div className="mb-6">
           <div 
             ref={videoContainerRef}
-            className="relative w-full aspect-video rounded-lg overflow-hidden shadow-2xl group"
+            className="relative w-full max-w-4xl mx-auto aspect-video rounded-lg overflow-hidden shadow-2xl group"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >
@@ -527,7 +472,7 @@ export const VideoPage: React.FC = () => {
             <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-transparent to-black/20" />
           </div>
 
-          <div className="flex gap-4 items-center justify-center mt-5 bg-[#222]/70 backdrop-blur-md px-5 py-3 rounded-full shadow-lg">
+          <div className="flex gap-4 items-center justify-center mt-4 bg-[#222]/70 backdrop-blur-md px-5 py-3 rounded-full shadow-lg">
             <button onClick={togglePlay} className="hover:text-red-500 transition-all">
               {isPlaying ? <Pause size={24} /> : <Play size={24} />}
             </button>
@@ -569,166 +514,158 @@ export const VideoPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="mb-8">
-          <div className="bg-gray-900/50 rounded-lg p-4 backdrop-blur-sm">
-            <h2 className="text-lg font-semibold mb-3">Calificar esta película</h2>
-            
-            <div className="mb-4">
-              <div className="flex gap-1 mb-2 justify-center">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    onClick={() => handleRateVideo(star)}
-                    onMouseEnter={() => setHoverRating(star)}
-                    onMouseLeave={() => setHoverRating(0)}
-                    disabled={isRating}
-                    className={`p-1 transition-all transform hover:scale-110 ${
-                      isRating ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
-                    }`}
-                  >
-                    <Star
-                      size={28}
-                      className={`
-                        ${(hoverRating || userRating) >= star 
-                          ? 'fill-yellow-400 text-yellow-400' 
-                          : 'text-gray-400'
-                        }
-                        transition-colors
-                      `}
-                    />
-                  </button>
-                ))}
-              </div>
-              <p className="text-sm text-gray-400 text-center">
-                {userRating ? `Tu calificación: ${userRating} estrellas` : 'Selecciona tu calificación'}
-              </p>
-              {!currentUser && (
-                <p className="text-sm text-red-400 text-center mt-1">
-                  <button 
-                    onClick={() => navigate("/login")}
-                    className="underline"
-                  >
-                    Inicia sesión
-                  </button> para calificar
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="lg:col-span-1">
+            <div className="bg-gray-900/50 rounded-lg p-6 backdrop-blur-sm">
+              <h2 className="text-xl font-semibold mb-4">Calificar esta película</h2>
+              
+              <div className="mb-4">
+                <div className="flex gap-1 mb-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      onClick={() => handleRateVideo(star)}
+                      onMouseEnter={() => setHoverRating(star)}
+                      onMouseLeave={() => setHoverRating(0)}
+                      disabled={isRating}
+                      className={`p-1 transition-all transform hover:scale-110 ${
+                        isRating ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+                      }`}
+                    >
+                      <Star
+                        size={32}
+                        className={`
+                          ${(hoverRating || userRating) >= star 
+                            ? 'fill-yellow-400 text-yellow-400' 
+                            : 'text-gray-400'
+                          }
+                          transition-colors
+                        `}
+                      />
+                    </button>
+                  ))}
+                </div>
+                <p className="text-sm text-gray-400 text-center">
+                  {userRating ? `Tu calificación: ${userRating} estrellas` : 'Selecciona tu calificación'}
                 </p>
-              )}
-            </div>
+              </div>
 
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-2">
-                <Star size={20} className="fill-yellow-400 text-yellow-400" />
-                <span className="text-xl font-bold">{averageRating}</span>
-                <span className="text-gray-400">/5</span>
+              <div className="text-center mb-4">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <Star size={24} className="fill-yellow-400 text-yellow-400" />
+                  <span className="text-2xl font-bold">{averageRating}</span>
+                  <span className="text-gray-400">/5</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="mb-8">
-          <div className="bg-gray-900/50 rounded-lg p-6 backdrop-blur-sm">
-            <h2 className="text-xl font-semibold mb-4">
-              Comentarios ({comments.length})
-              {loadingComments && <span className="text-sm text-gray-400 ml-2">(cargando...)</span>}
-            </h2>
+          <div className="lg:col-span-1">
+            <div className="bg-gray-900/50 rounded-lg p-6 backdrop-blur-sm">
+              <h2 className="text-xl font-semibold mb-4">
+                Comentarios ({comments.length})
+                {loadingComments && <span className="text-sm text-gray-400 ml-2">(cargando...)</span>}
+              </h2>
 
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-3">Escribe tu opinión aquí</h3>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleAddComment()}
-                  placeholder="Comparte tu opinión..."
-                  className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
-                />
-                <button
-                  onClick={handleAddComment}
-                  disabled={!newComment.trim() || !currentUser}
-                  className="bg-red-600 hover:bg-red-700 disabled:bg-gray-600 disabled:cursor-not-allowed transition-all p-2 rounded-lg"
-                >
-                  <Send size={20} />
-                </button>
-              </div>
-              {!currentUser && (
-                <p className="text-sm text-gray-400 mt-2 text-center">
-                  <button 
-                    onClick={() => navigate("/login")}
-                    className="text-red-400 hover:text-red-300 underline"
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold mb-3">Escribe tu opinión aquí</h3>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleAddComment()}
+                    placeholder="Comparte tu opinión..."
+                    className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
+                  />
+                  <button
+                    onClick={handleAddComment}
+                    disabled={!newComment.trim() || !currentUser}
+                    className="bg-red-600 hover:bg-red-700 disabled:bg-gray-600 disabled:cursor-not-allowed transition-all p-2 rounded-lg"
                   >
-                    Inicia sesión
-                  </button> para comentar
-                </p>
-              )}
-            </div>
+                    <Send size={20} />
+                  </button>
+                </div>
+                {!currentUser && (
+                  <p className="text-sm text-gray-400 mt-2 text-center">
+                    <button 
+                      onClick={() => navigate("/login")}
+                      className="text-red-400 hover:text-red-300 underline"
+                    >
+                      Inicia sesión
+                    </button> para comentar
+                  </p>
+                )}
+              </div>
 
-            <div className="space-y-4 max-h-[600px] overflow-y-auto">
-              {loadingComments ? (
-                <p className="text-gray-400 text-center py-8">Cargando comentarios...</p>
-              ) : comments.length === 0 ? (
-                <p className="text-gray-400 text-center py-8">No hay comentarios aún. ¡Sé el primero en comentar!</p>
-              ) : (
-                comments.map((comment) => (
-                  <div key={comment._id} className="bg-gray-800/50 rounded-lg p-4">
-                    {editingComment === comment._id ? (
-                      <div className="space-y-2">
-                        <textarea
-                          value={editText}
-                          onChange={(e) => setEditText(e.target.value)}
-                          className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white resize-none"
-                          rows={3}
-                        />
-                        <div className="flex gap-2 justify-end">
-                          <button
-                            onClick={() => setEditingComment(null)}
-                            className="px-3 py-1 text-sm bg-gray-600 hover:bg-gray-500 rounded transition-all"
-                          >
-                            Cancelar
-                          </button>
-                          <button
-                            onClick={() => handleUpdateComment(comment._id)}
-                            disabled={!editText.trim()}
-                            className="px-3 py-1 text-sm bg-green-600 hover:bg-green-500 disabled:bg-gray-600 rounded transition-all"
-                          >
-                            Guardar
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="flex justify-between items-start mb-2">
-                          <div>
-                            <span className="font-semibold text-red-400">
-                              {getUserDisplayName(comment)}
-                            </span>
-                            <span className="text-gray-400 text-sm ml-2">
-                              {formatDate(comment.createdAt)}
-                              {comment.updatedAt !== comment.createdAt && " (editado)"}
-                            </span>
+              <div className="space-y-4 max-h-[500px] overflow-y-auto">
+                {loadingComments ? (
+                  <p className="text-gray-400 text-center py-8">Cargando comentarios...</p>
+                ) : comments.length === 0 ? (
+                  <p className="text-gray-400 text-center py-8">No hay comentarios aún. ¡Sé el primero en comentar!</p>
+                ) : (
+                  comments.map((comment) => (
+                    <div key={comment._id} className="bg-gray-800/50 rounded-lg p-4">
+                      {editingComment === comment._id ? (
+                        <div className="space-y-2">
+                          <textarea
+                            value={editText}
+                            onChange={(e) => setEditText(e.target.value)}
+                            className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white resize-none"
+                            rows={3}
+                          />
+                          <div className="flex gap-2 justify-end">
+                            <button
+                              onClick={() => setEditingComment(null)}
+                              className="px-3 py-1 text-sm bg-gray-600 hover:bg-gray-500 rounded transition-all"
+                            >
+                              Cancelar
+                            </button>
+                            <button
+                              onClick={() => handleUpdateComment(comment._id)}
+                              disabled={!editText.trim()}
+                              className="px-3 py-1 text-sm bg-red-600 hover:bg-red-500 disabled:bg-gray-600 rounded transition-all"
+                            >
+                              Guardar
+                            </button>
                           </div>
-                          {isCommentOwner(comment) && (
-                            <div className="flex gap-1">
-                              <button
-                                onClick={() => handleEditComment(comment)}
-                                className="p-1 hover:bg-gray-700 rounded transition-all"
-                              >
-                                <Edit3 size={14} />
-                              </button>
-                              <button
-                                onClick={() => handleDeleteComment(comment._id)}
-                                className="p-1 hover:bg-gray-700 rounded transition-all"
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                            </div>
-                          )}
                         </div>
-                        <p className="text-gray-200 whitespace-pre-wrap">{comment.text}</p>
-                      </>
-                    )}
-                  </div>
-                ))
-              )}
+                      ) : (
+                        <>
+                          <div className="flex justify-between items-start mb-2">
+                            <div>
+                              <span className="font-semibold text-red-400">
+                                {getUserDisplayName(comment)}
+                              </span>
+                              <span className="text-gray-400 text-sm ml-2">
+                                {formatDate(comment.createdAt)}
+                                {comment.updatedAt !== comment.createdAt && " (editado)"}
+                              </span>
+                            </div>
+                            {isCommentOwner(comment) && (
+                              <div className="flex gap-1">
+                                <button
+                                  onClick={() => handleEditComment(comment)}
+                                  className="p-1 hover:bg-gray-700 rounded transition-all"
+                                >
+                                  <Edit3 size={14} />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteComment(comment._id)}
+                                  className="p-1 hover:bg-gray-700 rounded transition-all"
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                          <p className="text-gray-200 whitespace-pre-wrap">{comment.text}</p>
+                        </>
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
           </div>
         </div>
