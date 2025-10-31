@@ -29,6 +29,16 @@ const LayoutMovu: React.FC = () => {
             Mapa del sitio
           </Link>
         </p>
+        <p className="mb-2">
+          <a
+            href="/Manual_de_Usuario_Movu.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-red-500 hover:underline font-medium"
+          >
+            Manual de usuario (PDF)
+          </a>
+        </p>
         © 2025 Movu — Todos los derechos reservados
       </footer>
     </div>
