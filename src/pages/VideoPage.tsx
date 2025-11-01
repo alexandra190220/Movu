@@ -62,7 +62,7 @@ export const VideoPage: React.FC = () => {
   const [activeSubtitle, setActiveSubtitle] = useState<string>("none");
   const [availableSubtitles, setAvailableSubtitles] = useState<string[]>([]);
   const [showTitle, setShowTitle] = useState(false);
-  
+
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [editingComment, setEditingComment] = useState<string | null>(null);
@@ -78,10 +78,13 @@ export const VideoPage: React.FC = () => {
 
   const getUserData = async (userId: string): Promise<User | null> => {
     try {
-      const response = await fetch(`https://movu-back-4mcj.onrender.com/api/v1/users/${userId}`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
+      const response = await fetch(
+        `https://movu-back-4mcj.onrender.com/api/v1/users/${userId}`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
       if (!response.ok) {
         console.error("Error al obtener datos del usuario");
@@ -95,21 +98,23 @@ export const VideoPage: React.FC = () => {
     }
   };
 
-  const fetchUserDataForComments = async (comments: Comment[]): Promise<Comment[]> => {
+  const fetchUserDataForComments = async (
+    comments: Comment[]
+  ): Promise<Comment[]> => {
     const commentsWithUsers = await Promise.all(
       comments.map(async (comment) => {
         try {
           if (comment.user) return comment;
-          
+
           const userData = await getUserData(comment.userId);
           if (userData) {
-            return { 
-              ...comment, 
+            return {
+              ...comment,
               user: {
                 firstName: userData.firstName,
                 lastName: userData.lastName,
-                email: userData.email
-              }
+                email: userData.email,
+              },
             };
           }
           return comment;
@@ -125,7 +130,9 @@ export const VideoPage: React.FC = () => {
   const loadComments = async () => {
     setLoadingComments(true);
     try {
-      const response = await fetch(`https://movu-back-4mcj.onrender.com/api/v1/comments/video/${video.id}`);
+      const response = await fetch(
+        `https://movu-back-4mcj.onrender.com/api/v1/comments/video/${video.id}`
+      );
       if (response.ok) {
         const data = await response.json();
         const commentsWithUsers = await fetchUserDataForComments(data);
@@ -142,7 +149,9 @@ export const VideoPage: React.FC = () => {
 
   const loadRatings = async () => {
     try {
-      const averageResponse = await fetch(`https://movu-back-4mcj.onrender.com/api/v1/ratings/average/${video.id}`);
+      const averageResponse = await fetch(
+        `https://movu-back-4mcj.onrender.com/api/v1/ratings/average/${video.id}`
+      );
       if (averageResponse.ok) {
         const averageData = await averageResponse.json();
         setAverageRating(parseFloat(averageData.average.toFixed(1)) || 0);
@@ -172,15 +181,18 @@ export const VideoPage: React.FC = () => {
 
     try {
       setIsRating(true);
-      const response = await fetch("https://movu-back-4mcj.onrender.com/api/v1/ratings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: currentUser._id,
-          videoId: video.id,
-          rating: rating
-        })
-      });
+      const response = await fetch(
+        "https://movu-back-4mcj.onrender.com/api/v1/ratings",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: currentUser._id,
+            videoId: video.id,
+            rating: rating,
+          }),
+        }
+      );
 
       if (response.ok) {
         const result = await response.json();
@@ -200,15 +212,18 @@ export const VideoPage: React.FC = () => {
     if (!newComment.trim() || !currentUser) return;
 
     try {
-      const response = await fetch("https://movu-back-4mcj.onrender.com/api/v1/comments", {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          userId: currentUser._id,
-          videoId: video.id,
-          text: newComment 
-        })
-      });
+      const response = await fetch(
+        "https://movu-back-4mcj.onrender.com/api/v1/comments",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: currentUser._id,
+            videoId: video.id,
+            text: newComment,
+          }),
+        }
+      );
 
       if (response.ok) {
         const comment = await response.json();
@@ -217,10 +232,10 @@ export const VideoPage: React.FC = () => {
           user: {
             firstName: currentUser.firstName,
             lastName: currentUser.lastName,
-            email: currentUser.email
-          }
+            email: currentUser.email,
+          },
         };
-        setComments(prev => [commentWithUser, ...prev]);
+        setComments((prev) => [commentWithUser, ...prev]);
         setNewComment("");
       }
     } catch (error) {
@@ -236,18 +251,27 @@ export const VideoPage: React.FC = () => {
   const handleUpdateComment = async (commentId: string) => {
     if (!editText.trim()) return;
     try {
-      const response = await fetch("https://movu-back-4mcj.onrender.com/api/v1/comments", {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ commentId, text: editText })
-      });
+      const response = await fetch(
+        "https://movu-back-4mcj.onrender.com/api/v1/comments",
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ commentId, text: editText }),
+        }
+      );
 
       if (response.ok) {
-        setComments(prev => prev.map(comment =>
-          comment._id === commentId 
-            ? { ...comment, text: editText, updatedAt: new Date().toISOString() }
-            : comment
-        ));
+        setComments((prev) =>
+          prev.map((comment) =>
+            comment._id === commentId
+              ? {
+                  ...comment,
+                  text: editText,
+                  updatedAt: new Date().toISOString(),
+                }
+              : comment
+          )
+        );
         setEditingComment(null);
         setEditText("");
       }
@@ -257,16 +281,24 @@ export const VideoPage: React.FC = () => {
   };
 
   const handleDeleteComment = async (commentId: string) => {
-    if (!window.confirm("¿Estás seguro de que quieres eliminar este comentario?")) return;
+    if (
+      !window.confirm("¿Estás seguro de que quieres eliminar este comentario?")
+    )
+      return;
     try {
-      const response = await fetch("https://movu-back-4mcj.onrender.com/api/v1/comments", {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ commentId })
-      });
+      const response = await fetch(
+        "https://movu-back-4mcj.onrender.com/api/v1/comments",
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ commentId }),
+        }
+      );
 
       if (response.ok) {
-        setComments(prev => prev.filter(comment => comment._id !== commentId));
+        setComments((prev) =>
+          prev.filter((comment) => comment._id !== commentId)
+        );
       }
     } catch (error) {
       console.error("Error eliminando comentario:", error);
@@ -285,7 +317,7 @@ export const VideoPage: React.FC = () => {
     if (diffMins < 60) return `Hace ${diffMins} min`;
     if (diffHours < 24) return `Hace ${diffHours} h`;
     if (diffDays < 7) return `Hace ${diffDays} d`;
-    return date.toLocaleDateString('es-ES');
+    return date.toLocaleDateString("es-ES");
   };
 
   const isCommentOwner = (comment: Comment) => {
@@ -294,7 +326,8 @@ export const VideoPage: React.FC = () => {
 
   const getUserDisplayName = (comment: Comment) => {
     if (isCommentOwner(comment)) return "Tú";
-    if (comment.user) return `${comment.user.firstName} ${comment.user.lastName}`;
+    if (comment.user)
+      return `${comment.user.firstName} ${comment.user.lastName}`;
     return "Cargando...";
   };
 
@@ -345,12 +378,12 @@ export const VideoPage: React.FC = () => {
   const handleSubtitleChange = (lang: string) => {
     setActiveSubtitle(lang);
     if (!videoRef.current) return;
-    
+
     const tracks = videoRef.current.textTracks;
     for (let i = 0; i < tracks.length; i++) {
       tracks[i].mode = "disabled";
     }
-    
+
     if (lang !== "none") {
       const track = Array.from(tracks).find((t) => t.language === lang);
       if (track) {
@@ -362,7 +395,9 @@ export const VideoPage: React.FC = () => {
   const handleVideoLoad = () => {
     if (videoRef.current && activeSubtitle !== "none") {
       const tracks = videoRef.current.textTracks;
-      const track = Array.from(tracks).find((t) => t.language === activeSubtitle);
+      const track = Array.from(tracks).find(
+        (t) => t.language === activeSubtitle
+      );
       if (track) {
         track.mode = "showing";
       }
@@ -404,14 +439,14 @@ export const VideoPage: React.FC = () => {
   useEffect(() => {
     if (video?.id) {
       const subtitles = [];
-      if (video.subtitles?.es || hasSubtitleFile(video.id, 'es')) {
-        subtitles.push('es');
+      if (video.subtitles?.es || hasSubtitleFile(video.id, "es")) {
+        subtitles.push("es");
       }
-      if (video.subtitles?.en || hasSubtitleFile(video.id, 'en')) {
-        subtitles.push('en');
+      if (video.subtitles?.en || hasSubtitleFile(video.id, "en")) {
+        subtitles.push("en");
       }
       setAvailableSubtitles(subtitles);
-      
+
       loadComments();
       loadRatings();
     }
@@ -429,9 +464,9 @@ export const VideoPage: React.FC = () => {
         Volver
       </button>
 
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto mt-10">
         <div className="mb-6">
-          <div 
+          <div
             ref={videoContainerRef}
             className="relative w-full max-w-4xl mx-auto aspect-video rounded-lg overflow-hidden shadow-2xl group"
             onMouseEnter={handleMouseEnter}
@@ -452,17 +487,23 @@ export const VideoPage: React.FC = () => {
                   src={getSubtitleUrl(lang)}
                   kind="subtitles"
                   srcLang={lang}
-                  label={lang === 'es' ? 'Español' : 'English'}
+                  label={lang === "es" ? "Español" : "English"}
                   default={activeSubtitle === lang}
                 />
               ))}
             </video>
 
-            <div className={`absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/80 to-transparent transition-all duration-300 ${
-              showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-            }`}>
+            <div
+              className={`absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/80 to-transparent transition-all duration-300 ${
+                showTitle
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-4"
+              }`}
+            >
               <h1 className="text-xl font-semibold tracking-wide">
-                {video?.video_files?.[0]?.name || video?.alt || "Untitled video"}
+                {video?.video_files?.[0]?.name ||
+                  video?.alt ||
+                  "Untitled video"}
               </h1>
               <p className="text-sm text-gray-400">
                 {video?.user?.name ? `By ${video.user.name}` : ""}
@@ -473,17 +514,33 @@ export const VideoPage: React.FC = () => {
           </div>
 
           <div className="flex gap-4 items-center justify-center mt-4 bg-[#222]/70 backdrop-blur-md px-5 py-3 rounded-full shadow-lg max-w-4xl mx-auto">
-            <button onClick={togglePlay} className="hover:text-red-500 transition-all">
+            <button
+              onClick={togglePlay}
+              className="hover:text-red-500 transition-all"
+            >
               {isPlaying ? <Pause size={24} /> : <Play size={24} />}
             </button>
-            <button onClick={handleStop} className="hover:text-gray-400 transition-all">
+            <button
+              onClick={handleStop}
+              className="hover:text-gray-400 transition-all"
+            >
               <Square size={22} />
             </button>
-            <button onClick={handleFullscreen} className="hover:text-blue-400 transition-all">
+            <button
+              onClick={handleFullscreen}
+              className="hover:text-blue-400 transition-all"
+            >
               <Maximize2 size={22} />
             </button>
-            <button onClick={toggleMute} className="hover:text-yellow-400 transition-all">
-              {isMuted || volume === 0 ? <VolumeX size={22} /> : <Volume2 size={22} />}
+            <button
+              onClick={toggleMute}
+              className="hover:text-yellow-400 transition-all"
+            >
+              {isMuted || volume === 0 ? (
+                <VolumeX size={22} />
+              ) : (
+                <Volume2 size={22} />
+              )}
             </button>
             <input
               type="range"
@@ -505,7 +562,7 @@ export const VideoPage: React.FC = () => {
                   <option value="none">Sin subtítulos</option>
                   {availableSubtitles.map((lang) => (
                     <option key={lang} value={lang}>
-                      {lang === 'es' ? 'Español' : 'English'}
+                      {lang === "es" ? "Español" : "English"}
                     </option>
                   ))}
                 </select>
@@ -519,10 +576,14 @@ export const VideoPage: React.FC = () => {
           {/* Sección de Calificaciones - 1/3 del ancho, altura ajustada al contenido */}
           <div className="lg:w-1/3">
             <div className="bg-gray-900/50 rounded-lg p-6 backdrop-blur-sm h-fit">
-              <h2 className="text-xl font-semibold mb-6 text-center">Calificar esta película</h2>
-              
+              <h2 className="text-xl font-semibold mb-6 text-center">
+                Calificar esta película
+              </h2>
+
               <div className="mb-6">
-                <p className="text-sm text-gray-300 mb-4 text-center">Selecciona tu calificación</p>
+                <p className="text-sm text-gray-300 mb-4 text-center">
+                  Selecciona tu calificación
+                </p>
                 <div className="flex gap-2 mb-3 justify-center">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
@@ -532,15 +593,18 @@ export const VideoPage: React.FC = () => {
                       onMouseLeave={() => setHoverRating(0)}
                       disabled={isRating}
                       className={`p-1 transition-all transform hover:scale-110 ${
-                        isRating ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+                        isRating
+                          ? "opacity-50 cursor-not-allowed"
+                          : "cursor-pointer"
                       }`}
                     >
                       <Star
                         size={28}
                         className={`
-                          ${(hoverRating || userRating) >= star 
-                            ? 'fill-yellow-400 text-yellow-400' 
-                            : 'text-gray-400'
+                          ${
+                            (hoverRating || userRating) >= star
+                              ? "fill-yellow-400 text-yellow-400"
+                              : "text-gray-400"
                           }
                           transition-colors
                         `}
@@ -549,15 +613,17 @@ export const VideoPage: React.FC = () => {
                   ))}
                 </div>
                 <p className="text-lg font-semibold text-center mb-2">
-                  {userRating ? `${userRating} / 5` : '0 / 5'}
+                  {userRating ? `${userRating} / 5` : "0 / 5"}
                 </p>
                 <p className="text-sm text-gray-400 text-center">
-                  {userRating ? 'Tu calificación' : 'Sin calificar'}
+                  {userRating ? "Tu calificación" : "Sin calificar"}
                 </p>
               </div>
 
               <div className="text-center border-t border-gray-700 pt-4">
-                <p className="text-sm text-gray-300 mb-2">Calificación promedio</p>
+                <p className="text-sm text-gray-300 mb-2">
+                  Calificación promedio
+                </p>
                 <div className="flex items-center justify-center gap-2 mb-1">
                   <Star size={20} className="fill-yellow-400 text-yellow-400" />
                   <span className="text-2xl font-bold">{averageRating}</span>
@@ -572,17 +638,23 @@ export const VideoPage: React.FC = () => {
             <div className="bg-gray-900/50 rounded-lg p-6 backdrop-blur-sm">
               <h2 className="text-xl font-semibold mb-4">
                 Comentarios ({comments.length})
-                {loadingComments && <span className="text-sm text-gray-400 ml-2">(cargando...)</span>}
+                {loadingComments && (
+                  <span className="text-sm text-gray-400 ml-2">
+                    (cargando...)
+                  </span>
+                )}
               </h2>
 
               <div className="mb-6">
-                <h3 className="text-lg font-semibold mb-3">Escribe tu opinión aquí</h3>
+                <h3 className="text-lg font-semibold mb-3">
+                  Escribe tu opinión aquí
+                </h3>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleAddComment()}
+                    onKeyPress={(e) => e.key === "Enter" && handleAddComment()}
                     placeholder="Comparte tu opinión..."
                     className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
                   />
@@ -596,24 +668,32 @@ export const VideoPage: React.FC = () => {
                 </div>
                 {!currentUser && (
                   <p className="text-sm text-gray-400 mt-2 text-center">
-                    <button 
+                    <button
                       onClick={() => navigate("/login")}
                       className="text-red-400 hover:text-red-300 underline"
                     >
                       Inicia sesión
-                    </button> para comentar
+                    </button>{" "}
+                    para comentar
                   </p>
                 )}
               </div>
 
               <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
                 {loadingComments ? (
-                  <p className="text-gray-400 text-center py-8">Cargando comentarios...</p>
+                  <p className="text-gray-400 text-center py-8">
+                    Cargando comentarios...
+                  </p>
                 ) : comments.length === 0 ? (
-                  <p className="text-gray-400 text-center py-8">No hay comentarios aún. ¡Sé el primero en comentar!</p>
+                  <p className="text-gray-400 text-center py-8">
+                    No hay comentarios aún. ¡Sé el primero en comentar!
+                  </p>
                 ) : (
                   comments.map((comment) => (
-                    <div key={comment._id} className="bg-gray-800/50 rounded-lg p-4">
+                    <div
+                      key={comment._id}
+                      className="bg-gray-800/50 rounded-lg p-4"
+                    >
                       {editingComment === comment._id ? (
                         <div className="space-y-2">
                           <textarea
@@ -647,7 +727,8 @@ export const VideoPage: React.FC = () => {
                               </span>
                               <span className="text-gray-400 text-sm ml-2">
                                 {formatDate(comment.createdAt)}
-                                {comment.updatedAt !== comment.createdAt && " (editado)"}
+                                {comment.updatedAt !== comment.createdAt &&
+                                  " (editado)"}
                               </span>
                             </div>
                             {isCommentOwner(comment) && (
@@ -659,7 +740,9 @@ export const VideoPage: React.FC = () => {
                                   <Edit3 size={14} />
                                 </button>
                                 <button
-                                  onClick={() => handleDeleteComment(comment._id)}
+                                  onClick={() =>
+                                    handleDeleteComment(comment._id)
+                                  }
                                   className="p-1 hover:bg-gray-700 rounded transition-all"
                                 >
                                   <Trash2 size={14} />
@@ -667,7 +750,9 @@ export const VideoPage: React.FC = () => {
                               </div>
                             )}
                           </div>
-                          <p className="text-gray-200 whitespace-pre-wrap">{comment.text}</p>
+                          <p className="text-gray-200 whitespace-pre-wrap">
+                            {comment.text}
+                          </p>
                         </>
                       )}
                     </div>
