@@ -423,7 +423,8 @@ export const VideoPage: React.FC = () => {
     <div className="min-h-screen bg-[#2b2f33] text-white p-4">
       <button
         onClick={handleBack}
-        className="absolute top-6 left-6 flex items-center gap-2 bg-gray-800 hover:bg-gray-700 transition-all px-3 py-2 rounded-full text-sm z-20"
+        className="absolute top-6 left-6 flex items-center gap-2 bg-gray-800 hover:bg-gray-700 transition-all px-3 py-2 rounded-full text-sm z-20 focus:outline-none focus:ring-2 focus:ring-red-500"
+        aria-label="Volver"
       >
         <ArrowLeft size={18} />
         Volver
@@ -433,9 +434,11 @@ export const VideoPage: React.FC = () => {
         <div className="mb-6">
           <div 
             ref={videoContainerRef}
-            className="relative w-full max-w-4xl mx-auto aspect-video rounded-lg overflow-hidden shadow-2xl group"
+            className="relative w-full max-w-2xl mx-auto aspect-video rounded-lg overflow-hidden shadow-2xl group mt-16"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
+            role="region"
+            aria-label="Reproductor de video"
           >
             <video
               ref={videoRef}
@@ -445,6 +448,7 @@ export const VideoPage: React.FC = () => {
               controls={false}
               crossOrigin="anonymous"
               onLoadedMetadata={handleVideoLoad}
+              aria-label="Video principal"
             >
               {availableSubtitles.map((lang) => (
                 <track
@@ -460,7 +464,7 @@ export const VideoPage: React.FC = () => {
 
             <div className={`absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/80 to-transparent transition-all duration-300 ${
               showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-            }`}>
+            }`} aria-hidden={!showTitle}>
               <h1 className="text-xl font-semibold tracking-wide">
                 {video?.video_files?.[0]?.name || video?.alt || "Untitled video"}
               </h1>
@@ -473,16 +477,20 @@ export const VideoPage: React.FC = () => {
           </div>
 
           <div className="flex gap-4 items-center justify-center mt-4 bg-[#222]/70 backdrop-blur-md px-5 py-3 rounded-full shadow-lg max-w-4xl mx-auto">
-            <button onClick={togglePlay} className="hover:text-red-500 transition-all">
+            <button 
+              onClick={togglePlay} 
+              className="hover:text-red-500 transition-all focus:outline-none focus:ring-2 focus:ring-red-500"
+              aria-label={isPlaying ? "Pausar" : "Reproducir"}
+            >
               {isPlaying ? <Pause size={24} /> : <Play size={24} />}
             </button>
-            <button onClick={handleStop} className="hover:text-gray-400 transition-all">
+            <button onClick={handleStop} className="hover:text-gray-400 transition-all focus:outline-none focus:ring-2 focus:ring-gray-400" aria-label="Detener">
               <Square size={22} />
             </button>
-            <button onClick={handleFullscreen} className="hover:text-blue-400 transition-all">
+            <button onClick={handleFullscreen} className="hover:text-blue-400 transition-all focus:outline-none focus:ring-2 focus:ring-blue-400" aria-label="Pantalla completa">
               <Maximize2 size={22} />
             </button>
-            <button onClick={toggleMute} className="hover:text-yellow-400 transition-all">
+            <button onClick={toggleMute} className="hover:text-yellow-400 transition-all focus:outline-none focus:ring-2 focus:ring-yellow-400" aria-label={isMuted ? "Activar sonido" : "Silenciar"}>
               {isMuted || volume === 0 ? <VolumeX size={22} /> : <Volume2 size={22} />}
             </button>
             <input
@@ -493,14 +501,16 @@ export const VideoPage: React.FC = () => {
               value={isMuted ? 0 : volume}
               onChange={handleVolumeChange}
               className="w-20 accent-red-600 cursor-pointer"
+              aria-label="Control de volumen"
             />
             {hasSubtitles && (
               <div className="flex items-center gap-2">
-                <Captions size={22} className="text-gray-300" />
+                <Captions size={22} className="text-gray-300" aria-hidden="true" />
                 <select
                   value={activeSubtitle}
                   onChange={(e) => handleSubtitleChange(e.target.value)}
                   className="bg-gray-800 text-sm rounded px-2 py-1 outline-none focus:ring-2 focus:ring-red-500"
+                  aria-label="Seleccionar subtítulos"
                 >
                   <option value="none">Sin subtítulos</option>
                   {availableSubtitles.map((lang) => (
@@ -534,6 +544,7 @@ export const VideoPage: React.FC = () => {
                       className={`p-1 transition-all transform hover:scale-110 ${
                         isRating ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
                       }`}
+                      aria-label={`Calificar ${star} de 5`}
                     >
                       <Star
                         size={28}
@@ -585,11 +596,13 @@ export const VideoPage: React.FC = () => {
                     onKeyPress={(e) => e.key === 'Enter' && handleAddComment()}
                     placeholder="Comparte tu opinión..."
                     className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    aria-label="Escribe un comentario"
                   />
                   <button
                     onClick={handleAddComment}
                     disabled={!newComment.trim() || !currentUser}
-                    className="bg-red-600 hover:bg-red-700 disabled:bg-gray-600 disabled:cursor-not-allowed transition-all p-2 rounded-lg"
+                    className="bg-red-600 hover:bg-red-700 disabled:bg-gray-600 disabled:cursor-not-allowed transition-all p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                    aria-label="Enviar comentario"
                   >
                     <Send size={20} />
                   </button>
@@ -621,18 +634,19 @@ export const VideoPage: React.FC = () => {
                             onChange={(e) => setEditText(e.target.value)}
                             className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white resize-none"
                             rows={3}
+                            aria-label="Editar comentario"
                           />
                           <div className="flex gap-2 justify-end">
                             <button
                               onClick={() => setEditingComment(null)}
-                              className="px-3 py-1 text-sm bg-gray-600 hover:bg-gray-500 rounded transition-all"
+                              className="px-3 py-1 text-sm bg-gray-600 hover:bg-gray-500 rounded transition-all focus:outline-none focus:ring-2 focus:ring-gray-400"
                             >
                               Cancelar
                             </button>
                             <button
                               onClick={() => handleUpdateComment(comment._id)}
                               disabled={!editText.trim()}
-                              className="px-3 py-1 text-sm bg-red-600 hover:bg-red-500 disabled:bg-gray-600 rounded transition-all"
+                              className="px-3 py-1 text-sm bg-red-600 hover:bg-red-500 disabled:bg-gray-600 rounded transition-all focus:outline-none focus:ring-2 focus:ring-red-500"
                             >
                               Guardar
                             </button>
@@ -654,13 +668,15 @@ export const VideoPage: React.FC = () => {
                               <div className="flex gap-1">
                                 <button
                                   onClick={() => handleEditComment(comment)}
-                                  className="p-1 hover:bg-gray-700 rounded transition-all"
+                                  className="p-1 hover:bg-gray-700 rounded transition-all focus:outline-none focus:ring-2 focus:ring-gray-400"
+                                  aria-label="Editar comentario"
                                 >
                                   <Edit3 size={14} />
                                 </button>
                                 <button
                                   onClick={() => handleDeleteComment(comment._id)}
-                                  className="p-1 hover:bg-gray-700 rounded transition-all"
+                                  className="p-1 hover:bg-gray-700 rounded transition-all focus:outline-none focus:ring-2 focus:ring-gray-400"
+                                  aria-label="Eliminar comentario"
                                 >
                                   <Trash2 size={14} />
                                 </button>
