@@ -472,7 +472,7 @@ export const VideoPage: React.FC = () => {
             <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-transparent to-black/20" />
           </div>
 
-          <div className="flex gap-4 items-center justify-center mt-4 bg-[#222]/70 backdrop-blur-md px-5 py-3 rounded-full shadow-lg">
+          <div className="flex gap-4 items-center justify-center mt-4 bg-[#222]/70 backdrop-blur-md px-5 py-3 rounded-full shadow-lg max-w-4xl mx-auto">
             <button onClick={togglePlay} className="hover:text-red-500 transition-all">
               {isPlaying ? <Pause size={24} /> : <Play size={24} />}
             </button>
@@ -514,13 +514,16 @@ export const VideoPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="lg:col-span-1">
-            <div className="bg-gray-900/50 rounded-lg p-6 backdrop-blur-sm">
-              <h2 className="text-xl font-semibold mb-4">Calificar esta película</h2>
+        {/* SECCIÓN MODIFICADA: Distribución 1/3 para calificaciones y 2/3 para comentarios */}
+        <div className="flex flex-col lg:flex-row gap-6 max-w-4xl mx-auto">
+          {/* Sección de Calificaciones - 1/3 del ancho, altura ajustada al contenido */}
+          <div className="lg:w-1/3">
+            <div className="bg-gray-900/50 rounded-lg p-6 backdrop-blur-sm h-fit">
+              <h2 className="text-xl font-semibold mb-6 text-center">Calificar esta película</h2>
               
-              <div className="mb-4">
-                <div className="flex gap-1 mb-2">
+              <div className="mb-6">
+                <p className="text-sm text-gray-300 mb-4 text-center">Selecciona tu calificación</p>
+                <div className="flex gap-2 mb-3 justify-center">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       key={star}
@@ -533,7 +536,7 @@ export const VideoPage: React.FC = () => {
                       }`}
                     >
                       <Star
-                        size={32}
+                        size={28}
                         className={`
                           ${(hoverRating || userRating) >= star 
                             ? 'fill-yellow-400 text-yellow-400' 
@@ -545,22 +548,27 @@ export const VideoPage: React.FC = () => {
                     </button>
                   ))}
                 </div>
+                <p className="text-lg font-semibold text-center mb-2">
+                  {userRating ? `${userRating} / 5` : '0 / 5'}
+                </p>
                 <p className="text-sm text-gray-400 text-center">
-                  {userRating ? `Tu calificación: ${userRating} estrellas` : 'Selecciona tu calificación'}
+                  {userRating ? 'Tu calificación' : 'Sin calificar'}
                 </p>
               </div>
 
-              <div className="text-center mb-4">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <Star size={24} className="fill-yellow-400 text-yellow-400" />
+              <div className="text-center border-t border-gray-700 pt-4">
+                <p className="text-sm text-gray-300 mb-2">Calificación promedio</p>
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <Star size={20} className="fill-yellow-400 text-yellow-400" />
                   <span className="text-2xl font-bold">{averageRating}</span>
-                  <span className="text-gray-400">/5</span>
+                  <span className="text-gray-400 text-lg">/5</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="lg:col-span-1">
+          {/* Sección de Comentarios - 2/3 del ancho */}
+          <div className="lg:w-2/3">
             <div className="bg-gray-900/50 rounded-lg p-6 backdrop-blur-sm">
               <h2 className="text-xl font-semibold mb-4">
                 Comentarios ({comments.length})
@@ -598,7 +606,7 @@ export const VideoPage: React.FC = () => {
                 )}
               </div>
 
-              <div className="space-y-4 max-h-[500px] overflow-y-auto">
+              <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
                 {loadingComments ? (
                   <p className="text-gray-400 text-center py-8">Cargando comentarios...</p>
                 ) : comments.length === 0 ? (
