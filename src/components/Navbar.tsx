@@ -6,7 +6,7 @@ import { Film, Heart, Search, ArrowLeft } from "lucide-react";
  * @fileoverview
  * Navbar component that provides navigation, search functionality, and responsive menu options for the Movu app.
  *
- * ✅ Accessibility compliance:
+ * Accessibility compliance:
  * - Uses appropriate ARIA roles and labels for navigation, search, and menu items.
  * - Buttons and links have descriptive `aria-label`s.
  * - Touch targets meet WCAG minimum (44x44 px).
